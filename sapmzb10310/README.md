@@ -12,5 +12,3 @@
 4. 부가 기능
     - 항공사명, 공항명은 SELECT SINGLE, READ TABLE 등을 이용해서 적용
   
-### 출력 결과 정리
-- https://zest-kitchen-ec0.notion.site/SAPMZB10310-24a7be15f9c880ad9232c4f878875e9c?source=copy_link
