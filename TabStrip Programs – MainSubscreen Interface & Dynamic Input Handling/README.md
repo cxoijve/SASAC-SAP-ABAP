@@ -1,4 +1,4 @@
-# SAP ABAP TabStrip Programs – Main/Subscreen Interface & Dynamic Input Handling
+# TabStrip Programs – Main/Subscreen Interface & Dynamic Input Handling
 
 ## 1. 개요
 - 문제 정의 및 목적
