@@ -1,6 +1,6 @@
 # SAPMZB10821
 - [B10] ALV 3 – 예약 현황 Field Catalog, Refresh_table_display
-<img width="841" height="676" alt="B10  ALV 3 – 예약 현황 Field Catalog, Refresh_table_display" src="https://github.com/user-attachments/assets/f97b1db4-4429-4e0c-ab88-e7b6216dc2be" />
+<img width="200" height="400" alt="B10  ALV 3 – 예약 현황 Field Catalog, Refresh_table_display" src="https://github.com/user-attachments/assets/f97b1db4-4429-4e0c-ab88-e7b6216dc2be" />
 
 
 ## 기능 요약
