@@ -1,4 +1,7 @@
 ## Screen Basic 정리 2
+<img width="684" height="415" alt="Screen 100 - 1" src="https://github.com/user-attachments/assets/e8391dc7-2c07-459f-80e1-f4f7c5d6b481" />
+<img width="684" height="415" alt="Screen 100 - 2" src="https://github.com/user-attachments/assets/6f23d94c-6e97-471d-b0ed-d6170e3e9793" />
+<img width="684" height="415" alt="Screen 200" src="https://github.com/user-attachments/assets/77a6ca45-9af7-4a80-bc5e-1f4272e390eb" />
 
 ###  주요 기능
   1. Search 버튼
