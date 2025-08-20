@@ -1,1 +1,0 @@
-# SASAC-SAP-ABAP
