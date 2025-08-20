@@ -1,6 +1,7 @@
 # SAPMZB10821
-
 - [B10] ALV 3 – 예약 현황 Field Catalog, Refresh_table_display
+<img width="841" height="676" alt="B10  ALV 3 – 예약 현황 Field Catalog, Refresh_table_display" src="https://github.com/user-attachments/assets/f97b1db4-4429-4e0c-ab88-e7b6216dc2be" />
+
 
 ## 기능 요약
 
@@ -30,7 +31,7 @@
 - **표준 날짜 함수 활용**
   - `RP_LAST_DAY_OF_MONTHS`, `RE_ADD_MONTH_TO_DATE` 등
 
-## 예외사항 체크 (예외 아이콘, 색상 적용 로직 - 진행중)
+## 예외사항 (예외 아이콘, 색상 적용 로직 - 진행중)
 
 - 예약일자보다 항공일자가 큰 경우: Red Icon
 - 고객타입 다를 경우: Yellow Icon (현재 고객타입은 하나 - 생각해보기)
