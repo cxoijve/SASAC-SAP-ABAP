@@ -1,4 +1,6 @@
 # 항공 예약 관리 ALV 프로그램 (SAPMZB10832)
+<img width="991" height="748" alt="IMG1" src="https://github.com/user-attachments/assets/4f518d26-bd79-4a03-81e3-f8493c7283da" />
+<img width="959" height="312" alt="IMG2" src="https://github.com/user-attachments/assets/a70c1cca-f949-4259-8989-c196367fdaae" />
 
 ## 주요 기능
 
