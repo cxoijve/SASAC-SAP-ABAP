@@ -1,4 +1,6 @@
 ## Screen Basic 정리 1
+<img width="684" height="415" alt="B10  Screen Basic 정리 1 1" src="https://github.com/user-attachments/assets/0bb515c1-1b0a-4b88-91ab-6c2d365101f2" />
+<img width="684" height="415" alt="B10  Screen Basic 정리 1 2" src="https://github.com/user-attachments/assets/4f65fa4e-d31d-43eb-bf48-723d667fc45e" />
 
 ### 주요 기능  
 1. Search 버튼 클릭 시
