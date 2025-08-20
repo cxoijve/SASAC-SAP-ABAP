@@ -1,4 +1,7 @@
 # TabStrip Programs – Main/Subscreen Interface & Dynamic Input Handling
+<img width="917" height="485" alt="Tab Strip 1" src="https://github.com/user-attachments/assets/ffe6cab4-7399-4d35-b58f-cf02fad0ba19" />
+<img width="917" height="485" alt="Tab Strip 2" src="https://github.com/user-attachments/assets/0794e3f9-0b11-4383-b70c-0b9fb40a5699" />
+
 
 ## 1. 개요
 - 문제 정의 및 목적
