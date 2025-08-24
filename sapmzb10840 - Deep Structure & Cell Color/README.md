@@ -7,7 +7,7 @@
 2. 코드 내 deep structure 사용
 
 - Deep Structure 선언 부분:
-
+    - zsb105002는 자재 구조, it_col은 cell color 정보
 ````abap
 DATA: BEGIN OF gs_mat.   "deep structure 구조
     INCLUDE TYPE zsb105002.
@@ -15,6 +15,3 @@ DATA: it_col TYPE lvc_t_scol,
       END OF gs_mat,
       gt_mat LIKE TABLE OF gs_mat.
 DATA gs_col LIKE LINE OF gs_mat-it_col.
-    ````  
-※ zsb105002는 자재 구조, it_col은 cell color 정보
-
