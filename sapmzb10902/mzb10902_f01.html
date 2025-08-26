@@ -241,6 +241,7 @@ FORM set_alv_layo .<br />
 &nbsp;&nbsp;CLEAR&nbsp;gs_layo.<br />
 &nbsp;&nbsp;gs_layo-zebra&nbsp;=&nbsp;'X'.<br />
 &nbsp;&nbsp;gs_layo-cwidth_opt&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;gs_layo-sel_mode&nbsp;=&nbsp;'A'.<br />
 <br />
    </div>
    <div class="codeComment">
@@ -608,10 +609,11 @@ ENDFORM.<br />
 FORM get_comdm_info .<br />
 &nbsp;&nbsp;DATA&nbsp;ls_data&nbsp;&nbsp;LIKE&nbsp;LINE&nbsp;OF&nbsp;gt_data.<br />
 <br />
-<br />
 &nbsp;&nbsp;IF&nbsp;zsb10m01-name&nbsp;IS&nbsp;INITIAL.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;get_comdm_name&nbsp;USING&nbsp;zsb10m01-comdm<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;zsb10m01-name.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;zsb10m01-comdm&nbsp;&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;get_comdm_name&nbsp;USING&nbsp;zsb10m01-comdm<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;zsb10m01-name.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
 &nbsp;&nbsp;ENDIF.<br />
 <br />
 &nbsp;&nbsp;PERFORM&nbsp;get_emp_info.<br />
@@ -625,6 +627,7 @@ FORM get_comdm_info .<br />
 <br />
 &nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_ztb0001&nbsp;INTO&nbsp;gs_ztb0001&nbsp;WITH&nbsp;KEY&nbsp;pernr&nbsp;=&nbsp;ls_data-comdm.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;sy-subrc&nbsp;=&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_data-entdt&nbsp;=&nbsp;gs_ztb0001-entdt.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_data-gesch&nbsp;=&nbsp;gs_ztb0001-gesch.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_data-orgeh&nbsp;=&nbsp;gs_ztb0001-orgeh.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_data-money&nbsp;=&nbsp;gs_ztb0001-money.<br />
@@ -644,6 +647,7 @@ FORM get_comdm_info .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_scarr&nbsp;INTO&nbsp;gs_scarr&nbsp;WITH&nbsp;KEY&nbsp;carrid&nbsp;=&nbsp;ls_data-carrid.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;sy-subrc&nbsp;=&nbsp;0.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_data-carrname&nbsp;=&nbsp;gs_scarr-carrname.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_data-currcode&nbsp;=&nbsp;gs_scarr-currcode.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
 <br />
 &nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_spfli&nbsp;INTO&nbsp;gs_spfli&nbsp;WITH&nbsp;KEY&nbsp;carrid&nbsp;=&nbsp;ls_data-carrid<br />
@@ -651,6 +655,9 @@ FORM get_comdm_info .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;sy-subrc&nbsp;=&nbsp;0.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_data-airpfrom&nbsp;=&nbsp;gs_spfli-airpfrom.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_data-airpto&nbsp;=&nbsp;gs_spfli-airpto.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_data-airpfrom_t&nbsp;=&nbsp;gs_spfli-airpfrom_t.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_data-airpto_t&nbsp;=&nbsp;gs_spfli-airpto_t.<br />
+<br />
 &nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
 <br />
 &nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_dep&nbsp;INTO&nbsp;gs_dep&nbsp;WITH&nbsp;KEY&nbsp;depid&nbsp;=&nbsp;ls_data-orgeh.<br />
@@ -663,6 +670,7 @@ FORM get_comdm_info .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;sy-subrc&nbsp;=&nbsp;0.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_data-orgeh_t&nbsp;=&nbsp;gs_dep_t-dname.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
 <br />
 <br />
 <br />
@@ -727,7 +735,7 @@ ENDFORM.<br />
    </div>
    <div class="code">
 FORM get_scarr .<br />
-&nbsp;&nbsp;SELECT&nbsp;carrid&nbsp;carrname<br />
+&nbsp;&nbsp;SELECT&nbsp;carrid&nbsp;carrname&nbsp;currcode<br />
 &nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;scarr<br />
 &nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;gt_scarr.<br />
 ENDFORM.<br />
@@ -744,9 +752,13 @@ ENDFORM.<br />
    </div>
    <div class="code">
 FORM get_spfli .<br />
-&nbsp;&nbsp;SELECT&nbsp;carrid&nbsp;connid&nbsp;airpfrom&nbsp;airpto<br />
-&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;spfli<br />
+&nbsp;&nbsp;SELECT&nbsp;a~carrid&nbsp;a~connid&nbsp;a~airpfrom&nbsp;a~airpto<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b~name&nbsp;AS&nbsp;airpfrom_t&nbsp;c~name&nbsp;AS&nbsp;airpto_t<br />
+&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;spfli&nbsp;AS&nbsp;a<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INNER&nbsp;JOIN&nbsp;sairport&nbsp;AS&nbsp;b&nbsp;ON&nbsp;a~airpfrom&nbsp;=&nbsp;b~id<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INNER&nbsp;JOIN&nbsp;sairport&nbsp;AS&nbsp;c&nbsp;ON&nbsp;a~airpto&nbsp;=&nbsp;c~id<br />
 &nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;gt_spfli.<br />
+<br />
 ENDFORM.<br />
    </div>
    <div class="codeComment">
@@ -810,7 +822,7 @@ FORM get_double_click  USING    ps_row_no TYPE lvc_s_roid<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;sy-subrc&nbsp;IS&nbsp;INITIAL.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zsb10m02-carrid&nbsp;=&nbsp;gs_data-carrid.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zsb10m02-carrname&nbsp;=&nbsp;gs_data-carrname.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zsb10m02-waers&nbsp;=&nbsp;gs_data-waers.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zsb10m02-currcode&nbsp;=&nbsp;gs_data-currcode.<br />
 <br />
    </div>
    <div class="codeComment">
@@ -938,32 +950,6 @@ ENDFORM.<br />
    </div>
    <div class="codeComment">
 *&---------------------------------------------------------------------*<br />
-*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Form&nbsp;&nbsp;GET_AIRLINE_INFO<br />
-*&---------------------------------------------------------------------*<br />
-*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
-*----------------------------------------------------------------------*<br />
-*&nbsp;&nbsp;--&gt;&nbsp;&nbsp;p1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
-*&nbsp;&nbsp;&lt;--&nbsp;&nbsp;p2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
-*----------------------------------------------------------------------*<br />
-   </div>
-   <div class="code">
-FORM get_airline_info .<br />
-&nbsp;&nbsp;CLEAR&nbsp;zsb10m02.<br />
-<br />
-<br />
-&nbsp;&nbsp;"&nbsp;#####,&nbsp;####,&nbsp;##<br />
-   </div>
-   <div class="codeComment">
-*&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;carrid&nbsp;carrname<br />
-*&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;scarr<br />
-*&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;zsb10m02<br />
-*&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;carrid&nbsp;=&nbsp;zsb10m02-carrid.<br />
-   </div>
-   <div class="code">
-ENDFORM.<br />
-   </div>
-   <div class="codeComment">
-*&---------------------------------------------------------------------*<br />
 *&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Form&nbsp;&nbsp;GET_ORGEH_INFO<br />
 *&---------------------------------------------------------------------*<br />
 *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
@@ -983,6 +969,159 @@ FORM get_orgeh_info.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;zsb10m02<br />
 &nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;a~depid&nbsp;=&nbsp;gs_data-orgeh<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;b~langu&nbsp;=&nbsp;sy-langu.<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Form&nbsp;&nbsp;GET_ROW_INFO<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;--P_GV_SUBRC&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM get_row_info  CHANGING p_subrc. " TYPE sy-subrc.<br />
+&nbsp;&nbsp;DATA:&nbsp;lt_row_no&nbsp;TYPE&nbsp;lvc_t_roid,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_row_no&nbsp;LIKE&nbsp;LINE&nbsp;OF&nbsp;lt_row_no,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lv_cnt&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;i.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;p_subrc.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;go_alv-&gt;get_selected_rows<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;et_index_rows&nbsp;=<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;et_row_no&nbsp;=&nbsp;lt_row_no.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;##&nbsp;#&nbsp;##&nbsp;##&nbsp;##<br />
+&nbsp;&nbsp;IF&nbsp;lt_row_no&nbsp;IS&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;p_subrc&nbsp;=&nbsp;4.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;RETURN.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;##&nbsp;#&nbsp;##&nbsp;##&nbsp;##&nbsp;##<br />
+&nbsp;&nbsp;DESCRIBE&nbsp;TABLE&nbsp;lt_row_no&nbsp;LINES&nbsp;lv_cnt.<br />
+&nbsp;&nbsp;IF&nbsp;lv_cnt&nbsp;&gt;&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;p_subrc&nbsp;=&nbsp;4.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;RETURN.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;ls_row_no.<br />
+&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;lt_row_no&nbsp;INDEX&nbsp;1&nbsp;INTO&nbsp;ls_row_no.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;gs_data.<br />
+&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_data&nbsp;INDEX&nbsp;ls_row_no-row_id&nbsp;INTO&nbsp;gs_data.<br />
+<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Form&nbsp;&nbsp;SET_INIT_0200<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;--&gt;&nbsp;&nbsp;p1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*&nbsp;&nbsp;&lt;--&nbsp;&nbsp;p2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM set_init_0200 .<br />
+&nbsp;&nbsp;zsb10m05-begda&nbsp;=&nbsp;sy-datum.<br />
+&nbsp;&nbsp;zsb10m05-endda&nbsp;=&nbsp;'99991231'.<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Form&nbsp;&nbsp;REFRESH_GT_DATA<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;--&gt;&nbsp;&nbsp;p1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*&nbsp;&nbsp;&lt;--&nbsp;&nbsp;p2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM refresh_gt_data .<br />
+&nbsp;&nbsp;CLEAR&nbsp;gt_data.<br />
+<br />
+&nbsp;&nbsp;PERFORM&nbsp;get_comdm_info.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Form&nbsp;&nbsp;GET_ORIGIN_DATA<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&gt;P_ZSB10M05_COMDM&nbsp;&nbsp;text<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&gt;P_ZSB10M05_CARRID&nbsp;&nbsp;text<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&gt;P_ZSB10M05_CONNID&nbsp;&nbsp;text<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&gt;P_ZSB10M05_BEGDA&nbsp;&nbsp;text<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&gt;P_ZSB10M05_ENDDA&nbsp;&nbsp;text<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;--P_ZSB10M05&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM get_origin_data .<br />
+&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_data&nbsp;INTO&nbsp;gs_data&nbsp;WITH&nbsp;KEY&nbsp;comdm&nbsp;=&nbsp;zsb10m05-comdm<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;carrid&nbsp;=&nbsp;zsb10m05-carrid<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connid&nbsp;=&nbsp;zsb10m05-connid<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begda&nbsp;&nbsp;=&nbsp;zsb10m05-begda<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endda&nbsp;&nbsp;=&nbsp;zsb10m05-endda.<br />
+<br />
+&nbsp;&nbsp;zsb10m05-gesch&nbsp;=&nbsp;gs_data-gesch.<br />
+&nbsp;&nbsp;zsb10m05-gesch_t&nbsp;=&nbsp;gs_data-gesch_t.<br />
+&nbsp;&nbsp;zsb10m05-entdt&nbsp;=&nbsp;gs_data-entdt.<br />
+&nbsp;&nbsp;zsb10m05-money&nbsp;=&nbsp;gs_data-money.<br />
+&nbsp;&nbsp;zsb10m05-waers&nbsp;=&nbsp;gs_data-waers.<br />
+&nbsp;&nbsp;zsb10m05-orgeh&nbsp;=&nbsp;gs_data-orgeh.<br />
+&nbsp;&nbsp;zsb10m05-orgeh_t&nbsp;=&nbsp;gs_data-orgeh_t.<br />
+&nbsp;&nbsp;zsb10m05-currcode&nbsp;=&nbsp;gs_data-currcode.<br />
+&nbsp;&nbsp;zsb10m05-airpfrom&nbsp;=&nbsp;gs_data-airpfrom.<br />
+&nbsp;&nbsp;zsb10m05-airpto&nbsp;=&nbsp;gs_data-airpto.<br />
+<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Form&nbsp;&nbsp;GET_ORG_DATA<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;--&gt;&nbsp;&nbsp;p1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*&nbsp;&nbsp;&lt;--&nbsp;&nbsp;p2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM get_org_data .<br />
+&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_data&nbsp;INTO&nbsp;gs_data&nbsp;WITH&nbsp;KEY&nbsp;comdm&nbsp;=&nbsp;zsb10m03-comdm<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begda&nbsp;&nbsp;=&nbsp;zsb10m03-begda<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endda&nbsp;&nbsp;=&nbsp;zsb10m03-endda.<br />
+<br />
+<br />
+&nbsp;&nbsp;zsb10m03-carrid&nbsp;=&nbsp;gs_data-carrid.<br />
+&nbsp;&nbsp;zsb10m03-connid&nbsp;=&nbsp;gs_data-connid.<br />
+&nbsp;&nbsp;zsb10m03-gesch&nbsp;=&nbsp;gs_data-gesch.<br />
+&nbsp;&nbsp;zsb10m03-gesch_t&nbsp;=&nbsp;gs_data-gesch_t.<br />
+&nbsp;&nbsp;zsb10m03-entdt&nbsp;=&nbsp;gs_data-entdt.<br />
+&nbsp;&nbsp;zsb10m03-money&nbsp;=&nbsp;gs_data-money.<br />
+&nbsp;&nbsp;zsb10m03-waers&nbsp;=&nbsp;gs_data-waers.<br />
+&nbsp;&nbsp;zsb10m03-orgeh&nbsp;=&nbsp;gs_data-orgeh.<br />
+&nbsp;&nbsp;zsb10m03-orgeh_t&nbsp;=&nbsp;gs_data-orgeh_t.<br />
+&nbsp;&nbsp;zsb10m03-currcode&nbsp;=&nbsp;gs_data-currcode.<br />
+&nbsp;&nbsp;zsb10m03-airpfrom&nbsp;=&nbsp;gs_data-airpfrom.<br />
+&nbsp;&nbsp;zsb10m03-airpto&nbsp;=&nbsp;gs_data-airpto.<br />
+<br />
+<br />
 ENDFORM.<br />
             </div>
           </td>

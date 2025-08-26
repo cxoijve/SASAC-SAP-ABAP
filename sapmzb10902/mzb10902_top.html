@@ -64,8 +64,43 @@ DATA: ok_code  TYPE sy-ucomm,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gv_subrc&nbsp;TYPE&nbsp;sy-subrc,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gv_dynnr&nbsp;TYPE&nbsp;sy-dynnr.<br />
 <br />
+<br />
+" ##<br />
+DATA: BEGIN OF gs_zsb10m05,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mandt&nbsp;&nbsp;TYPE&nbsp;sy-mandt,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;carrid&nbsp;TYPE&nbsp;zsb10m05-carrid,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connid&nbsp;TYPE&nbsp;zsb10m05-connid,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;comdm&nbsp;&nbsp;TYPE&nbsp;zsb10m05-comdm,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begda&nbsp;&nbsp;TYPE&nbsp;zsb10m05-begda,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endda&nbsp;&nbsp;TYPE&nbsp;zsb10m05-endda,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;gs_zsb10m05.<br />
+<br />
+" ##<br />
+DATA: BEGIN OF gs_zsb10m03,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mandt&nbsp;&nbsp;TYPE&nbsp;sy-mandt,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;carrid&nbsp;TYPE&nbsp;zsb10m03-carrid,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connid&nbsp;TYPE&nbsp;zsb10m03-connid,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;comdm&nbsp;&nbsp;TYPE&nbsp;zsb10m03-comdm,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begda&nbsp;&nbsp;TYPE&nbsp;zsb10m03-begda,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endda&nbsp;&nbsp;TYPE&nbsp;zsb10m03-endda,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;gs_zsb10m03.<br />
+<br />
+" ####<br />
+DATA: BEGIN OF gs_zsb10m04,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mandt&nbsp;&nbsp;TYPE&nbsp;sy-mandt,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;carrid&nbsp;TYPE&nbsp;zsb10m04-carrid,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connid&nbsp;TYPE&nbsp;zsb10m04-connid,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;comdm&nbsp;&nbsp;TYPE&nbsp;zsb10m04-comdm,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begda&nbsp;&nbsp;TYPE&nbsp;zsb10m04-begda,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endda&nbsp;&nbsp;TYPE&nbsp;zsb10m04-endda,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;gs_zsb10m04.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
 " COND<br />
-TABLES zsb10m01.<br />
+TABLES: zsb10m01, zsb10m03, zsb10m04, zsb10m05.<br />
    </div>
    <div class="codeComment">
 *DATA:&nbsp;gs_cond&nbsp;TYPE&nbsp;ztb10m02.<br />
@@ -85,28 +120,33 @@ DATA gs_col LIKE LINE OF gs_data-it_col.<br />
 DATA: BEGIN OF gs_scarr,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;carrid&nbsp;&nbsp;&nbsp;TYPE&nbsp;scarr-carrid,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;carrname&nbsp;TYPE&nbsp;scarr-carrname,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;currcode&nbsp;TYPE&nbsp;scarr-currcode,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;gs_scarr,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gt_scarr&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;gs_scarr.<br />
 <br />
 <br />
+DATA: BEGIN OF gs_spfli,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;carrid&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;spfli-carrid,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connid&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;spfli-connid,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;airpfrom&nbsp;&nbsp;&nbsp;TYPE&nbsp;spfli-airpfrom,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;airpto&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;spfli-airpto,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;airpfrom_t&nbsp;TYPE&nbsp;char20,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;airpto_t&nbsp;&nbsp;&nbsp;TYPE&nbsp;char20,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;gs_spfli,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gt_spfli&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;gs_spfli.<br />
    </div>
    <div class="codeComment">
-*DATA:&nbsp;BEGIN&nbsp;OF&nbsp;gs_spfli,<br />
-*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;carrid&nbsp;TYPE&nbsp;spfli-carrid,<br />
-*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connid&nbsp;TYPE&nbsp;spfli-connid,<br />
-*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;carrid&nbsp;TYPE&nbsp;spfli-carrid,<br />
-*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connid&nbsp;TYPE&nbsp;spfli-connid,<br />
-*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;gs_spfli,<br />
+*DATA:&nbsp;gs_spfli&nbsp;TYPE&nbsp;spfli,<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gt_spfli&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;gs_spfli.<br />
+<br />
    </div>
    <div class="code">
-DATA: gs_spfli TYPE spfli,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gt_spfli&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;gs_spfli.<br />
-<br />
 DATA: gs_dep TYPE ztb0002,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gt_dep&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;gs_dep.<br />
 <br />
 DATA: gs_dep_t TYPE ztb0002_t,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gt_dep_t&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;gs_dep_t.<br />
+<br />
 <br />
 " ### ##<br />
 DATA: gs_comdm_info TYPE ztb10m02,<br />
