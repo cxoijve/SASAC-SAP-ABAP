@@ -919,15 +919,17 @@ ENDFORM.<br />
    <div class="code">
 FORM get_comdm_name  USING VALUE(p_comdm)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;cv_name.<br />
+&nbsp;&nbsp;DATA:&nbsp;lv_lname&nbsp;TYPE&nbsp;zeb00_lname,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lv_fname&nbsp;TYPE&nbsp;zeb00_fname.<br />
 <br />
 &nbsp;&nbsp;CLEAR&nbsp;cv_name.<br />
 <br />
 &nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;lname&nbsp;fname<br />
 &nbsp;&nbsp;&nbsp;FROM&nbsp;ztb0001<br />
-&nbsp;&nbsp;&nbsp;INTO&nbsp;(zsb10m01-lname,&nbsp;zsb10m01-fname)<br />
+&nbsp;&nbsp;&nbsp;INTO&nbsp;(lv_lname,&nbsp;lv_fname)<br />
 &nbsp;&nbsp;&nbsp;WHERE&nbsp;pernr&nbsp;=&nbsp;p_comdm.<br />
 <br />
-&nbsp;&nbsp;CONCATENATE&nbsp;zsb10m01-lname&nbsp;zsb10m01-fname&nbsp;INTO&nbsp;cv_name.<br />
+&nbsp;&nbsp;CONCATENATE&nbsp;lv_lname&nbsp;lv_fname&nbsp;INTO&nbsp;cv_name.<br />
 <br />
 ENDFORM.<br />
    </div>
@@ -1076,6 +1078,7 @@ FORM get_origin_data .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begda&nbsp;&nbsp;=&nbsp;zsb10m05-begda<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endda&nbsp;&nbsp;=&nbsp;zsb10m05-endda.<br />
 <br />
+&nbsp;&nbsp;zsb10m05-name&nbsp;=&nbsp;gs_data-name.<br />
 &nbsp;&nbsp;zsb10m05-gesch&nbsp;=&nbsp;gs_data-gesch.<br />
 &nbsp;&nbsp;zsb10m05-gesch_t&nbsp;=&nbsp;gs_data-gesch_t.<br />
 &nbsp;&nbsp;zsb10m05-entdt&nbsp;=&nbsp;gs_data-entdt.<br />
@@ -1102,27 +1105,79 @@ ENDFORM.<br />
 *----------------------------------------------------------------------*<br />
    </div>
    <div class="code">
-FORM get_org_data .<br />
-&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_data&nbsp;INTO&nbsp;gs_data&nbsp;WITH&nbsp;KEY&nbsp;comdm&nbsp;=&nbsp;zsb10m03-comdm<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begda&nbsp;&nbsp;=&nbsp;zsb10m03-begda<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endda&nbsp;&nbsp;=&nbsp;zsb10m03-endda.<br />
+FORM get_org_data USING    iv_comdm TYPE ztb10m02-comdm<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv_carrid&nbsp;TYPE&nbsp;ztb10m02-carrid<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv_connid&nbsp;TYPE&nbsp;ztb10m02-connid<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv_begda&nbsp;&nbsp;TYPE&nbsp;ztb10m02-begda<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iv_endda&nbsp;&nbsp;TYPE&nbsp;ztb10m02-endda<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;cs_data&nbsp;TYPE&nbsp;zsb10m05.<br />
 <br />
+&nbsp;&nbsp;DATA:&nbsp;ls_data&nbsp;LIKE&nbsp;gs_data.<br />
 <br />
-&nbsp;&nbsp;zsb10m03-carrid&nbsp;=&nbsp;gs_data-carrid.<br />
-&nbsp;&nbsp;zsb10m03-connid&nbsp;=&nbsp;gs_data-connid.<br />
-&nbsp;&nbsp;zsb10m03-gesch&nbsp;=&nbsp;gs_data-gesch.<br />
-&nbsp;&nbsp;zsb10m03-gesch_t&nbsp;=&nbsp;gs_data-gesch_t.<br />
-&nbsp;&nbsp;zsb10m03-entdt&nbsp;=&nbsp;gs_data-entdt.<br />
-&nbsp;&nbsp;zsb10m03-money&nbsp;=&nbsp;gs_data-money.<br />
-&nbsp;&nbsp;zsb10m03-waers&nbsp;=&nbsp;gs_data-waers.<br />
-&nbsp;&nbsp;zsb10m03-orgeh&nbsp;=&nbsp;gs_data-orgeh.<br />
-&nbsp;&nbsp;zsb10m03-orgeh_t&nbsp;=&nbsp;gs_data-orgeh_t.<br />
-&nbsp;&nbsp;zsb10m03-currcode&nbsp;=&nbsp;gs_data-currcode.<br />
-&nbsp;&nbsp;zsb10m03-airpfrom&nbsp;=&nbsp;gs_data-airpfrom.<br />
-&nbsp;&nbsp;zsb10m03-airpto&nbsp;=&nbsp;gs_data-airpto.<br />
+&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_data&nbsp;INTO&nbsp;ls_data<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;KEY&nbsp;comdm&nbsp;&nbsp;=&nbsp;iv_comdm<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;carrid&nbsp;=&nbsp;iv_carrid<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connid&nbsp;=&nbsp;iv_connid<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begda&nbsp;&nbsp;=&nbsp;iv_begda<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endda&nbsp;&nbsp;=&nbsp;iv_endda.<br />
 <br />
+&nbsp;&nbsp;IF&nbsp;sy-subrc&nbsp;=&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cs_data-name&nbsp;=&nbsp;ls_data-name.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cs_data-gesch&nbsp;&nbsp;&nbsp;=&nbsp;ls_data-gesch.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cs_data-gesch_t&nbsp;=&nbsp;ls_data-gesch_t.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cs_data-entdt&nbsp;&nbsp;&nbsp;=&nbsp;ls_data-entdt.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cs_data-money&nbsp;&nbsp;&nbsp;=&nbsp;ls_data-money.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cs_data-waers&nbsp;&nbsp;&nbsp;=&nbsp;ls_data-waers.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cs_data-orgeh&nbsp;&nbsp;&nbsp;=&nbsp;ls_data-orgeh.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cs_data-orgeh_t&nbsp;=&nbsp;ls_data-orgeh_t.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cs_data-currcode&nbsp;=&nbsp;ls_data-currcode.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cs_data-airpfrom&nbsp;=&nbsp;ls_data-airpfrom.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;cs_data-airpto&nbsp;&nbsp;=&nbsp;ls_data-airpto.<br />
+&nbsp;&nbsp;ELSE.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;cs_data.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;##&nbsp;###&nbsp;##&nbsp;###&nbsp;###&nbsp;###<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR:&nbsp;cs_data-name,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs_data-gesch,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs_data-gesch_t,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs_data-entdt,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs_data-money,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs_data-waers,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs_data-orgeh,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs_data-orgeh_t,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs_data-currcode,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs_data-airpfrom,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cs_data-airpto.<br />
+&nbsp;&nbsp;ENDIF.<br />
 <br />
 ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+**FORM&nbsp;get_org_data&nbsp;.<br />
+**<br />
+**&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_data&nbsp;INTO&nbsp;gs_data&nbsp;WITH&nbsp;KEY&nbsp;comdm&nbsp;=&nbsp;zsb10m03-comdm<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;begda&nbsp;&nbsp;=&nbsp;zsb10m03-begda<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;endda&nbsp;&nbsp;=&nbsp;zsb10m03-endda.<br />
+**<br />
+**<br />
+**&nbsp;&nbsp;zsb10m03-carrid&nbsp;=&nbsp;gs_data-carrid.<br />
+**&nbsp;&nbsp;zsb10m03-connid&nbsp;=&nbsp;gs_data-connid.<br />
+**&nbsp;&nbsp;zsb10m03-gesch&nbsp;=&nbsp;gs_data-gesch.<br />
+**&nbsp;&nbsp;zsb10m03-gesch_t&nbsp;=&nbsp;gs_data-gesch_t.<br />
+**&nbsp;&nbsp;zsb10m03-entdt&nbsp;=&nbsp;gs_data-entdt.<br />
+**&nbsp;&nbsp;zsb10m03-money&nbsp;=&nbsp;gs_data-money.<br />
+**&nbsp;&nbsp;zsb10m03-waers&nbsp;=&nbsp;gs_data-waers.<br />
+**&nbsp;&nbsp;zsb10m03-orgeh&nbsp;=&nbsp;gs_data-orgeh.<br />
+**&nbsp;&nbsp;zsb10m03-orgeh_t&nbsp;=&nbsp;gs_data-orgeh_t.<br />
+**&nbsp;&nbsp;zsb10m03-currcode&nbsp;=&nbsp;gs_data-currcode.<br />
+**&nbsp;&nbsp;zsb10m03-airpfrom&nbsp;=&nbsp;gs_data-airpfrom.<br />
+**&nbsp;&nbsp;zsb10m03-airpto&nbsp;=&nbsp;gs_data-airpto.<br />
+**<br />
+**<br />
+**ENDFORM.<br />
             </div>
           </td>
         </tr>
