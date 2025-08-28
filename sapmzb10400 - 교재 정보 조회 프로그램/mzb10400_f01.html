@@ -1,50 +1,50 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http ://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http ://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=ISO-8859-1" />
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=KSC5601" />
 <title>MZB10400_F01</title>
 <style type="text/css">
-.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
-  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
-  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
-  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+.code{ font-family :"Courier New", Courier, monospace; color :#000; font-size :14px; background-color :#F2F4F7 }
+  .codeComment {font-family :"Courier New", Courier, monospace; color :#0000F0; font-size :14px; background-color :#F2F4F7 }
+  .normalBold{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :12px; font-weight :800 }
+  .normalBoldLarge{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :16px; font-weight :800 }
 </style>
 <style type="text/css">
-  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
-  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
-  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
-  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .normal{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :12px }
+  .footer{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :12px; text-align : center }
+  h2{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :16px; font-weight :800 }
+  h3{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :14px; font-weight :800 }
   .outerTable{
-   background-color:#E0E7ED;
-   width:100%;
-   border-top-width: thin;
-   border-right-width: thin;
-   border-right-width: thin;
-   border-left-width: thin;
-   border-top-style: solid;
-   border-right-style: solid;
-   border-bottom-style: solid;
-   border-left-style: solid;
+   background-color :#E0E7ED;
+   width :100%;
+   border-top-width : thin;
+   border-right-width : thin;
+   border-right-width : thin;
+   border-left-width : thin;
+   border-top-style : solid;
+   border-right-style : solid;
+   border-bottom-style : solid;
+   border-left-style : solid;
   }
   .innerTable{
-   background-color:#F2F4F7;
-   width:100%;
-   border-top-width: thin;
-   border-right-width: thin;
-   border-bottom-width: thin;
-   border-left-width: thin;
-   border-top-style: solid;
-   border-right-style: solid;
-   border-bottom-style: solid;
-   border-left-style: solid;
+   background-color :#F2F4F7;
+   width :100%;
+   border-top-width : thin;
+   border-right-width : thin;
+   border-bottom-width : thin;
+   border-left-width : thin;
+   border-top-style : solid;
+   border-right-style : solid;
+   border-bottom-style : solid;
+   border-left-style : solid;
   }
 </style>
 </head>
 <body>
 <table class="outerTable">
   <tr class="normalBoldLarge">
-     <td><h2>Code listing for: MZB10400_F01</h2>
-<h3> Description: Include MZB10400_F01</h3></td>
+     <td><h2>Code listing for : MZB10400_F01</h2>
+<h3> Description : </h3></td>
    </tr>
   <tr>
      <td>
@@ -100,7 +100,7 @@ FORM get_book_info .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;cbook&nbsp;=&nbsp;zsb101401-cbook<br />
 &nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;&nbsp;&nbsp;spras&nbsp;=&nbsp;sy-langu.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;Ä«Å×°í¸®<br />
 &nbsp;&nbsp;PERFORM&nbsp;get_domain_value&nbsp;USING&nbsp;'ZDCBCAT'&nbsp;CHANGING&nbsp;gt_domain.<br />
 <br />
 &nbsp;&nbsp;CLEAR&nbsp;gs_domain.<br />
@@ -110,9 +110,9 @@ FORM get_book_info .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;zsb101402-cbcat_t&nbsp;=&nbsp;gs_domain-ddtext.<br />
 &nbsp;&nbsp;ENDIF.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;##&nbsp;###&nbsp;###&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;±³Àç&nbsp;±Ý¾×ÀÌ&nbsp;´Þ·¯ÀÎ&nbsp;°æ¿ì<br />
 &nbsp;&nbsp;IF&nbsp;zsb101402-waers&nbsp;=&nbsp;'USD'.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;##&nbsp;1,381#&nbsp;####&nbsp;##&nbsp;##<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;È¯À²&nbsp;1,381¿ø&nbsp;Àû¿ëÇØ¼­&nbsp;¿øÈ­&nbsp;Ç¥½Ã<br />
 &nbsp;&nbsp;&nbsp;&nbsp;zsb101402-waers_k&nbsp;=&nbsp;'KRW'.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;zsb101402-cbpri_k&nbsp;=&nbsp;zsb101402-cbpri&nbsp;*&nbsp;1381.<br />
 &nbsp;&nbsp;ENDIF.<br />
@@ -133,7 +133,7 @@ ENDFORM.<br />
    </div>
    <div class="code">
 FORM get_pinfo .<br />
-&nbsp;&nbsp;"&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;¼ºº°<br />
 &nbsp;&nbsp;PERFORM&nbsp;get_domain_value&nbsp;USING&nbsp;'GESCH'&nbsp;CHANGING&nbsp;gt_domain.<br />
 <br />
 &nbsp;&nbsp;CLEAR&nbsp;gs_domain.<br />
@@ -156,7 +156,7 @@ ENDFORM.<br />
    </div>
    <div class="code">
 FORM get_dinfo .<br />
-&nbsp;&nbsp;"&nbsp;##&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;ºÎ¼­&nbsp;Á¤º¸<br />
    </div>
    <div class="codeComment">
 **&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;depid&nbsp;phone&nbsp;dflag<br />
@@ -171,7 +171,7 @@ FORM get_dinfo .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;zsb101404<br />
 &nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;depid&nbsp;=&nbsp;zsb101403-orgeh.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;###<br />
+&nbsp;&nbsp;"&nbsp;ºÎ¼­¸í<br />
 &nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;dname<br />
 &nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ztb0002_t<br />
 &nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;zsb101404-dname<br />
@@ -191,7 +191,7 @@ ENDFORM.<br />
    </div>
    <div class="code">
 FORM connect_p .<br />
-&nbsp;&nbsp;"&nbsp;####&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;´ã´ç»ç¿ø&nbsp;Á¤º¸<br />
 &nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;pernr&nbsp;lname&nbsp;fname&nbsp;gesch&nbsp;entdt&nbsp;orgeh&nbsp;money&nbsp;waers<br />
 &nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ztb0001<br />
 &nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;zsb101403<br />
@@ -206,7 +206,7 @@ FORM connect_p .<br />
 <br />
 &nbsp;&nbsp;IF&nbsp;zsb101402-pernr&nbsp;IS&nbsp;INITIAL.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;zsb101403-name.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;s001(zmbc10)&nbsp;DISPLAY&nbsp;LIKE&nbsp;'E'.&nbsp;"&nbsp;##&nbsp;##&nbsp;###&nbsp;####.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;s001(zmbc10)&nbsp;DISPLAY&nbsp;LIKE&nbsp;'E'.&nbsp;"&nbsp;ÇØ´ç&nbsp;»ç¿ø&nbsp;Á¤º¸°¡&nbsp;¾ø½À´Ï´Ù.<br />
 &nbsp;&nbsp;ENDIF.<br />
 ENDFORM.<br />
    </div>

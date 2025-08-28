@@ -1,50 +1,50 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http ://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http ://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=ISO-8859-1" />
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=KSC5601" />
 <title>MZB10811_F01</title>
 <style type="text/css">
-.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
-  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
-  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
-  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+.code{ font-family :"Courier New", Courier, monospace; color :#000; font-size :14px; background-color :#F2F4F7 }
+  .codeComment {font-family :"Courier New", Courier, monospace; color :#0000F0; font-size :14px; background-color :#F2F4F7 }
+  .normalBold{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :12px; font-weight :800 }
+  .normalBoldLarge{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :16px; font-weight :800 }
 </style>
 <style type="text/css">
-  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
-  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
-  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
-  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .normal{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :12px }
+  .footer{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :12px; text-align : center }
+  h2{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :16px; font-weight :800 }
+  h3{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :14px; font-weight :800 }
   .outerTable{
-   background-color:#E0E7ED;
-   width:100%;
-   border-top-width: thin;
-   border-right-width: thin;
-   border-right-width: thin;
-   border-left-width: thin;
-   border-top-style: solid;
-   border-right-style: solid;
-   border-bottom-style: solid;
-   border-left-style: solid;
+   background-color :#E0E7ED;
+   width :100%;
+   border-top-width : thin;
+   border-right-width : thin;
+   border-right-width : thin;
+   border-left-width : thin;
+   border-top-style : solid;
+   border-right-style : solid;
+   border-bottom-style : solid;
+   border-left-style : solid;
   }
   .innerTable{
-   background-color:#F2F4F7;
-   width:100%;
-   border-top-width: thin;
-   border-right-width: thin;
-   border-bottom-width: thin;
-   border-left-width: thin;
-   border-top-style: solid;
-   border-right-style: solid;
-   border-bottom-style: solid;
-   border-left-style: solid;
+   background-color :#F2F4F7;
+   width :100%;
+   border-top-width : thin;
+   border-right-width : thin;
+   border-bottom-width : thin;
+   border-left-width : thin;
+   border-top-style : solid;
+   border-right-style : solid;
+   border-bottom-style : solid;
+   border-left-style : solid;
   }
 </style>
 </head>
 <body>
 <table class="outerTable">
   <tr class="normalBoldLarge">
-     <td><h2>Code listing for: MZB10811_F01</h2>
-<h3> Description: Include MZB10811_F01</h3></td>
+     <td><h2>Code listing for : MZB10811_F01</h2>
+<h3> Description : </h3></td>
    </tr>
   <tr>
      <td>
@@ -66,7 +66,7 @@
    </div>
    <div class="code">
 FORM create_alv .<br />
-&nbsp;&nbsp;"&nbsp;Container&nbsp;###&nbsp;####&nbsp;#&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;Container&nbsp;°´Ã¼°¡&nbsp;Á¸ÀçÇÏ¸é&nbsp;¹Ì&nbsp;»ý¼º<br />
 &nbsp;&nbsp;IF&nbsp;go_con&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;RETURN.<br />
 &nbsp;&nbsp;ENDIF.<br />
@@ -82,7 +82,7 @@ FORM create_alv .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lifetime_dynpro_dynpro_link&nbsp;=&nbsp;5<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;6.<br />
 &nbsp;&nbsp;IF&nbsp;sy-subrc&nbsp;&lt;&gt;&nbsp;0.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;&nbsp;a005(zmbc10).&nbsp;"&nbsp;###&nbsp;##&nbsp;###&nbsp;######.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;&nbsp;a005(zmbc10).&nbsp;"&nbsp;¿¹±âÄ¡&nbsp;¾ÊÀº&nbsp;¿À·ù°¡&nbsp;¹ß»ýÇß½À´Ï´Ù.<br />
    </div>
    <div class="codeComment">
 *&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
@@ -125,7 +125,7 @@ FORM display_alv .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
    </div>
    <div class="codeComment">
-*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i_structure_name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'ZSB103101'&nbsp;"&nbsp;###<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i_structure_name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'ZSB103101'&nbsp;"&nbsp;´ë¹®ÀÚ<br />
    </div>
    <div class="code">
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is_layout&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;gs_layo<br />
@@ -161,13 +161,13 @@ ENDFORM.<br />
    </div>
    <div class="code">
 FORM get_data .<br />
-&nbsp;&nbsp;CLEAR&nbsp;:&nbsp;gt_res,&nbsp;gs_res.&nbsp;"&nbsp;##!<br />
+&nbsp;&nbsp;CLEAR&nbsp;:&nbsp;gt_res,&nbsp;gs_res.&nbsp;"&nbsp;ÇÊ¼ö!<br />
 <br />
 &nbsp;&nbsp;PERFORM&nbsp;modify_range.<br />
 <br />
    </div>
    <div class="codeComment">
-*&nbsp;Join&nbsp;####&nbsp;##<br />
+*&nbsp;Join&nbsp;»ç¿ëÇÏÁö&nbsp;¸»±â<br />
    </div>
    <div class="code">
 &nbsp;&nbsp;PERFORM&nbsp;get_sflight.<br />
@@ -183,7 +183,7 @@ FORM get_data .<br />
 &nbsp;&nbsp;ENDIF.<br />
 <br />
 <br />
-&nbsp;&nbsp;"&nbsp;#######&nbsp;##&nbsp;#&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;ÀÎÅÍ³ÎÅ×ÀÌºí¿¡&nbsp;ÀÖ´Â&nbsp;Çà&nbsp;°³¼ö<br />
 &nbsp;&nbsp;DATA&nbsp;lv_line&nbsp;TYPE&nbsp;i.<br />
 &nbsp;&nbsp;lv_line&nbsp;=&nbsp;lines(&nbsp;gt_res&nbsp;).<br />
    </div>
@@ -296,7 +296,7 @@ ENDFORM.<br />
    </div>
    <div class="code">
 FORM get_data_planetype .<br />
-&nbsp;&nbsp;"&nbsp;planetype&nbsp;#&nbsp;##&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;planetype&nbsp;°ª&nbsp;ÀÖÀ»&nbsp;°æ¿ì<br />
 &nbsp;&nbsp;SELECT&nbsp;*<br />
 &nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;sflight<br />
 &nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;gt_res<br />
@@ -344,7 +344,7 @@ FORM set_init .<br />
 &nbsp;&nbsp;DATA:&nbsp;lv_last&nbsp;TYPE&nbsp;d.<br />
 <br />
 &nbsp;&nbsp;IF&nbsp;zsb102101-fldate_b&nbsp;IS&nbsp;INITIAL.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;zsb102101-fldate_b&nbsp;=&nbsp;sy-datum+0(6)&nbsp;&&&nbsp;'01'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;##&nbsp;#&nbsp;1#<br />
+&nbsp;&nbsp;&nbsp;&nbsp;zsb102101-fldate_b&nbsp;=&nbsp;sy-datum+0(6)&nbsp;&&&nbsp;'01'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;ÀÌ¹ø&nbsp;´Þ&nbsp;1ÀÏ<br />
 &nbsp;&nbsp;ENDIF.<br />
 <br />
 &nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'RP_LAST_DAY_OF_MONTHS'<br />
@@ -368,7 +368,7 @@ FORM set_init .<br />
    </div>
    <div class="codeComment">
 **&nbsp;&nbsp;IF&nbsp;zsb102101-fldate_e&nbsp;IS&nbsp;INITIAL.<br />
-**&nbsp;&nbsp;&nbsp;&nbsp;zsb102101-fldate_e&nbsp;=&nbsp;CONV&nbsp;d(&nbsp;sy-datum&nbsp;+&nbsp;14&nbsp;).&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;##&nbsp;+&nbsp;14#<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;zsb102101-fldate_e&nbsp;=&nbsp;CONV&nbsp;d(&nbsp;sy-datum&nbsp;+&nbsp;14&nbsp;).&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;¿À´Ã&nbsp;+&nbsp;14ÀÏ<br />
 **&nbsp;&nbsp;ENDIF.<br />
 <br />
    </div>
@@ -417,13 +417,13 @@ FORM set_sort .<br />
 &nbsp;&nbsp;CLEAR:&nbsp;gt_sort,&nbsp;gs_sort.<br />
 &nbsp;&nbsp;gs_sort-spos&nbsp;=&nbsp;'1'.<br />
 &nbsp;&nbsp;gs_sort-fieldname&nbsp;=&nbsp;'FLDATE'.<br />
-&nbsp;&nbsp;gs_sort-up&nbsp;=&nbsp;'X'.&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;gs_sort-up&nbsp;=&nbsp;'X'.&nbsp;"&nbsp;¿À¸§Â÷¼ø<br />
 &nbsp;&nbsp;APPEND&nbsp;gs_sort&nbsp;TO&nbsp;gt_sort.<br />
 <br />
 &nbsp;&nbsp;CLEAR&nbsp;gs_sort.<br />
 &nbsp;&nbsp;gs_sort-spos&nbsp;=&nbsp;'2'.<br />
 &nbsp;&nbsp;gs_sort-fieldname&nbsp;=&nbsp;'SEATS_TOT'.<br />
-&nbsp;&nbsp;gs_sort-down&nbsp;=&nbsp;'X'.&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;gs_sort-down&nbsp;=&nbsp;'X'.&nbsp;"&nbsp;³»¸²Â÷¼ø<br />
 &nbsp;&nbsp;APPEND&nbsp;gs_sort&nbsp;TO&nbsp;gt_sort.<br />
 ENDFORM.<br />
    </div>
@@ -447,7 +447,7 @@ FORM set_fcat .<br />
 <br />
 &nbsp;&nbsp;"&nbsp;fieldcat<br />
 &nbsp;&nbsp;CLEAR&nbsp;gs_fcat.<br />
-&nbsp;&nbsp;"&nbsp;#&nbsp;####&nbsp;##&nbsp;##&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;ÃÑ&nbsp;¿¹¾à°¡´É&nbsp;ÁÂ¼®&nbsp;¼ö¸¸&nbsp;º¸ÀÌµµ·Ï<br />
 &nbsp;&nbsp;gs_fcat-fieldname&nbsp;=&nbsp;'SEATS_TOT'.<br />
 &nbsp;&nbsp;gs_fcat-col_pos&nbsp;=&nbsp;2.<br />
 &nbsp;&nbsp;gs_fcat-coltext&nbsp;=&nbsp;'Total&nbsp;Capacity'(c03).<br />
@@ -528,14 +528,14 @@ FORM set_fcat .<br />
 <br />
 <br />
 <br />
-&nbsp;&nbsp;"&nbsp;##&nbsp;##&nbsp;###&nbsp;###&nbsp;NO_OUT&nbsp;=&nbsp;'X'&nbsp;##<br />
-&nbsp;&nbsp;"&nbsp;B&nbsp;###&nbsp;####&nbsp;##&nbsp;#<br />
+&nbsp;&nbsp;"&nbsp;ÁÂ¼®&nbsp;°ü·Ã&nbsp;³ª¸ÓÁö&nbsp;ÇÊµå´Â&nbsp;NO_OUT&nbsp;=&nbsp;'X'&nbsp;¼³Á¤<br />
+&nbsp;&nbsp;"&nbsp;B&nbsp;Å¬·¡½º&nbsp;¿¹¾à°¡´É&nbsp;ÁÂ¼®&nbsp;¼ö<br />
 &nbsp;&nbsp;CLEAR&nbsp;gs_fcat.<br />
 &nbsp;&nbsp;gs_fcat-fieldname&nbsp;=&nbsp;'SEATS_TOT_B'.<br />
 &nbsp;&nbsp;gs_fcat-no_out&nbsp;=&nbsp;'X'.<br />
 &nbsp;&nbsp;APPEND&nbsp;gs_fcat&nbsp;TO&nbsp;gt_fcat.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;F&nbsp;###&nbsp;####&nbsp;##&nbsp;#<br />
+&nbsp;&nbsp;"&nbsp;F&nbsp;Å¬·¡½º&nbsp;¿¹¾à°¡´É&nbsp;ÁÂ¼®&nbsp;¼ö<br />
 &nbsp;&nbsp;CLEAR&nbsp;gs_fcat.<br />
 &nbsp;&nbsp;gs_fcat-fieldname&nbsp;=&nbsp;'SEATS_TOT_F'.<br />
 &nbsp;&nbsp;gs_fcat-no_out&nbsp;=&nbsp;'X'.<br />
