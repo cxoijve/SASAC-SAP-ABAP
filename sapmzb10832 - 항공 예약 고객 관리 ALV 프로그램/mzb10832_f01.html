@@ -1,50 +1,50 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http ://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http ://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=ISO-8859-1" />
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=KSC5601" />
 <title>MZB10832_F01</title>
 <style type="text/css">
-.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
-  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
-  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
-  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+.code{ font-family :"Courier New", Courier, monospace; color :#000; font-size :14px; background-color :#F2F4F7 }
+  .codeComment {font-family :"Courier New", Courier, monospace; color :#0000F0; font-size :14px; background-color :#F2F4F7 }
+  .normalBold{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :12px; font-weight :800 }
+  .normalBoldLarge{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :16px; font-weight :800 }
 </style>
 <style type="text/css">
-  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
-  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
-  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
-  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .normal{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :12px }
+  .footer{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :12px; text-align : center }
+  h2{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :16px; font-weight :800 }
+  h3{ font-family :Arial, Helvetica, sans-serif; color :#000; font-size :14px; font-weight :800 }
   .outerTable{
-   background-color:#E0E7ED;
-   width:100%;
-   border-top-width: thin;
-   border-right-width: thin;
-   border-right-width: thin;
-   border-left-width: thin;
-   border-top-style: solid;
-   border-right-style: solid;
-   border-bottom-style: solid;
-   border-left-style: solid;
+   background-color :#E0E7ED;
+   width :100%;
+   border-top-width : thin;
+   border-right-width : thin;
+   border-right-width : thin;
+   border-left-width : thin;
+   border-top-style : solid;
+   border-right-style : solid;
+   border-bottom-style : solid;
+   border-left-style : solid;
   }
   .innerTable{
-   background-color:#F2F4F7;
-   width:100%;
-   border-top-width: thin;
-   border-right-width: thin;
-   border-bottom-width: thin;
-   border-left-width: thin;
-   border-top-style: solid;
-   border-right-style: solid;
-   border-bottom-style: solid;
-   border-left-style: solid;
+   background-color :#F2F4F7;
+   width :100%;
+   border-top-width : thin;
+   border-right-width : thin;
+   border-bottom-width : thin;
+   border-left-width : thin;
+   border-top-style : solid;
+   border-right-style : solid;
+   border-bottom-style : solid;
+   border-left-style : solid;
   }
 </style>
 </head>
 <body>
 <table class="outerTable">
   <tr class="normalBoldLarge">
-     <td><h2>Code listing for: MZB10832_F01</h2>
-<h3> Description: Include MZB00821_F01</h3></td>
+     <td><h2>Code listing for : MZB10832_F01</h2>
+<h3> Description : </h3></td>
    </tr>
   <tr>
      <td>
@@ -196,10 +196,10 @@ ENDFORM.<br />
    </div>
    <div class="code">
 FORM set_default .<br />
-&nbsp;&nbsp;"####&nbsp;##<br />
+&nbsp;&nbsp;"±âº»Á¶°Ç&nbsp;¼³Á¤<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_default_condition.<br />
 <br />
-&nbsp;&nbsp;"##&nbsp;##&nbsp;List<br />
+&nbsp;&nbsp;"±âº»&nbsp;¿¹¾à&nbsp;List<br />
 &nbsp;&nbsp;PERFORM&nbsp;get_booking_list.<br />
 <br />
 ENDFORM.<br />
@@ -220,7 +220,7 @@ FORM set_default_condition .<br />
 &nbsp;&nbsp;zsb003301-carrid&nbsp;=&nbsp;'KA'.<br />
 &nbsp;&nbsp;zsb003301-connid&nbsp;=&nbsp;'0017'.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;2##&nbsp;1##&nbsp;###&nbsp;####&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;2´ÞÀü&nbsp;1ÀÏ·Î&nbsp;±âº»°ª&nbsp;¼³Á¤À¸·Î&nbsp;º¯°æ<br />
 &nbsp;&nbsp;DATA&nbsp;lv_bday&nbsp;TYPE&nbsp;sy-datum.<br />
 &nbsp;&nbsp;CONCATENATE&nbsp;sy-datum(6)&nbsp;'01'&nbsp;INTO&nbsp;lv_bday.<br />
 <br />
@@ -237,13 +237,13 @@ FORM set_default_condition .<br />
 &nbsp;&nbsp;zsb003301-fldate_b&nbsp;=&nbsp;lv_bday.<br />
 <br />
 <br />
-&nbsp;&nbsp;"&nbsp;##&nbsp;#&nbsp;###&nbsp;###&nbsp;####&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;ÇÑ´Þ&nbsp;ÈÄ&nbsp;¸»ÀÏ·Î&nbsp;±âº»°ª&nbsp;¼³Á¤À¸·Î&nbsp;º¯°æ<br />
 &nbsp;&nbsp;DATA:&nbsp;lv_eday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;sy-datum,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lv_next_month&nbsp;TYPE&nbsp;sy-datum.<br />
 <br />
 &nbsp;&nbsp;CONCATENATE&nbsp;sy-datum(6)&nbsp;'30'&nbsp;INTO&nbsp;lv_eday.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;#&nbsp;#&nbsp;#&nbsp;###<br />
+&nbsp;&nbsp;"&nbsp;ÇÑ&nbsp;´Þ&nbsp;µÚ&nbsp;±¸ÇÏ±â<br />
 &nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'RP_CALC_DATE_IN_INTERVAL'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;sy-datum<br />
@@ -254,7 +254,7 @@ FORM set_default_condition .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;calc_date&nbsp;=&nbsp;lv_next_month.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;#&nbsp;#&nbsp;#&nbsp;##&nbsp;##&nbsp;##&nbsp;##&nbsp;###<br />
+&nbsp;&nbsp;"&nbsp;ÇÑ&nbsp;´Þ&nbsp;µÚ&nbsp;³¯ÀÇ&nbsp;ÇØ´ç&nbsp;¿ùÀÇ&nbsp;¸»ÀÏ&nbsp;±¸ÇÏ±â<br />
 &nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'RP_LAST_DAY_OF_MONTHS'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;day_in&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;lv_next_month<br />
@@ -275,7 +275,7 @@ FORM set_default_condition .<br />
 <br />
 <br />
 <br />
-&nbsp;&nbsp;"&nbsp;####&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;Ç×°ø»ç¸í&nbsp;Ãëµæ<br />
 &nbsp;&nbsp;PERFORM&nbsp;get_airline_name&nbsp;USING&nbsp;zsb003301-carrid<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;zsb003301-carrname.<br />
 ENDFORM.<br />
@@ -318,7 +318,7 @@ FORM get_booking_list .<br />
 &nbsp;&nbsp;PERFORM&nbsp;get_custname.<br />
 &nbsp;&nbsp;PERFORM&nbsp;get_spfli.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;##&nbsp;##&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;Ãß°¡&nbsp;Á¤º¸&nbsp;Ãëµæ<br />
 &nbsp;&nbsp;PERFORM&nbsp;modify_booking_list.<br />
 <br />
 &nbsp;&nbsp;SORT&nbsp;gt_book&nbsp;BY&nbsp;fldate&nbsp;DESCENDING&nbsp;order_date.<br />
@@ -382,13 +382,13 @@ FORM modify_booking_list .<br />
 <br />
 &nbsp;&nbsp;LOOP&nbsp;AT&nbsp;gt_book&nbsp;INTO&nbsp;ls_book.<br />
 <br />
-&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;###&nbsp;##<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;°í°´¸í&nbsp;Ãëµæ<br />
 &nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_scustom&nbsp;INTO&nbsp;gs_scustom&nbsp;WITH&nbsp;KEY&nbsp;id&nbsp;=&nbsp;ls_book-customid.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;sy-subrc&nbsp;=&nbsp;0.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_book-name&nbsp;=&nbsp;gs_scustom-name.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
 <br />
-&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;&nbsp;AIRPFROM&nbsp;/&nbsp;AIRPTO&nbsp;##<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;&nbsp;AIRPFROM&nbsp;/&nbsp;AIRPTO&nbsp;Ãëµæ<br />
 &nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;gt_spfli&nbsp;INTO&nbsp;gs_spfli&nbsp;WITH&nbsp;KEY&nbsp;carrid&nbsp;=&nbsp;ls_book-carrid<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;connid&nbsp;=&nbsp;ls_book-connid.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;sy-subrc&nbsp;=&nbsp;0.<br />
@@ -396,8 +396,8 @@ FORM modify_booking_list .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_book-airpto&nbsp;=&nbsp;gs_spfli-airpto.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
 <br />
-&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;###&nbsp;##<br />
-&nbsp;&nbsp;&nbsp;&nbsp;"#####&nbsp;###&nbsp;###&nbsp;0#<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;ÇÒÀÎ°¡&nbsp;°è»ê<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"ÅëÈ­´ÜÀ§°¡&nbsp;´Ù¸£¸é&nbsp;¹«Á¶°Ç&nbsp;0¿ø<br />
 &nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;ls_book-currency&nbsp;&lt;&gt;&nbsp;ls_book-loccurkey.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_book-discount&nbsp;=&nbsp;''.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
@@ -405,18 +405,18 @@ FORM modify_booking_list .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
 <br />
 <br />
-&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Class&nbsp;###&nbsp;##<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Class&nbsp;ÅØ½ºÆ®&nbsp;Á¤º¸<br />
 &nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;get_value_text&nbsp;USING&nbsp;lt_dclass&nbsp;'CLASS'&nbsp;'CLASS_T'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;ls_dclass&nbsp;ls_book.<br />
 <br />
-&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;CUSTTYPE&nbsp;###&nbsp;##<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;CUSTTYPE&nbsp;ÅØ½ºÆ®&nbsp;Á¤º¸<br />
 &nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;get_value_text&nbsp;USING&nbsp;lt_dcusttype&nbsp;'CUSTTYPE'&nbsp;'CUSTTYPE_T'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;ls_dcusttype&nbsp;ls_book.<br />
 <br />
 <br />
-&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;##&nbsp;##<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;¿¹¿Ü&nbsp;Ã³¸®<br />
 &nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;ls_book-order_date&nbsp;&gt;&nbsp;ls_book-fldate.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_book-light&nbsp;=&nbsp;1.&nbsp;"&nbsp;###&nbsp;##&nbsp;CASE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_book-light&nbsp;=&nbsp;1.&nbsp;"&nbsp;¹®Á¦°¡&nbsp;ÀÖ´Â&nbsp;CASE<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_book-color&nbsp;=&nbsp;'C610'.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
    </div>
@@ -428,7 +428,7 @@ FORM modify_booking_list .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
 <br />
 <br />
-&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;#######&nbsp;##&nbsp;(&nbsp;FLDATE,&nbsp;ORDER_DATE&nbsp;##&nbsp;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Ãâ¹ßÀü¿¹¾àÀÏ¼ö&nbsp;°è»ê&nbsp;(&nbsp;FLDATE,&nbsp;ORDER_DATE&nbsp;ÀÌ¿ë&nbsp;)<br />
 &nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;get_ledays&nbsp;USING&nbsp;ls_book-order_date<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ls_book-fldate<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;ls_book-ledays.<br />
@@ -436,7 +436,7 @@ FORM modify_booking_list .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;gt_book&nbsp;FROM&nbsp;ls_book.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;ls_book.<br />
 <br />
-&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;####&nbsp;###&nbsp;##&nbsp;###&nbsp;delete<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;°í°´¹øÈ£&nbsp;Á¶°Ç¿¡&nbsp;ÇØ´ç&nbsp;¾øÀ¸¸é&nbsp;delete<br />
 &nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;ls_book-customid&nbsp;&lt;&gt;&nbsp;zsb003301-customid.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DELETE&nbsp;gt_book&nbsp;INDEX&nbsp;sy-tabix.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
@@ -502,87 +502,87 @@ FORM set_alv_fcat .<br />
 <br />
 &nbsp;&nbsp;CLEAR:&nbsp;gt_fcat,&nbsp;gs_fcat.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;ºñÇàÀÏÀÚ<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'FLDATE'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'1'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'####'(c01)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'ºñÇàÀÏÀÚ'(c01)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;¿¹¾àÀÏÀÚ<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'ORDER_DATE'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'col_pos'&nbsp;'2'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'####'(c02)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'¿¹¾àÀÏÀÚ'(c02)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat.<br />
 <br />
 <br />
-&nbsp;&nbsp;"&nbsp;##&nbsp;#&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;Ãâ¹ß&nbsp;Àü&nbsp;¿¹¾à<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'LEDAYS'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'3'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'#####'(c03)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'Ãâ¹ßÀü¿¹¾à'(c03)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;¿¹¾à¹øÈ£<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'BOOKID'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'7'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'####'(c04)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'¿¹¾à¹øÈ£'(c04)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;°í°´¹øÈ£<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'CUSTOMID'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'8'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'####'(c05)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'°í°´¹øÈ£'(c05)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;###<br />
+&nbsp;&nbsp;"&nbsp;°í°´¸í<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'NAME'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'9'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'###'(c12)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'°í°´¸í'(c12)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
 <br />
-&nbsp;&nbsp;"&nbsp;Field&nbsp;CUSTTYPE,&nbsp;CLASS#&nbsp;###&nbsp;#&nbsp;###&nbsp;##<br />
-&nbsp;&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;Field&nbsp;CUSTTYPE,&nbsp;CLASS´Â&nbsp;È­¸é¿¡&nbsp;¾È&nbsp;º¸ÀÌ°Ô&nbsp;¼³Á¤<br />
+&nbsp;&nbsp;"&nbsp;°í°´Å¸ÀÔ<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'CUSTTYPE'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'NO_OUT'&nbsp;'X'&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;####&nbsp;###<br />
+&nbsp;&nbsp;"&nbsp;°í°´Å¸ÀÔ&nbsp;ÅØ½ºÆ®<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'CUSTTYPE_T'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'10'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'####'(c06)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'°í°´Å¸ÀÔ'(c06)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;ÁÂ¼®µî±Þ<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'CLASS'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'NO_OUT'&nbsp;'X'&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;####&nbsp;###<br />
+&nbsp;&nbsp;"&nbsp;ÁÂ¼®µî±Þ&nbsp;ÅØ½ºÆ®<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'CLASS_T'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'11'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'####'(c07)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'ÁÂ¼®µî±Þ'(c07)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
 <br />
-&nbsp;&nbsp;"&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;¿ø°¡<br />
    </div>
    <div class="codeComment">
 *&nbsp;&nbsp;gs_fcat-cfieldname&nbsp;=&nbsp;'CURRENCY'.<br />
@@ -594,19 +594,19 @@ FORM set_alv_fcat .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'12'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'##'(c13)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'¿ø°¡'(c13)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;##&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;¿ø°¡&nbsp;ÅëÈ­<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'CURRENCY'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'13'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'##'(c09)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'ÅëÈ­'(c09)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
 <br />
-&nbsp;&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;¿¹¾à°¡°Ý<br />
    </div>
    <div class="codeComment">
 *&nbsp;&nbsp;gs_fcat-cfieldname&nbsp;=&nbsp;'LOCCURKEY'.<br />
@@ -618,21 +618,21 @@ FORM set_alv_fcat .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'14'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'####'(c08)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'¿¹¾à°¡°Ý'(c08)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
 <br />
 <br />
-&nbsp;&nbsp;"&nbsp;####&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;¿¹¾à°¡°Ý&nbsp;ÅëÈ­<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'LOCCURKEY'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'15'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'##'(c09)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'ÅëÈ­'(c09)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
 <br />
-&nbsp;&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;ÇÒÀÎ±Ý¾×<br />
    </div>
    <div class="codeComment">
 *&nbsp;&nbsp;gs_fcat-cfieldname&nbsp;=&nbsp;'LOCCURKEY'.<br />
@@ -644,37 +644,37 @@ FORM set_alv_fcat .<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'16'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'####'(c14)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'ÇÒÀÎ±Ý¾×'(c14)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;###<br />
+&nbsp;&nbsp;"&nbsp;Ç×°ø»ç<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'CARRID'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'NO_OUT'&nbsp;'X'&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;###<br />
+&nbsp;&nbsp;"&nbsp;Ç×°øÆí<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'CONNID'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'4'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'###'(c11)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'Ç×°øÆí'(c11)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;###<br />
+&nbsp;&nbsp;"&nbsp;Ç×°ø»ç<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'AIRPFROM'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'5'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'###'(c15)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'Ãâ¹ßÁö'(c15)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;###<br />
+&nbsp;&nbsp;"&nbsp;Ç×°øÆí<br />
 &nbsp;&nbsp;PERFORM&nbsp;set_fcat&nbsp;:&nbsp;USING&nbsp;'FIELDNAME'&nbsp;'AIRPTO'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COL_POS'&nbsp;'6'&nbsp;''<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'###'(c16)&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;'COLTEXT'&nbsp;'µµÂøÁö'(c16)&nbsp;'X'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;gt_fcat&nbsp;gs_fcat&nbsp;.<br />
 <br />
 ENDFORM.<br />
@@ -691,22 +691,22 @@ ENDFORM.<br />
    </div>
    <div class="code">
 FORM set_alv_sort .<br />
-&nbsp;&nbsp;"&nbsp;##&nbsp;#####,&nbsp;#####,&nbsp;##&nbsp;##&nbsp;###&nbsp;###&nbsp;##<br />
-&nbsp;&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;ÃÖ±Ù&nbsp;ºñÇàÀÏÀÚº°,&nbsp;ÁÂ¼®µî±Þº°,&nbsp;°¡Àå&nbsp;»¡¸®&nbsp;¿¹¾àÇÑ&nbsp;¼øÀ¸·Î&nbsp;Á¤¿­<br />
+&nbsp;&nbsp;"&nbsp;ºñÇàÀÏÀÚ<br />
 &nbsp;&nbsp;CLEAR&nbsp;gs_sort.<br />
 &nbsp;&nbsp;gs_sort-spos&nbsp;=&nbsp;'1'.<br />
 &nbsp;&nbsp;gs_sort-fieldname&nbsp;=&nbsp;'FLDATE'.<br />
 &nbsp;&nbsp;gs_sort-down&nbsp;=&nbsp;'X'.<br />
 &nbsp;&nbsp;APPEND&nbsp;gs_sort&nbsp;TO&nbsp;gt_sort.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;"&nbsp;ÁÂ¼®µî±Þ<br />
 &nbsp;&nbsp;CLEAR&nbsp;gs_sort.<br />
 &nbsp;&nbsp;gs_sort-spos&nbsp;=&nbsp;'2'.<br />
 &nbsp;&nbsp;gs_sort-fieldname&nbsp;=&nbsp;'CLASS'.<br />
 &nbsp;&nbsp;gs_sort-down&nbsp;=&nbsp;'X'.<br />
 &nbsp;&nbsp;APPEND&nbsp;gs_sort&nbsp;TO&nbsp;gt_sort.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;##&nbsp;##&nbsp;#<br />
+&nbsp;&nbsp;"&nbsp;ºü¸¥&nbsp;¿¹¾à&nbsp;¼ø<br />
 &nbsp;&nbsp;CLEAR&nbsp;gs_sort.<br />
 &nbsp;&nbsp;gs_sort-spos&nbsp;=&nbsp;'3'.<br />
 &nbsp;&nbsp;gs_sort-fieldname&nbsp;=&nbsp;'ORDER_DATE'.<br />
@@ -784,7 +784,7 @@ FORM set_fcat  USING    VALUE(p_field)<br />
 &nbsp;&nbsp;ASSIGN&nbsp;(lv_field)&nbsp;TO&nbsp;&lt;fs&gt;.<br />
 &nbsp;&nbsp;&lt;fs&gt;&nbsp;=&nbsp;p_value.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;GS_FCAT&nbsp;##&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;GS_FCAT&nbsp;³»¿ë&nbsp;¹Ý¿µ<br />
    </div>
    <div class="codeComment">
 *&nbsp;&nbsp;cs_fcat&nbsp;=&nbsp;gs_fcat.<br />
@@ -822,13 +822,13 @@ FORM get_ledays USING VALUE(p_from) TYPE vtbbewe-dbervon<br />
 <br />
    </div>
    <div class="code">
-&nbsp;&nbsp;"&nbsp;Function&nbsp;Module&nbsp;FIMA_DAYS_AND_MONTHS_AND_YEARS&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;Function&nbsp;Module&nbsp;FIMA_DAYS_AND_MONTHS_AND_YEARS&nbsp;ÀÌ¿ë<br />
 &nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'FIMA_DAYS_AND_MONTHS_AND_YEARS'<br />
 &nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i_date_from&nbsp;=&nbsp;p_from&nbsp;"&nbsp;lv_date_from&nbsp;"&nbsp;"&nbsp;####<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i_date_to&nbsp;&nbsp;&nbsp;=&nbsp;p_to&nbsp;"&nbsp;####<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i_date_from&nbsp;=&nbsp;p_from&nbsp;"&nbsp;lv_date_from&nbsp;"&nbsp;"&nbsp;¿¹¾àÀÏÀÚ<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i_date_to&nbsp;&nbsp;&nbsp;=&nbsp;p_to&nbsp;"&nbsp;ºñÇàÀÏÀÚ<br />
 &nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e_days&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;lv_ledays&nbsp;"&nbsp;#&nbsp;##&nbsp;###&nbsp;#&nbsp;##&nbsp;##<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e_days&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;lv_ledays&nbsp;"&nbsp;µÎ&nbsp;³¯Â¥&nbsp;»çÀÌÀÇ&nbsp;ÃÑ&nbsp;ÀÏ¼ö&nbsp;Â÷ÀÌ<br />
    </div>
    <div class="codeComment">
 *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e_months&nbsp;&nbsp;&nbsp;&nbsp;=<br />
@@ -888,7 +888,7 @@ FORM get_sbook_info .<br />
 <br />
 <br />
 &nbsp;&nbsp;IF&nbsp;sy-subrc&nbsp;&lt;&gt;&nbsp;0.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;"&&nbsp;&&nbsp;####&nbsp;###&nbsp;####&nbsp;####.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&&nbsp;&&nbsp;ÀÏÄ¡ÇÏ´Â&nbsp;Á¤º¸°¡&nbsp;Á¸ÀçÇÏÁö&nbsp;¾Ê½À´Ï´Ù.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;s000(zmcb99).<br />
 &nbsp;&nbsp;&nbsp;&nbsp;RETURN.<br />
 &nbsp;&nbsp;ENDIF.<br />
@@ -909,7 +909,7 @@ ENDFORM.<br />
 FORM get_custname .<br />
 &nbsp;&nbsp;CLEAR:&nbsp;gt_scustom,&nbsp;gs_scustom.<br />
 <br />
-&nbsp;&nbsp;"&nbsp;###&nbsp;##<br />
+&nbsp;&nbsp;"&nbsp;°í°´¸í&nbsp;Á¤º¸<br />
 &nbsp;&nbsp;SELECT&nbsp;*<br />
 &nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;scustom<br />
 &nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;gt_scustom.<br />

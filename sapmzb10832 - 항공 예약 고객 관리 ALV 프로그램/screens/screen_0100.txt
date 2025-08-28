@@ -8,24 +8,24 @@ SAPMZB10832
 750																																
                 40																																
 %_HEADER																																
-SAPMZB10832                             0100 0100     27119192 37  0  0 29124  0G E                              20250820113621																																
+SAPMZB10832                             0100 0100     30121192 37  0  0 30142  0G E                              20250820231910																																
 %_DESCRIPTION																																
-Main																																
+                40																																
 %_FIELDS																																
 B_COND		CHAR	119	00	00	00	30	00	  1	  2		  0	  0	  0		  5	R				  0	  0	101							Condition		
-ZSB003301-CARRID	2	CHAR	 16	30	00	04	30	00	  2	  3		  0	  0	  0		  0			CAR		  0	  0								Airline	                                                                                                                                                                                                                                                        X	
+ZSB003301-CARRID	2	CHAR	 16	30	00	04	30	00	  2	  3		  0	  0	  0		  0			CAR		  0	  0								항공사	                                                                                                                                                                                                                                                        X	
 ZSB003301-CARRID	C	CHAR	  3	A0	00	AC	00	08	  2	 20		  0	  0	  0		  0			CAR		  6	  0								___	X                                      00	
 ZSB003301-CARRNAME	C	CHAR	 20	A0	02	80	31	00	  2	 26		  0	  0	  0		  0					 40	  0								____________________	                                       00	
-ZSB003301-CUSTOMID	2	CHAR	 15	30	00	04	30	00	  2	 63		  0	  0	  0		  0			CSM		  0	  0								Customer Number	                                                                                                                                                                                                                                                        X	
+ZSB003301-CUSTOMID	2	CHAR	 15	30	00	04	30	00	  2	 63		  0	  0	  0		  0			CSM		  0	  0								고객 번호	                                                                                                                                                                                                                                                        X	
 ZSB003301-CUSTOMID	N	NUMC	  8	A0	00	84	00	08	  2	 80		  0	  0	  0		  0			CSM		 16	  0								________	X                                      00	
 ZSB003301-CNAME	C	CHAR	 25	A0	02	80	31	00	  2	 91		  0	  0	  0		  0					 50	  0								_________________________	                                       00	
-ZSB003301-CONNID	2	CHAR	 15	30	00	04	30	00	  3	  3		  0	  0	  0		  0			CON		  0	  0								Flight Number	                                                                                                                                                                                                                                                        X	
+ZSB003301-CONNID	2	CHAR	 15	30	00	04	30	00	  3	  3		  0	  0	  0		  0			CON		  0	  0								항공편 번호	                                                                                                                                                                                                                                                        X	
 ZSB003301-CONNID	N	NUMC	  4	A0	00	AC	00	08	  3	 20		  0	  0	  0		  0			CON		  8	  0								____	X                                      00	
-ZSB003301-FLDATE_B	2	CHAR	  9	30	00	00	30	00	  4	  3		  0	  0	  0		  0			DAY		  0	  0								Date	                                                                                                                                                                                                                                                        X	
+ZSB003301-FLDATE_B	2	CHAR	  9	30	00	00	30	00	  4	  3		  0	  0	  0		  0			DAY		  0	  0								일자	                                                                                                                                                                                                                                                        X	
 ZSB003301-FLDATE_B	D	DATE	 10	A0	00	A0	00	08	  4	 20		  0	  0	  0		  0			DAY		 16	  0								__________	X                                      00	
 	0	CHAR	  1	00	00	00	30	00	  4	 32		  0	  0	  0		  0					  0	  0								~		
 ZSB003301-FLDATE_E	D	DATE	 10	A0	00	80	00	08	  4	 35		  0	  0	  0		  0			DAY		 16	  0								__________	X                                      00	
-CON			119	00	00	00	30	00	  7	  2		  0	  0	  0		 21	U				  1	  1	102									
+CON			121	00	00	00	30	00	  7	  2		  0	  0	  0		 24	U				  1	  1	102									
 OK_CODE		CHAR	 20	80	10	00	00	00	255	  1	O	  0	  0	  0		  0					  0	  0								____________________		
 %_FLOWLOGIC																																
 PROCESS BEFORE OUTPUT.																																
