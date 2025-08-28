@@ -2,7 +2,7 @@
 <html xmlns="http ://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=KSC5601" />
-<title>MZB10310_TOP</title>
+<title>SAPMZB10512</title>
 <style type="text/css">
 .code{ font-family :"Courier New", Courier, monospace; color :#000; font-size :14px; background-color :#F2F4F7 }
   .codeComment {font-family :"Courier New", Courier, monospace; color :#0000F0; font-size :14px; background-color :#F2F4F7 }
@@ -43,7 +43,7 @@
 <body>
 <table class="outerTable">
   <tr class="normalBoldLarge">
-     <td><h2>Code listing for : MZB10310_TOP</h2>
+     <td><h2>Code listing for : SAPMZB10512</h2>
 <h3> Description : </h3></td>
    </tr>
   <tr>
@@ -53,21 +53,43 @@
           <td>
    <div class="codeComment">
 *&---------------------------------------------------------------------*<br />
-*&&nbsp;Include&nbsp;MZB10310_TOP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;Pool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAPMZB10310<br />
+*&&nbsp;Module&nbsp;Pool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAPMZB00511<br />
 *&<br />
 *&---------------------------------------------------------------------*<br />
+*&<br />
+*&<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+<br />
    </div>
    <div class="code">
-PROGRAM sapmzb10310.<br />
+include <a href ="mzb10512top.html">MZB10512TOP</a>.<br />
+   </div>
+   <div class="codeComment">
+*INCLUDE&nbsp;mzb00511top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;global&nbsp;Data<br />
 <br />
-DATA: ok_code  TYPE sy-ucomm,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gv_subrc&nbsp;TYPE&nbsp;sy-subrc.<br />
+   </div>
+   <div class="code">
+include <a href ="mzb10512o01.html">MZB10512O01</a>.<br />
+   </div>
+   <div class="codeComment">
+*INCLUDE&nbsp;mzb00511o01&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;"&nbsp;PBO-Modules<br />
+   </div>
+   <div class="code">
+include <a href ="mzb10512i01.html">MZB10512I01</a>.<br />
+   </div>
+   <div class="codeComment">
+*INCLUDE&nbsp;mzb00511i01&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;"&nbsp;PAI-Modules<br />
+   </div>
+   <div class="code">
+include <a href ="mzb10512f01.html">MZB10512F01</a>.<br />
+   </div>
+   <div class="codeComment">
+*INCLUDE&nbsp;mzb00511f01&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;"&nbsp;FORM-Routines<br />
 <br />
-DATA: gt_scarr TYPE TABLE OF scarr,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_scarr&nbsp;TYPE&nbsp;scarr.<br />
-<br />
-TABLES: zsb101301,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zsb101302.<br />
+*GUI&nbsp;Texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;T100&nbsp;--&gt;&nbsp;&&nbsp;사원&nbsp;정보<br />
             </div>
           </td>
         </tr>

@@ -10,21 +10,21 @@ SAPMZB10821
 %_HEADER																																
 SAPMZB10821                             0100 0100     26100192 37  0  0 27120  0G E                              20250820010437																																
 %_DESCRIPTION																																
-Main																																
+                40																																
 %_FIELDS																																
 B_COND		CHAR	 46	00	00	00	30	00	  1	  2		  0	  0	  0		  7	R				  0	  0	101							Condition		
-ZSB103301-CARRID	2	CHAR	 16	30	00	04	30	00	  2	  4		  0	  0	  0		  0			CAR		  0	  0								Airline	                                                                                                                                                                                                                                                        X	
+ZSB103301-CARRID	2	CHAR	 16	30	00	04	30	00	  2	  4		  0	  0	  0		  0			CAR		  0	  0								항공사	                                                                                                                                                                                                                                                        X	
 ZSB103301-CARRID	C	CHAR	  3	A0	00	8C	00	08	  2	 21		  0	  0	  0		  0			CAR		  6	  0								___	X                                      00	
 ZSB103301-CARRNAME	C	CHAR	 20	A0	02	80	31	00	  2	 25		  0	  0	  0		  0					 40	  0								____________________	                                       00	
-ZSB103301-CONNID	2	CHAR	 15	30	00	04	30	00	  3	  4		  0	  0	  0		  0			CON		  0	  0								Flight Number	                                                                                                                                                                                                                                                        X	
+ZSB103301-CONNID	2	CHAR	 15	30	00	04	30	00	  3	  4		  0	  0	  0		  0			CON		  0	  0								항공편 번호	                                                                                                                                                                                                                                                        X	
 ZSB103301-CONNID	N	NUMC	  4	A0	00	8C	00	08	  3	 21		  0	  0	  0		  0			CON		  8	  0								____	X                                      00	
-ZSB103301-FLDATE_B	2	CHAR	  9	30	00	04	30	00	  4	  4		  0	  0	  0		  0			DAY		  0	  0								Date	                                                                                                                                                                                                                                                        X	
+ZSB103301-FLDATE_B	2	CHAR	  9	30	00	04	30	00	  4	  4		  0	  0	  0		  0			DAY		  0	  0								일자	                                                                                                                                                                                                                                                        X	
 ZSB103301-FLDATE_B	D	DATE	 10	A0	00	8C	00	08	  4	 21		  0	  0	  0		  0			DAY		 16	  0								__________	X                                      00	
 	0	CHAR	  1	00	00	00	30	00	  4	 32		  0	  0	  0		  0					  0	  0								~		
 ZSB103301-FLDATE_E	D	DATE	 10	A0	00	80	00	08	  4	 34		  0	  0	  0		  0			DAY		 16	  0								__________	X                                      00	
-ZSB103301-CLASS	2	CHAR	  8	30	00	01	30	00	  5	  4		  0	  0	  0		  0					  0	  0								Class	                                                                                                                                                                                                                                                        X	
+ZSB103301-CLASS	2	CHAR	  8	30	00	01	30	00	  5	  4		  0	  0	  0		  0					  0	  0								클래스	                                                                                                                                                                                                                                                        X	
 ZSB103301-CLASS	C	CHAR	  1	A0	00	81	00	08	  5	 21		  0	  0	  0		 21					  2	  0								_	XDL                                    00	
-ZSB103301-CUSTTYPE	2	CHAR	 15	30	00	01	30	00	  6	  4		  0	  0	  0		  0					  0	  0								B/P customer	                                                                                                                                                                                                                                                        X	
+ZSB103301-CUSTTYPE	2	CHAR	 15	30	00	01	30	00	  6	  4		  0	  0	  0		  0					  0	  0								B/P 고객	                                                                                                                                                                                                                                                        X	
 ZSB103301-CUSTTYPE	C	CHAR	  1	A0	00	81	00	08	  6	 21		  0	  0	  0		 21					  2	  0								_	XDL                                    00	
 CON			100	00	00	00	30	00	  8	  2		  0	  0	  0		 19	U				  1	  1	102									
 OK_CODE	C	CHAR	 20	80	10	00	00	00	255	  1	O	  0	  0	  0		  0					  0	  0								____________________	                                       00	

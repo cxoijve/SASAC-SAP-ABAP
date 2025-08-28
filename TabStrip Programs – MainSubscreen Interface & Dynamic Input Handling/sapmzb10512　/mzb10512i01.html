@@ -2,7 +2,7 @@
 <html xmlns="http ://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=KSC5601" />
-<title>MZB10310_O01</title>
+<title>MZB10512I01</title>
 <style type="text/css">
 .code{ font-family :"Courier New", Courier, monospace; color :#000; font-size :14px; background-color :#F2F4F7 }
   .codeComment {font-family :"Courier New", Courier, monospace; color :#0000F0; font-size :14px; background-color :#F2F4F7 }
@@ -43,7 +43,7 @@
 <body>
 <table class="outerTable">
   <tr class="normalBoldLarge">
-     <td><h2>Code listing for : MZB10310_O01</h2>
+     <td><h2>Code listing for : MZB10512I01</h2>
 <h3> Description : </h3></td>
    </tr>
   <tr>
@@ -53,67 +53,69 @@
           <td>
    <div class="codeComment">
 *&---------------------------------------------------------------------*<br />
-*&&nbsp;&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MZB10310_O01<br />
+*&&nbsp;&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MZB00511I01<br />
 *&---------------------------------------------------------------------*<br />
 *&---------------------------------------------------------------------*<br />
-*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;STATUS_0100&nbsp;&nbsp;OUTPUT<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;EXIT&nbsp;&nbsp;INPUT<br />
 *&---------------------------------------------------------------------*<br />
 *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
 *----------------------------------------------------------------------*<br />
    </div>
    <div class="code">
-MODULE status_0100 OUTPUT.<br />
-&nbsp;&nbsp;SET&nbsp;PF-STATUS&nbsp;'S100'.<br />
-&nbsp;&nbsp;SET&nbsp;TITLEBAR&nbsp;'T100'.&nbsp;"WITH&nbsp;SY-UNAME.<br />
+MODULE exit INPUT.<br />
+&nbsp;&nbsp;CASE&nbsp;sy-ucomm.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'EXIT'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;PROGRAM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'CANC'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.<br />
+&nbsp;&nbsp;ENDCASE.<br />
 ENDMODULE.<br />
    </div>
    <div class="codeComment">
 *&---------------------------------------------------------------------*<br />
-*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;STATUS_0200&nbsp;&nbsp;OUTPUT<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;USER_COMMAND_0100&nbsp;&nbsp;INPUT<br />
 *&---------------------------------------------------------------------*<br />
 *&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
 *----------------------------------------------------------------------*<br />
    </div>
    <div class="code">
-MODULE status_0200 OUTPUT.<br />
-&nbsp;&nbsp;SET&nbsp;PF-STATUS&nbsp;'S200'.<br />
-&nbsp;&nbsp;SET&nbsp;TITLEBAR&nbsp;'T200'.<br />
-ENDMODULE.<br />
-   </div>
-   <div class="codeComment">
-*&---------------------------------------------------------------------*<br />
-*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;MODIFY_SCREEN_0100&nbsp;&nbsp;OUTPUT<br />
-*&---------------------------------------------------------------------*<br />
-*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
-*----------------------------------------------------------------------*<br />
-   </div>
-   <div class="code">
-MODULE modify_screen_0100 OUTPUT.<br />
-   </div>
-   <div class="codeComment">
-*&nbsp;&nbsp;DATA&nbsp;lv_myid&nbsp;TYPE&nbsp;string.<br />
-*&nbsp;&nbsp;lv_myid&nbsp;=&nbsp;sy-uname+8(2).<br />
+MODULE user_command_0100 INPUT.<br />
+&nbsp;&nbsp;CASE&nbsp;ok_code.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'BACK'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'SEARCH'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;get_info.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gv_name&nbsp;=&nbsp;zsb002011-ename.<br />
 <br />
-   </div>
-   <div class="code">
-&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;SCREEN.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;screen-name&nbsp;=&nbsp;'ZSB101301-CARRID'.<br />
-   </div>
-   <div class="codeComment">
-*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;lv_myid&nbsp;=&nbsp;10.<br />
-   </div>
-   <div class="code">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;sy-uname&nbsp;=&nbsp;'SESAC-B-10'.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;screen-input&nbsp;=&nbsp;0.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;screen-input&nbsp;=&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'ENTER'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"조건&nbsp;사원명&nbsp;취득<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;get_emp_name.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;zsb002011-ename&nbsp;&lt;&gt;&nbsp;gv_name&nbsp;AND&nbsp;zsb002012&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;get_info.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gv_name&nbsp;=&nbsp;zsb002011-ename.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
-&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;SCREEN.<br />
-&nbsp;&nbsp;ENDLOOP.<br />
 <br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'TAB1'&nbsp;OR&nbsp;'TAB2'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ts_info-activetab&nbsp;=&nbsp;ok_code.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;OTHERS.<br />
 <br />
+&nbsp;&nbsp;ENDCASE.<br />
 ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;CHECK_PERNR&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+*MODULE&nbsp;check_pernr&nbsp;INPUT.<br />
+*&nbsp;&nbsp;IF&nbsp;zsb002011-pernr&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;get_info.<br />
+*&nbsp;&nbsp;ELSE.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'사번이&nbsp;입력되지&nbsp;않았습니다.'&nbsp;TYPE&nbsp;'I'.<br />
+*&nbsp;&nbsp;ENDIF.<br />
+*ENDMODULE.<br />
             </div>
           </td>
         </tr>

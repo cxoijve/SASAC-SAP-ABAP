@@ -2,7 +2,7 @@
 <html xmlns="http ://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=KSC5601" />
-<title>MZB10310_TOP</title>
+<title>MZB10512TOP</title>
 <style type="text/css">
 .code{ font-family :"Courier New", Courier, monospace; color :#000; font-size :14px; background-color :#F2F4F7 }
   .codeComment {font-family :"Courier New", Courier, monospace; color :#0000F0; font-size :14px; background-color :#F2F4F7 }
@@ -43,7 +43,7 @@
 <body>
 <table class="outerTable">
   <tr class="normalBoldLarge">
-     <td><h2>Code listing for : MZB10310_TOP</h2>
+     <td><h2>Code listing for : MZB10512TOP</h2>
 <h3> Description : </h3></td>
    </tr>
   <tr>
@@ -53,21 +53,45 @@
           <td>
    <div class="codeComment">
 *&---------------------------------------------------------------------*<br />
-*&&nbsp;Include&nbsp;MZB10310_TOP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;Pool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAPMZB10310<br />
+*&&nbsp;Include&nbsp;MZB00511TOP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;Pool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SAPMZB00511<br />
 *&<br />
 *&---------------------------------------------------------------------*<br />
    </div>
    <div class="code">
-PROGRAM sapmzb10310.<br />
+PROGRAM sapmzb00511.<br />
 <br />
-DATA: ok_code  TYPE sy-ucomm,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gv_subrc&nbsp;TYPE&nbsp;sy-subrc.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;Common<br />
+   </div>
+   <div class="code">
+DATA: gv_subrc TYPE sy-subrc,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gv_dynnr&nbsp;TYPE&nbsp;sy-dynnr,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok_code&nbsp;&nbsp;LIKE&nbsp;sy-ucomm.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;Condition<br />
+   </div>
+   <div class="code">
+TABLES zsb002011.<br />
 <br />
-DATA: gt_scarr TYPE TABLE OF scarr,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gs_scarr&nbsp;TYPE&nbsp;scarr.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;Info(&nbsp;사원,&nbsp;부서&nbsp;)<br />
+   </div>
+   <div class="code">
+TABLES: zsb002012, zsb002013.<br />
 <br />
-TABLES: zsb101301,<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zsb101302.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;Tab&nbsp;Strip<br />
+   </div>
+   <div class="code">
+CONTROLS ts_info TYPE TABSTRIP.<br />
+<br />
+<br />
+" 변수 선언한 방법으로 해볼 것<br />
+data: gv_name type ZEB00_ENAME.<br />
             </div>
           </td>
         </tr>
