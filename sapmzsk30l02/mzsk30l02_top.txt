@@ -1,0 +1,34 @@
+*&---------------------------------------------------------------------*
+*& Include MZSK30L02_TOP                                     ¸ðµâÇ®              SAPMZSK30L02
+*&
+*&---------------------------------------------------------------------*
+PROGRAM SAPMZSK30L02.
+
+DATA: GV_SUBRC    TYPE SY-SUBRC,
+      GV_DYNNR    TYPE SY-DYNNR,
+      OK_CODE     TYPE SY-UCOMM,
+      GR_BOOKID   TYPE RANGE OF SBOOK-BOOKID,
+      GS_BOOKID   LIKE LINE OF GR_BOOKID,
+      GR_CUSTOMID TYPE RANGE OF SBOOK-CUSTOMID,
+      GS_CUSTOMID LIKE LINE OF GR_CUSTOMID.
+
+" COND
+TABLES: ZSB3001.
+
+" RES
+DATA: BEGIN OF GS_DATA.
+    INCLUDE STRUCTURE ZSB3002.
+DATA: END OF GS_DATA,
+GT_DATA LIKE TABLE OF GS_DATA.
+
+" ALV
+DATA: GO_CON  TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV  TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYO TYPE LVC_S_LAYO,
+      GT_SORT TYPE LVC_T_SORT,
+      GS_SORT TYPE LVC_S_SORT,
+      GT_FCAT TYPE LVC_T_FCAT,
+      GS_FCAT TYPE LVC_S_FCAT.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

@@ -1,0 +1,282 @@
+*&---------------------------------------------------------------------*
+*&  Include           MZSK30L02_F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  SET_INIT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_INIT .
+  ZSB3001-CARRID = 'KA'.
+  ZSB3001-CONNID = '0017'.
+  ZSB3001-FLDATE = SY-DATUM.
+
+
+  PERFORM GET_ALV_DATA.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_ALV_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CREATE_ALV_0100 .
+  " 객체가 있을 시 미생성
+  IF GO_CON IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON
+    EXPORTING
+*     PARENT                      =
+      CONTAINER_NAME              = 'CON'
+*     STYLE                       =
+*     LIFETIME                    = lifetime_default
+*     REPID                       =
+*     DYNNR                       =
+*     NO_AUTODEF_PROGID_DYNNR     =
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV
+    EXPORTING
+*     I_SHELLSTYLE      = 0
+*     I_LIFETIME        =
+      I_PARENT          = GO_CON
+*     I_APPL_EVENTS     = space
+*     I_PARENTDBG       =
+*     I_APPLOGPARENT    =
+*     I_GRAPHICSPARENT  =
+*     I_NAME            =
+*     I_FCAT_COMPLETE   = SPACE
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_ALV_0100 .
+  CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+*     I_BUFFER_ACTIVE =
+*     I_BYPASSING_BUFFER            =
+*     I_CONSISTENCY_CHECK           =
+*     I_STRUCTURE_NAME              =
+*     IS_VARIANT      =
+*     I_SAVE          =
+*     I_DEFAULT       = 'X'
+      IS_LAYOUT       = GS_LAYO
+*     IS_PRINT        =
+*     IT_SPECIAL_GROUPS             =
+*     IT_TOOLBAR_EXCLUDING          =
+*     IT_HYPERLINK    =
+*     IT_ALV_GRAPHICS =
+*     IT_EXCEPT_QINFO =
+*     IR_SALV_ADAPTER =
+    CHANGING
+      IT_OUTTAB       = GT_DATA
+      IT_FIELDCATALOG = GT_FCAT
+      IT_SORT         = GT_SORT
+*     IT_FILTER       =
+*  EXCEPTIONS
+*     INVALID_PARAMETER_COMBINATION = 1
+*     PROGRAM_ERROR   = 2
+*     TOO_MANY_LINES  = 3
+*     OTHERS          = 4
+    .
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_LAYO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_LAYO .
+  CLEAR GS_LAYO.
+
+  GS_LAYO-CWIDTH_OPT = 'X'.
+  GS_LAYO-ZEBRA = 'X'.
+  GS_LAYO-SEL_MODE = 'A'.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_SORT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_SORT .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_FCAT .
+  CLEAR: GT_FCAT, GS_FCAT.
+  GS_FCAT-FIELDNAME = 'BOOKID'.
+  GS_FCAT-COL_POS = 1.
+  GS_FCAT-COLTEXT = 'BOOKID'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'CUSTOMID'.
+  GS_FCAT-COL_POS = 2.
+  GS_FCAT-COLTEXT = 'CUSTOMID'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'NAME'.
+  GS_FCAT-COL_POS = 3.
+  GS_FCAT-COLTEXT = 'NAME'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'CUSTTYPE'.
+  GS_FCAT-COL_POS = 4.
+  GS_FCAT-COLTEXT = 'CUSTTYPE'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'CLASS'.
+  GS_FCAT-COL_POS = 5.
+  GS_FCAT-COLTEXT = 'CLASS'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'FLDATE'.
+  GS_FCAT-COL_POS = 6.
+  GS_FCAT-COLTEXT = 'FLDATE'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'CONNID'.
+  GS_FCAT-COL_POS = 7.
+  GS_FCAT-COLTEXT = 'CONNID'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'CARRID'.
+  GS_FCAT-COL_POS = 8.
+  GS_FCAT-COLTEXT = 'CARRID'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'CARRNAME'.
+  GS_FCAT-COL_POS = 9.
+  GS_FCAT-COLTEXT = 'CARRNAME'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'MENUNO'.
+  GS_FCAT-COL_POS = 10.
+  GS_FCAT-COLTEXT = 'MENUNO'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'EDATE'.
+  GS_FCAT-COL_POS = 11.
+  GS_FCAT-COLTEXT = 'EDATE'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'SFLAG'.  "MSTAT
+  GS_FCAT-COL_POS = 12.
+  GS_FCAT-COLTEXT = 'SFLAG'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_ALV_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_ALV_DATA .
+  " 데이터 불러오기
+  SELECT A~CARRID A~CONNID A~FLDATE A~BOOKID A~CUSTOMID A~CLASS
+                A~CUSTTYPE B~NAME C~CARRNAME
+    FROM SBOOK AS A
+    INNER JOIN SCUSTOM AS B ON A~CUSTOMID = B~ID
+    INNER JOIN SCARR AS C ON A~CARRID = C~CARRID
+    INTO CORRESPONDING FIELDS OF TABLE GT_DATA
+    WHERE A~CARRID = ZSB3001-CARRID
+         AND CONNID = ZSB3001-CONNID
+         AND FLDATE = ZSB3001-FLDATE
+         AND BOOKID IN GR_BOOKID
+         AND CUSTOMID IN GR_CUSTOMID
+         AND CANCELLED = ''.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  MODIFY_RANGE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM MODIFY_RANGE .
+  CLEAR: GR_BOOKID, GS_BOOKID,
+              GR_CUSTOMID, GS_CUSTOMID.
+
+  IF ZSB3001-BOOKID IS NOT INITIAL.
+    GS_BOOKID-SIGN = 'I'.
+    GS_BOOKID-OPTION = 'EQ'.
+    GS_BOOKID-LOW = ZSB3001-BOOKID.
+    APPEND GS_BOOKID TO GR_BOOKID.
+  ENDIF.
+
+  IF ZSB3001-CUSTOMID IS NOT INITIAL.
+    GS_CUSTOMID-SIGN = 'I'.
+    GS_CUSTOMID-OPTION = 'EQ'.
+    GS_CUSTOMID-LOW = ZSB3001-CUSTOMID.
+    APPEND GS_CUSTOMID TO GR_CUSTOMID.
+  ENDIF.
+
+ENDFORM.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750
