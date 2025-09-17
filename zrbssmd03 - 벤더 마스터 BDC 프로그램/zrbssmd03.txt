@@ -1,0 +1,111 @@
+*&---------------------------------------------------------------------*
+*& Report  ZRBSSMD03
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+INCLUDE ZRBSSMD03TOP                            .    " global Data
+
+INCLUDE ZRBSSMD03O01                            .  " PBO-Modules
+INCLUDE ZRBSSMD03I01                            .  " PAI-Modules
+INCLUDE ZRBSSMD03F01                            .  " FORM-Routines
+
+INITIALIZATION.
+  PERFORM INITIALIZATION.
+*
+AT SELECTION-SCREEN OUTPUT.
+  PERFORM AT_SELECTION_SCREEN_OUTPUT.
+*
+  " Search Help // Selection Screen 안에서 취하는 액션
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR PA_FILE.
+  PERFORM GET_FILE CHANGING PA_FILE.
+*
+AT SELECTION-SCREEN.
+  PERFORM AT_SELECTION_SCREEN.
+*
+*
+START-OF-SELECTION.
+  PERFORM START_OF_SELECTION.
+
+  " 엑셀 업로드 기능 추가 후 BDC
+**    WRITE: / GS_EXCEL.
+
+  LOOP AT GT_EXCEL INTO GS_EXCEL.
+    CLEAR GT_BDC.
+
+*------------ 100번에서 등록 클릭 -------------*
+    PERFORM BDC
+      USING:
+        'X' 'SAPMZSSMD03' '0100',
+        ' ' 'BDC_CURSOR'  'ZSSSMD0301-VENID',
+        ' ' 'BDC_OKCODE'  '=REGIST' .
+
+
+*------------ 정보 입력 후 등록 -------------*
+**    LOOP AT GT_BDC INTO GS_BDC. " 삽입할 데이터의 itab
+
+    PERFORM BDC
+     USING: 'X' 'SAPMZSSMD03' '0200',
+            ' ' 'BDC_CURSOR'  'ZSSSMD0303-NEWEDOM',
+            ' ' 'BDC_OKCODE'  '=REGIST',
+            ' ' 'ZSSSMD0303-PENID'    GS_EXCEL-PENID,   " PA_PENID,
+            ' ' 'ZSSSMD0303-VNAME'    GS_EXCEL-VNAME,   " PA_VNAME,
+            ' ' 'ZSSSMD0303-BEGDA'    GS_EXCEL-BEGDA,   " PA_BEGDA,
+            ' ' 'ZSSSMD0303-ENDDA'    GS_EXCEL-ENDDA,   "PA_ENDDA,
+            ' ' 'ZSSSMD0303-VPNME'    GS_EXCEL-VPNME,   " PA_VPNME,
+            ' ' 'ZSSSMD0303-POSTC'    GS_EXCEL-POSTC,   "PA_POSTC,
+            ' ' 'ZSSSMD0303-ADDRE'    GS_EXCEL-ADDRE,   "PA_ADDRE,
+            ' ' 'ZSSSMD0303-EID'      GS_EXCEL-EID,     "PA_EID,
+            ' ' 'ZSSSMD0303-NEWEDOM'  GS_EXCEL-NEDOM,   " PA_NEDOM,
+            ' ' 'ZSSSMD0303-EDNME'    '0000'.
+
+
+    CALL TRANSACTION 'ZSSMD03' " 실행할 프로그램
+      USING GT_BDC
+        MODE 'N' "A, E, N
+     MESSAGES INTO GT_BDCMSG.
+
+
+    DATA: LV_MESSAGE TYPE CHAR100.
+    LOOP AT GT_BDCMSG.
+
+      CALL FUNCTION 'MESSAGE_TEXT_BUILD'
+        EXPORTING
+          MSGID               = GT_BDCMSG-MSGID
+          MSGNR               = GT_BDCMSG-MSGNR
+          MSGV1               = GT_BDCMSG-MSGV1
+          MSGV2               = GT_BDCMSG-MSGV2
+          MSGV3               = GT_BDCMSG-MSGV3
+          MSGV4               = GT_BDCMSG-MSGV4
+        IMPORTING
+          MESSAGE_TEXT_OUTPUT = LV_MESSAGE.
+
+      WRITE: LV_MESSAGE.
+    ENDLOOP.
+
+**  WRITE SY-SUBRC.
+
+  ENDLOOP.
+
+*GUI Texts
+*----------------------------------------------------------
+* T100 --> T100
+* T100 --> T100
+
+
+*Selection texts
+*----------------------------------------------------------
+* PA_FILE         파일 이름
+
+
+*Messages
+*----------------------------------------------------------
+*
+* Message class: Hard coded
+*   엑셀 파일을 선택하셨습니다.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

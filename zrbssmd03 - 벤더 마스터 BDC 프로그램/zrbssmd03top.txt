@@ -1,0 +1,78 @@
+*&---------------------------------------------------------------------*
+*& Include ZRBSSMD03TOP                                      Report ZRBSSMD03
+*&
+*&---------------------------------------------------------------------*
+REPORT ZRBSSMD03.
+
+" Common
+DATA: GV_SUBRC TYPE SY-SUBRC,
+      GV_DYNNR TYPE SY-DYNNR,
+      OK_CODE  TYPE SY-UCOMM.
+
+
+" Excel
+TYPES: BEGIN OF TY_S_EXCEL,
+**         MANDT TYPE S_MANDT,
+         PENID TYPE ZSSSMD0303-PENID,
+         VNAME TYPE ZSSSMD0303-VNAME,
+         BEGDA TYPE ZSSSMD0303-BEGDA,
+         ENDDA TYPE ZSSSMD0303-ENDDA,
+         VPNME TYPE ZSSSMD0303-VPNME,
+         POSTC TYPE ZSSSMD0303-POSTC,
+         ADDRE TYPE ZSSSMD0303-ADDRE,
+         EID   TYPE ZSSSMD0303-EID,
+         NEDOM TYPE ZSSSMD0303-NEWEDOM,
+       END OF TY_S_EXCEL.
+
+DATA: GT_EXCEL TYPE TABLE OF TY_S_EXCEL,
+      GS_EXCEL TYPE TY_S_EXCEL.
+
+
+DATA: GS_BDC    TYPE BDCDATA,
+      GT_BDC    LIKE TABLE OF GS_BDC,
+      GT_BDCMSG TYPE STANDARD TABLE OF BDCMSGCOLL WITH HEADER LINE.
+
+
+" Excel 경로
+PARAMETERS PA_FILE TYPE RLGRAP-FILENAME DEFAULT 'C:\' MODIF ID FUP.
+
+TABLES: ZSSSMD0303.
+
+***PARAMETERS: PA_PENID TYPE ZSSSMD0303-PENID,
+***            PA_VNAME TYPE ZSSSMD0303-VNAME,
+***            PA_BEGDA TYPE ZSSSMD0303-BEGDA,
+***            PA_ENDDA TYPE ZSSSMD0303-ENDDA,
+***            PA_VPNME TYPE ZSSSMD0303-VPNME,
+***            PA_POSTC TYPE ZSSSMD0303-POSTC,
+***            PA_ADDRE TYPE ZSSSMD0303-ADDRE,
+***            PA_EID   TYPE ZSSSMD0303-EID,
+***            PA_NEDOM TYPE ZSSSMD0303-NEWEDOM.
+
+
+
+
+" ALV
+DATA: GO_CON     TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV     TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYO    TYPE LVC_S_LAYO,
+      GT_SORT    TYPE LVC_T_SORT,
+      GS_SORT    TYPE LVC_S_SORT,
+      GT_FCAT    TYPE LVC_T_FCAT,
+      GS_FCAT    TYPE LVC_S_FCAT,
+      GT_EXCLUDE TYPE UI_FUNCTIONS.
+
+DATA: GT_ROWS TYPE LVC_T_ROW,
+      GS_ROWS TYPE LVC_S_ROW.
+
+DATA: GV_FLAG.
+
+****--------------------------------------------------------------------*
+**** BDC
+****--------------------------------------------------------------------*
+***DATA:
+***  GT_BDCDATA TYPE STANDARD TABLE OF BDCDATA,         " BDC 데이터 관련 "
+***  GT_BDCMSG  TYPE STANDARD TABLE OF BDCMSGCOLL,      " BDC 메시지 관련 "
+***  GS_OPT     TYPE CTU_PARAMS.                        " BDC 옵션 관련 "
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750
