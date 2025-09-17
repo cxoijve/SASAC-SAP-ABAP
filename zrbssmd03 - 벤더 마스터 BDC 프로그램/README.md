@@ -6,8 +6,8 @@
 - GitHub에 함께 공개된 벤더마스터 CRUD 프로그램과의 차이점
   ([sapmzssmd03 - 벤더 마스터 CRUD 프로그램](https://github.com/cxoijve/SeSAC_PROJ/tree/main/sapmzssmd03%20-%20%EB%B2%A4%EB%8D%94%20%EB%A7%88%EC%8A%A4%ED%84%B0%20CRUD%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8))
 
-- 벤더 마스터 프로그램: 사용자 대화형 입력/수정을 위한 CRUD 프로그램
-- 본 BDC 프로그램: 엑셀 기반 대량 등록 자동화 BDC 프로그램
+  - 벤더 마스터 프로그램: 사용자 대화형 입력/수정을 위한 CRUD 프로그램
+  - 본 BDC 프로그램(zrbssmd03): 엑셀 기반 대량 등록 자동화 BDC 프로그램
 
 ## 주요 기능
 
