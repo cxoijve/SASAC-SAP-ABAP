@@ -1,13 +1,13 @@
 # BDC Excel Upload & Vendor 등록
 
 <img src="https://github.com/user-attachments/assets/7871264e-4283-483e-95af-eeea7d27b743" width="700" />
-
+- Test용 SAP_VENDOR_DATA.xlsx 파일 업로드
 <img src="https://github.com/user-attachments/assets/6a6ac8c1-2b75-42d1-a133-2c4bf0c54981" width="700" />
-
+- 업로드 후 F8(실행)
 <img src="https://github.com/user-attachments/assets/c1c47551-8a75-402e-83ab-9133e881662b" width="700" />
-
+- BDC로 벤더 등록 후 확인 (벤더 마스터 프로그램으로 이동)
 <img src="https://github.com/user-attachments/assets/a0c5405a-af79-49ab-ab3e-ca61a7033457" width="700" />
-
+- 성공!
 <img src="https://github.com/user-attachments/assets/82ce43d9-c995-4dd4-a1e8-d194ad796949" width="700" />
 
 ## 개요
@@ -22,7 +22,6 @@
 ## 주요 기능
 
 - 엑셀 업로드: 지정된 템플릿 형태의 엑셀 파일 데이터를 내부 테이블(`GT_EXCEL`)에 적재
-  - Test용: SAP_VENDOR_DATA.xlsx
 - 데이터 매핑: 엑셀 데이터 → 화면 필드(`ZSSSMD0303-*`)로 변환
 - BDC 처리: `CALL TRANSACTION 'ZSSMD03'`로 트랜잭션 자동 실행 (Mode 'N')
 - 메시지 로그: 실행 중 발생하는 메시지를 사람이 읽을 수 있는 문장으로 변환하여 출력
