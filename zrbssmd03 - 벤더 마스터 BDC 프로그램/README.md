@@ -1,9 +1,14 @@
 # BDC Excel Upload & Vendor 등록
-<img width="707" height="128" alt="img1" src="https://github.com/user-attachments/assets/7871264e-4283-483e-95af-eeea7d27b743" />
-<img width="943" height="483" alt="img2" src="https://github.com/user-attachments/assets/6a6ac8c1-2b75-42d1-a133-2c4bf0c54981" />
-<img width="666" height="121" alt="img3" src="https://github.com/user-attachments/assets/c1c47551-8a75-402e-83ab-9133e881662b" />
-<img width="685" height="152" alt="img4" src="https://github.com/user-attachments/assets/a0c5405a-af79-49ab-ab3e-ca61a7033457" />
-<img width="1094" height="754" alt="img5" src="https://github.com/user-attachments/assets/82ce43d9-c995-4dd4-a1e8-d194ad796949" />
+
+<img src="https://github.com/user-attachments/assets/7871264e-4283-483e-95af-eeea7d27b743" width="700" />
+
+<img src="https://github.com/user-attachments/assets/6a6ac8c1-2b75-42d1-a133-2c4bf0c54981" width="700" />
+
+<img src="https://github.com/user-attachments/assets/c1c47551-8a75-402e-83ab-9133e881662b" width="700" />
+
+<img src="https://github.com/user-attachments/assets/a0c5405a-af79-49ab-ab3e-ca61a7033457" width="700" />
+
+<img src="https://github.com/user-attachments/assets/82ce43d9-c995-4dd4-a1e8-d194ad796949" width="700" />
 
 ## 개요
 
