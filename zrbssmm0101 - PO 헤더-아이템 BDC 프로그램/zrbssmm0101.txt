@@ -1,0 +1,49 @@
+*&---------------------------------------------------------------------*
+*& Report  ZRBSSMM0101
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+INCLUDE zrbssmm0101top                          .    " global Data
+
+INCLUDE zrbssmm0101o01                          .  " PBO-Modules
+INCLUDE zrbssmm0101i01                          .  " PAI-Modules
+INCLUDE zrbssmm0101f01                          .  " FORM-Routines
+
+
+
+INITIALIZATION.
+
+
+AT SELECTION-SCREEN OUTPUT.
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR pa_file.
+  PERFORM f4_data_file CHANGING pa_file.
+
+AT SELECTION-SCREEN.
+
+  CASE sscrfields-ucomm.
+    WHEN 'FC01'.
+      MESSAGE i000(ymc00) WITH 'Test'.
+
+    WHEN OTHERS.
+
+  ENDCASE.
+
+START-OF-SELECTION.
+
+  PERFORM get_excel_data.
+  PERFORM set_default.
+  PERFORM check_invalid_data.
+*  cl_demo_output=>display_data( gt_data ).
+*  PERFORM set_bdc.
+  CALL SCREEN '0100'.
+
+*GUI Texts
+*----------------------------------------------------------
+* T100 --> 대용량 데이터 처리 확인
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

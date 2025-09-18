@@ -1,0 +1,55 @@
+*&---------------------------------------------------------------------*
+*& Include ZRBSSMM0101TOP                                    Report ZRBSSMM0101
+*&
+*&---------------------------------------------------------------------*
+REPORT zrbssmm0101.
+
+TABLES: sscrfields.
+
+DATA : BEGIN OF gs_data,
+         ponum(11),
+         podat(8),
+         venid(8),
+         dudat(8),
+         stext(60),
+         curky(5),
+         rgdat(8),
+         rgtor(8),
+         itnum(3) ,
+         pomnr(8) ,
+         amount(3),
+         meins(3) ,
+         plant(4) ,
+         poprc(17),
+         del(1)   ,
+         hflag(1) ,
+         iflag(1)  ,
+         light,
+         it_col    TYPE lvc_t_scol.
+DATA: END OF gs_data,
+gt_data LIKE TABLE OF gs_data.
+
+
+SELECTION-SCREEN: FUNCTION KEY 1, FUNCTION KEY 2.
+
+PARAMETERS: pa_file  TYPE rlgrap-filename.
+
+DATA : gs_bdc TYPE bdcdata,
+       gt_bdc LIKE TABLE OF gs_bdc.
+
+" 공통변수
+DATA : ok_code  TYPE sy-ucomm,
+       gv_subrc TYPE sy-subrc,
+       gv_dynnr TYPE sy-dynnr.
+" 100번 alv 상세 조건 설정
+DATA : go_con TYPE REF TO cl_gui_custom_container,
+       go_alv TYPE REF TO cl_gui_alv_grid.
+
+DATA : gs_layo TYPE lvc_s_layo,
+       gt_fcat TYPE lvc_t_fcat,
+       gs_fcat TYPE lvc_s_fcat,
+       gt_sort TYPE lvc_t_sort,
+       gs_sort TYPE lvc_s_sort.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

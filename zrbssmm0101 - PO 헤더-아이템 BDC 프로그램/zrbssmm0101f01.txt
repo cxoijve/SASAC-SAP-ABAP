@@ -1,0 +1,500 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZRBSSMM0101F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  F4_DATA_FILE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_PA_FILE  text
+*----------------------------------------------------------------------*
+FORM f4_data_file CHANGING c_file TYPE rlgrap-filename.
+
+  DATA : lt_file TYPE filetable,
+         ls_file TYPE file_table,
+         lv_rc   TYPE i.
+
+  CALL METHOD cl_gui_frontend_services=>file_open_dialog
+    CHANGING
+      file_table = lt_file
+      rc         = lv_rc.
+
+  READ TABLE lt_file INTO ls_file INDEX 1.
+  IF sy-subrc = 0.
+    c_file = ls_file.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_EXCEL_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM get_excel_data .
+
+  DATA: lt_excel TYPE TABLE OF alsmex_tabline,
+        ls_excel LIKE LINE OF lt_excel,
+        ls_check LIKE ls_excel.
+
+  CALL FUNCTION 'ALSM_EXCEL_TO_INTERNAL_TABLE'
+    EXPORTING
+      filename                = pa_file
+      i_begin_col             = 1     "Start column
+      i_begin_row             = 2     "Start row( 1 Row Column Name )
+      i_end_col               = 20    "max Field
+      i_end_row               = 1000  "max row
+    TABLES
+      intern                  = lt_excel
+    EXCEPTIONS
+      inconsistent_parameters = 1
+      upload_ole              = 2
+      OTHERS                  = 3.
+  IF sy-subrc <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+  LOOP AT lt_excel INTO ls_excel.
+
+
+    READ TABLE lt_excel INTO ls_check WITH KEY row = ls_excel-row col = '10'.
+
+    IF ls_check-value = 'X'.
+
+      CASE ls_excel-col.
+        WHEN '1'.
+          gs_data-ponum = ls_excel-value.
+        WHEN '2'.
+          gs_data-podat = ls_excel-value.
+        WHEN '3'.
+          gs_data-venid = ls_excel-value.
+        WHEN '4'.
+          gs_data-dudat = ls_excel-value.
+        WHEN '5'.
+          gs_data-stext = ls_excel-value.
+        WHEN '6'.
+          gs_data-curky = ls_excel-value.
+        WHEN '7'.
+          gs_data-rgdat = ls_excel-value.
+        WHEN '8'.
+          gs_data-rgtor = ls_excel-value.
+        WHEN '10'.
+          gs_data-hflag = ls_excel-value.
+      ENDCASE.
+
+    ELSE.
+
+      CASE ls_excel-col.
+        WHEN '1'.
+          gs_data-ponum = ls_excel-value.
+        WHEN '2'.
+          gs_data-itnum = ls_excel-value.
+        WHEN '3'.
+          gs_data-pomnr = ls_excel-value.
+        WHEN '4'.
+          gs_data-amount = ls_excel-value.
+        WHEN '5'.
+          gs_data-meins = ls_excel-value.
+        WHEN '6'.
+          gs_data-plant = ls_excel-value.
+        WHEN '7'.
+          gs_data-poprc = ls_excel-value.
+        WHEN '8'.
+          gs_data-curky = ls_excel-value.
+        WHEN '9'.
+          gs_data-del = ls_excel-value.
+        WHEN '11'.
+          gs_data-iflag = ls_excel-value.
+      ENDCASE.
+
+    ENDIF.
+    CLEAR :  ls_excel, ls_check.
+
+    AT END OF row.
+      APPEND gs_data TO gt_data.
+      CLEAR gs_data.
+    ENDAT.
+    CLEAR ls_excel.
+  ENDLOOP.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_BDC
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM set_bdc .
+
+  DATA : ls_data LIKE gs_data.
+  DATA : lv_ponum   LIKE ztsspoh-ponum,
+         lv_process TYPE c LENGTH 1.
+  CLEAR : gt_bdc, gs_bdc.
+
+  DATA : ls_params TYPE ctu_params.
+  DATA : lt_message TYPE TABLE OF  bdcmsgcoll.
+
+  PERFORM bdc_dynpro_set USING 'SAPMZSSMM01' '0100' 'X'.
+  PERFORM bdc_field USING 'BDC_OKCODE' 'CREATE'.
+
+
+  DATA : lv_end_of(1).
+
+  ls_params-dismode = 'N'.
+  ls_params-racommit = 'X'.
+
+  LOOP AT gt_data INTO ls_data.
+*    IF ls_data-iflag = 'E'.
+*
+*    ELSE.
+*      ls_data-light = '1'.
+*    ENDIF.
+*    AT END OF hflag.
+*      IF ls_data-hflag IS NOT INITIAL.
+*        lv_end_of = 'H'.
+*      ELSE.
+*        lv_end_of = 'I'.
+*      ENDIF.
+*    ENDAT.
+
+    IF ls_data-hflag = 'X'.
+      lv_end_of = 'H'.
+      PERFORM bdc_dynpro_set USING 'SAPMZSSMM01' '0200' 'X'.
+      PERFORM bdc_field USING 'ZSSSMM0103-PODAT' ls_data-podat.
+      PERFORM bdc_field USING 'ZSSSMM0103-DUDAT' ls_data-dudat.
+      PERFORM bdc_field USING 'ZSSSMM0103-VENID' ls_data-venid.
+      PERFORM bdc_field USING 'ZSSSMM0103-RGTOR' ls_data-rgtor.
+      PERFORM bdc_field USING 'ZSSSMM0103-STEXT' ls_data-stext.
+    ELSE.
+      IF ls_data-del = 'X'. CONTINUE. ENDIF.
+      IF ls_data-iflag = 'E'. lv_end_of = 'I'. ENDIF.
+
+      PERFORM bdc_field USING 'BDC_OKCODE' 'I_ADD'.
+      PERFORM bdc_dynpro_set USING 'SAPMZSSMM01' '0210' 'X'.
+*      PERFORM bdc_field USING 'ZSSSMM0104-ITNUM'  ls_data-itnum.
+      PERFORM bdc_field USING 'ZSSSMM0104-POMNR'  ls_data-pomnr.
+      PERFORM bdc_field USING 'ZSSSMM0104-AMOUNT' ls_data-amount.
+*      PERFORM bdc_field USING 'ZSSSMM0104-POPRC'  ls_data-poprc.
+      PERFORM bdc_field USING 'BDC_OKCODE' 'SAVE'.
+      PERFORM bdc_dynpro_set USING 'SAPMZSSMM01' '0200' 'X'.
+    ENDIF.
+
+
+    IF lv_end_of = 'I'.
+      PERFORM bdc_field USING 'BDC_OKCODE' 'ORDER'.
+*      BREAK-POINT.
+      CLEAR : lv_end_of.
+    ELSE.
+      CLEAR : lv_end_of.
+    ENDIF.
+
+
+    AT LAST.
+      PERFORM bdc_dynpro_set USING 'SAPMZSSMM01' '0200' 'X'.
+      PERFORM bdc_field USING 'BDC_OKCODE' '/ECANC'.
+    ENDAT.
+
+  ENDLOOP.
+
+
+  CALL TRANSACTION 'ZSSMM01'
+  USING gt_bdc
+        MESSAGES INTO lt_message
+  OPTIONS FROM ls_params.
+
+*              MODE 'A'. "A, E, N
+  MESSAGE i999(zmcss) WITH 'Success or Fail : ' sy-subrc.
+*  WRITE : 'Success or Fail: ',  sy-subrc.
+
+
+*  LOOP AT gt_data INTO ls_data.
+*    REFRESH gt_bdc.
+*    CLEAR : gs_bdc.
+*
+*    IF ls_data-iflag = 'E'.
+*      ls_data-light = '2'.
+*    ELSE.
+*      ls_data-light = '1'.
+*    ENDIF.
+*
+*
+*
+*    " ==== 헤더 로직 ====
+*    IF ls_data-hflag = 'X'.
+**      lv_process = ''.
+*      PERFORM bdc_field USING 'ZSSSMM0103-PODAT' ls_data-podat.
+*      PERFORM bdc_field USING 'ZSSSMM0103-DUDAT' ls_data-dudat.
+*      PERFORM bdc_field USING 'ZSSSMM0103-VENID' ls_data-venid.
+*      PERFORM bdc_field USING 'ZSSSMM0103-RGTOR' ls_data-rgtor.
+*      PERFORM bdc_field USING 'ZSSSMM0103-STEXT' ls_data-stext.
+*
+*
+*    ENDIF.
+*    IF ls_data-hflag IS INITIAL.
+*      " ==== item 추가 로직 ====
+**      PERFORM bdc_field USING 'BDC_OKCODE' 'I_ADD'.
+**      CLEAR gs_bdc.
+**      gs_bdc-program = 'SAPMZSSMM01'.
+**      gs_bdc-dynpro = '0210'.
+**      gs_bdc-dynbegin = 'X'.
+**      APPEND gs_bdc TO gt_bdc.
+*
+*      PERFORM bdc_field USING 'ZSSSMM0104-ITNUM'  ls_data-itnum.
+*      PERFORM bdc_field USING 'ZSSSMM0104-POMNR'  ls_data-pomnr.
+*      PERFORM bdc_field USING 'ZSSSMM0104-AMOUNT' ls_data-amount.
+*      PERFORM bdc_field USING 'ZSSSMM0104-POPRC'  ls_data-poprc.
+*      PERFORM bdc_field USING 'BDC_OKCODE' 'SAVE'.
+*
+**      " 200번 스크린으로 다시 돌아감
+*      CLEAR gs_bdc.
+*      gs_bdc-program = 'SAPMZSSMM01'.
+*      gs_bdc-dynpro = '0200'.
+*      gs_bdc-dynbegin = 'X'.
+*      APPEND gs_bdc TO gt_bdc.
+*
+*        PERFORM bdc_field USING 'BDC_OKCODE' 'I_ADD'.
+*        CLEAR gs_bdc.
+*        gs_bdc-program = 'SAPMZSSMM01'.
+*        gs_bdc-dynpro = '0210'.
+*        gs_bdc-dynbegin = 'X'.
+*        APPEND gs_bdc TO gt_bdc.
+*
+*      IF ls_data-iflag = 'E'.
+*        PERFORM bdc_field USING 'BDC_OKCODE' 'ORDER'.
+*        CLEAR : ls_data.
+*        lv_process = 'X'.
+*      ELSE.
+**         CONTINUE.
+*      ENDIF.
+*    ENDIF.
+*
+*    "=== BDC ====
+*    AT END OF hflag .
+*      IF ls_data-hflag IS NOT INITIAL.
+*
+*        PERFORM bdc_field USING 'BDC_OKCODE' 'I_ADD'.
+*        CLEAR gs_bdc.
+*        gs_bdc-program = 'SAPMZSSMM01'.
+*        gs_bdc-dynpro = '0210'.
+*        gs_bdc-dynbegin = 'X'.
+*        APPEND gs_bdc TO gt_bdc.
+*
+*      ELSE.
+*
+*      CALL TRANSACTION 'ZSSMM01'
+*        USING gt_bdc MODE 'A'. "A, E, N
+*      WRITE : 'Success or Fail: ',  sy-subrc.
+*
+*      clear gt_bdc.
+*      ENDIF.
+*    ENDAT.
+*
+*    CLEAR : ls_data.
+*  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  BDC_FIELD
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0276   text
+*      -->P_0277   text
+*----------------------------------------------------------------------*
+FORM bdc_field  USING    VALUE(p_nam)
+                         VALUE(p_val).
+
+  CLEAR gs_bdc.
+  gs_bdc-fnam = p_nam.
+  gs_bdc-fval = p_val.
+  APPEND gs_bdc TO gt_bdc.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_ALV
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0038   text
+*      <--P_GO_CON  text
+*      <--P_GO_ALV  text
+*----------------------------------------------------------------------*
+FORM create_alv USING VALUE(p_con) TYPE c
+                 CHANGING  co_con TYPE REF TO cl_gui_custom_container
+                           co_alv TYPE REF TO cl_gui_alv_grid.
+
+  IF co_con IS NOT INITIAL. RETURN. ENDIF.
+
+  CREATE OBJECT co_con
+    EXPORTING
+*     parent                      =
+      container_name              = p_con
+*     style                       =
+*     lifetime                    = lifetime_default
+*     repid                       =
+*     dynnr                       =
+*     no_autodef_progid_dynnr     =
+    EXCEPTIONS
+      cntl_error                  = 1
+      cntl_system_error           = 2
+      create_error                = 3
+      lifetime_error              = 4
+      lifetime_dynpro_dynpro_link = 5
+      OTHERS                      = 6.
+  IF sy-subrc <> 0.
+    " &에 대한 시스템 오류입니다 담당자 &에게 문의하세요
+    MESSAGE a999(zmcss) WITH '시스템 오류입니다. 담당자에게 문의하세요'.
+    RETURN.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT co_alv
+    EXPORTING
+*     i_shellstyle      = 0
+*     i_lifetime        =
+      i_parent          = co_con
+*     i_appl_events     = space
+*     i_parentdbg       =
+*     i_applogparent    =
+*     i_graphicsparent  =
+*     i_name            =
+*     i_fcat_complete   = SPACE
+    EXCEPTIONS
+      error_cntl_create = 1
+      error_cntl_init   = 2
+      error_cntl_link   = 3
+      error_dp_create   = 4
+      OTHERS            = 5.
+
+  IF sy-subrc <> 0.
+    MESSAGE a999(zmcss) WITH '시스템 오류입니다. 담당자에게 문의하세요'.
+    RETURN.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0045   text
+*      <--P_GT_DATA  text
+*      <--P_GS_LAYO  text
+*      <--P_GT_FCAT  text
+*      <--P_GT_SORT  text
+*      <--P_GO_ALV  text
+*----------------------------------------------------------------------*
+FORM display_alv USING VALUE(p_name) TYPE c
+                  CHANGING ct_data
+                           cs_layo TYPE lvc_s_layo
+                           ct_fcat TYPE lvc_t_fcat
+                           ct_sort TYPE lvc_t_sort
+                           co_alv TYPE REF TO cl_gui_alv_grid.
+
+  CALL METHOD co_alv->set_table_for_first_display
+    EXPORTING
+      i_structure_name              = p_name
+*     is_variant                    =
+*     i_save                        =
+*     i_default                     = 'X'
+      is_layout                     = cs_layo
+    CHANGING
+      it_outtab                     = ct_data
+      it_fieldcatalog               = ct_fcat
+      it_sort                       = ct_sort
+*     it_filter                     =
+    EXCEPTIONS
+      invalid_parameter_combination = 1
+      program_error                 = 2
+      too_many_lines                = 3
+      OTHERS                        = 4.
+  IF sy-subrc <> 0.
+    MESSAGE a999(zmcss) WITH '시스템 오류입니다. 담당자에게 문의하세요'.
+    RETURN.
+  ENDIF.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_DEFAULT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM set_default .
+
+  gs_layo-cwidth_opt = 'X'.
+  gs_layo-zebra = 'X'.
+
+  gs_layo-excp_fname = 'LIGHT'.
+  gs_layo-excp_led = 'X'.
+
+  gs_layo-ctab_fname = 'IT_COL'.
+  gs_layo-info_fname = 'COLOR'.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CHECK_INVALID_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM check_invalid_data .
+
+  DATA : ls_data LIKE LINE OF gt_data,
+         ls_col  TYPE lvc_s_scol.
+
+  LOOP AT gt_data INTO ls_data.
+    IF ls_data-del = 'X'.
+
+      ls_data-light = '1'.
+      ls_col-fname = 'PONUM'.
+      ls_col-color-int = 1.
+      ls_col-color-inv = 1.
+      ls_col-color-col = 6.
+      APPEND ls_col TO ls_data-it_col.
+      ls_col-fname = 'DEL'.
+      ls_col-color-int = 1.
+      ls_col-color-inv = 1.
+      ls_col-color-col = 6.
+      APPEND ls_col TO ls_data-it_col.
+    ENDIF.
+    MODIFY gt_data FROM ls_data.
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  BDC_DYNPRO_SET
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0292   text
+*      -->P_0293   text
+*      -->P_0294   text
+*----------------------------------------------------------------------*
+FORM bdc_dynpro_set  USING    VALUE(p_prog)
+                              VALUE(p_dynp)
+                              VALUE(p_begin).
+
+
+  CLEAR : gs_bdc.
+  gs_bdc-program = p_prog.
+  gs_bdc-dynpro = p_dynp.
+  gs_bdc-dynbegin = p_begin.
+  APPEND gs_bdc TO gt_bdc.
+
+
+ENDFORM.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750
