@@ -3,13 +3,13 @@
 <img src="https://github.com/user-attachments/assets/7871264e-4283-483e-95af-eeea7d27b743" width="700" />
 
 - Test용 SAP_VENDOR_DATA.xlsx 파일 업로드
-<img src="https://github.com/user-attachments/assets/6a6ac8c1-2b75-42d1-a133-2c4bf0c54981" width="700" />
+  - <img src="https://github.com/user-attachments/assets/6a6ac8c1-2b75-42d1-a133-2c4bf0c54981" width="700" />
 - 업로드 후 F8(실행)
-<img src="https://github.com/user-attachments/assets/c1c47551-8a75-402e-83ab-9133e881662b" width="700" />
+  - <img src="https://github.com/user-attachments/assets/c1c47551-8a75-402e-83ab-9133e881662b" width="700" />
 - BDC로 벤더 등록 후 확인 (벤더 마스터 프로그램으로 이동)
-<img src="https://github.com/user-attachments/assets/a0c5405a-af79-49ab-ab3e-ca61a7033457" width="700" />
+  - <img src="https://github.com/user-attachments/assets/a0c5405a-af79-49ab-ab3e-ca61a7033457" width="700" />
 - 성공!
-<img src="https://github.com/user-attachments/assets/82ce43d9-c995-4dd4-a1e8-d194ad796949" width="700" />
+  - <img src="https://github.com/user-attachments/assets/82ce43d9-c995-4dd4-a1e8-d194ad796949" width="700" />
 
 ## 개요
 
