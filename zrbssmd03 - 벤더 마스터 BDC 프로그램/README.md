@@ -1,6 +1,7 @@
 # BDC Excel Upload & Vendor 등록
 
 <img src="https://github.com/user-attachments/assets/7871264e-4283-483e-95af-eeea7d27b743" width="700" />
+
 - Test용 SAP_VENDOR_DATA.xlsx 파일 업로드
 <img src="https://github.com/user-attachments/assets/6a6ac8c1-2b75-42d1-a133-2c4bf0c54981" width="700" />
 - 업로드 후 F8(실행)
