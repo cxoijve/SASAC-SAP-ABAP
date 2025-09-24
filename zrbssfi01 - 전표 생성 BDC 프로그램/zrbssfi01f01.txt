@@ -1,0 +1,534 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZRBSSFI01F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  INITIALIZATION
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM INITIALIZATION .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  AT_SELECTION_SCREEN_OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM AT_SELECTION_SCREEN_OUTPUT .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  AT_SELECTION_SCREEN
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM AT_SELECTION_SCREEN .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  START_OF_SELECTION
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM START_OF_SELECTION .
+  DATA: LT_ALSMEX TYPE TABLE OF ALSMEX_TABLINE,
+        LT_DFIES  TYPE TABLE OF DFIES.
+
+
+
+  CALL FUNCTION 'ALSM_EXCEL_TO_INTERNAL_TABLE'
+    EXPORTING
+      FILENAME                = PA_FILE  " 받아온 파일 "
+      I_BEGIN_COL             = 1        " 시작 할 열번호 "
+      I_BEGIN_ROW             = 2        " 시작 할 행번호 "
+      I_END_COL               = 256      " 명시한 필드갯수 "
+      I_END_ROW               = 100000   " 최대 행갯수 "
+    TABLES
+      INTERN                  = LT_ALSMEX " 해당 테이블에 값 넣기. "
+    EXCEPTIONS
+      INCONSISTENT_PARAMETERS = 1
+      UPLOAD_OLE              = 2
+      OTHERS                  = 3.
+
+
+  CALL FUNCTION 'DDIF_FIELDINFO_GET'
+    EXPORTING
+      TABNAME   = 'ZSSSFI0104'
+    TABLES
+      DFIES_TAB = LT_DFIES.
+
+
+  LOOP AT LT_ALSMEX INTO DATA(LS_ALSMEX).
+    AT NEW ROW.
+      CLEAR GS_EXCEL.
+    ENDAT.
+
+    ASSIGN COMPONENT LS_ALSMEX-COL OF STRUCTURE GS_EXCEL TO FIELD-SYMBOL(<FS_FIELD>).
+
+    READ TABLE LT_DFIES INTO DATA(LS_DFIES) INDEX LS_ALSMEX-COL.
+
+    IF SY-SUBRC EQ 0.
+
+      CASE LS_DFIES-INTTYPE.
+*        WHEN 'P'.
+*          REPLACE ALL OCCURRENCES OF ',' IN LS_ALSMEX-VALUE  WITH SPACE.
+        WHEN 'D'.
+          REPLACE ALL OCCURRENCES OF '.' IN LS_ALSMEX-VALUE WITH ''.
+*          REPLACE ALL OCCURRENCES OF '-' IN LS_ALSMEX-VALUE  WITH SPACE.
+        WHEN OTHERS.
+
+      ENDCASE.
+
+      DATA: LV_CURR_VAL TYPE P LENGTH 15 DECIMALS 2.
+
+***      " 여기에 CURR 타입 처리 추가
+***      CASE LS_DFIES-DATATYPE.
+***        WHEN 'CURR' OR 'DEC'.
+***          DATA(LV_RAW_STR) = LS_ALSMEX-VALUE.
+***          REPLACE ALL OCCURRENCES OF ',' IN LV_RAW_STR WITH ''.
+***          CONDENSE LV_RAW_STR.
+***          IF LV_RAW_STR IS NOT INITIAL.
+***            LV_CURR_VAL = LV_RAW_STR.
+***            " 반드시 DECIMALS 만큼 나누기 (예: 100)
+***            LV_CURR_VAL = LV_CURR_VAL / 100.
+***            LS_ALSMEX-VALUE = LV_CURR_VAL.
+***          ENDIF.
+***      ENDCASE.
+
+      IF LS_DFIES-CONVEXIT IS NOT INITIAL.
+        DATA(FUNCTION_NAME) = 'CONVERSION_EXIT_' && LS_DFIES-CONVEXIT && '_INPUT'.
+
+        CALL FUNCTION FUNCTION_NAME
+          EXPORTING
+            INPUT  = LS_ALSMEX-VALUE
+          IMPORTING
+            OUTPUT = LS_ALSMEX-VALUE.
+
+      ENDIF.
+
+
+
+      <FS_FIELD> = LS_ALSMEX-VALUE.
+    ENDIF.
+
+
+    AT END OF ROW.
+      APPEND GS_EXCEL TO GT_EXCEL.
+    ENDAT.
+
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_FILE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_PA_FILE  text
+*----------------------------------------------------------------------*
+FORM GET_FILE  CHANGING PA_FILE.
+
+
+  DATA LV_STRING TYPE STRING.
+
+  CALL METHOD CL_GUI_FRONTEND_SERVICES=>DIRECTORY_BROWSE
+    EXPORTING
+      WINDOW_TITLE    = 'TEST'              " Title of Browsing Window
+*     INITIAL_FOLDER  = PA_FUP                 " Start Browsing Here
+    CHANGING
+      SELECTED_FOLDER = LV_STRING                 " Folder Selected By User
+*        EXCEPTIONS
+*     CNTL_ERROR      = 1                " Control error
+*     ERROR_NO_GUI    = 2                " No GUI available
+*     NOT_SUPPORTED_BY_GUI = 3                " GUI does not support this
+*     OTHERS          = 4
+    .
+
+  PA_FILE = LV_STRING.
+
+  CALL FUNCTION 'WS_FILENAME_GET'
+    EXPORTING
+      MASK             = ' '
+      MODE             = ' '
+      TITLE            = ' '
+    IMPORTING
+      FILENAME         = PA_FILE
+    EXCEPTIONS
+      INV_WINSYS       = 1
+      NO_BATCH         = 2
+      SELECTION_CANCEL = 3
+      SELECTION_ERROR  = 4
+      OTHERS           = 5.
+
+  IF SY-SUBRC = 0.
+    MESSAGE '엑셀 파일을 선택하셨습니다.' TYPE 'S'.
+  ELSE.
+    MESSAGE '선택한 파일을 확인해주세요.' TYPE 'I'.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  BDC
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM BDC USING
+     VALUE(P_SCREEN)
+     VALUE(P_NAME)
+     VALUE(P_VALUE).
+
+  DATA LS_BDCDATA TYPE BDCDATA.
+  DATA : LV_VALUE LIKE LS_BDCDATA-FVAL.
+
+  WRITE P_VALUE TO LV_VALUE LEFT-JUSTIFIED.
+
+  IF P_SCREEN EQ 'X'.
+    LS_BDCDATA-DYNBEGIN = P_SCREEN.  " BDC screen start "
+    LS_BDCDATA-PROGRAM  = P_NAME.    " BDC Program "
+    LS_BDCDATA-DYNPRO   = LV_VALUE.   " BDC Screen Number "
+  ELSE.
+    LS_BDCDATA-FNAM     = P_NAME.    " Field Name "
+    LS_BDCDATA-FVAL     = LV_VALUE. " BDC Field Value "
+  ENDIF.
+
+  APPEND LS_BDCDATA TO GT_BDC.
+
+  CLEAR LS_BDCDATA.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_ALV_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CREATE_ALV_0100 .
+
+  " 객체가 있을 시 미생성
+  IF GO_CON IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON
+    EXPORTING
+      CONTAINER_NAME              = 'CON'
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV
+    EXPORTING
+      I_PARENT          = GO_CON
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_ALV_0100 .
+
+***  IF GT_FCAT IS INITIAL.
+***    MESSAGE '필드 카탈로그가 비어있음. 구조체 이름 확인 필요' TYPE 'E'.
+***  ENDIF.
+
+  CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+      I_STRUCTURE_NAME = 'ZSSSFI0104'
+      IS_LAYOUT        = GS_LAYO
+    CHANGING
+      IT_OUTTAB        = GT_EXCEL
+      IT_FIELDCATALOG  = GT_FCAT
+      IT_SORT          = GT_SORT
+*  EXCEPTIONS
+*     INVALID_PARAMETER_COMBINATION = 1
+*     PROGRAM_ERROR    = 2
+*     TOO_MANY_LINES   = 3
+*     OTHERS           = 4
+    .
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_LAYO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_LAYO .
+  CLEAR GS_LAYO.
+  GS_LAYO-ZEBRA = 'X'.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_SORT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_SORT .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_FCAT .
+
+  CLEAR: GT_FCAT.
+
+  PERFORM FCAT USING:
+        'JENUM' '1' '전표번호',
+        'FYEAR' '2' '회계연도',
+        'JTYPE' '3' '전표 유형',
+        'STEXT' '4' '비고',
+        'CURKY' '5' '통화 키',
+        'RGDAT' '6' '등록일',
+        'RGTOR' '7' '등록자',
+        'REV' '8' '역분개 여부',
+        'RRSON' '9' '역분개 사유',
+        'RJNUM' '10' '역분개 전표번호',
+        'JESEQ' '11' '전표 아이템 번호',
+        'DEBIT' '12' '차변',
+        'CREDIT' '13' '대변',
+        'GLACC' '14' 'G/L 계정',
+        'ACTNM' '15' 'G/L 계정명',
+        'ACTTY' '16' 'G/L 계정 유형',
+        'EFLAG' '17' 'EFLAG',
+        'HFLAG' '18' 'HFLAG'.
+
+  CLEAR GS_FCAT.
+
+  LOOP AT GT_FCAT INTO GS_FCAT.
+    IF GS_FCAT-FIELDNAME = 'JESEQ'.
+      GS_FCAT-LZERO = 'X'.
+    ELSEIF GS_FCAT-FIELDNAME = 'ACTNM'
+      OR GS_FCAT-FIELDNAME = 'ACTTY'
+      OR GS_FCAT-FIELDNAME = 'REV'
+      OR GS_FCAT-FIELDNAME = 'RRSON'
+      OR GS_FCAT-FIELDNAME = 'RJNUM' .
+      GS_FCAT-NO_OUT = 'X'.
+    ELSEIF GS_FCAT-FIELDNAME = 'DEBIT' OR GS_FCAT-FIELDNAME = 'CREDIT'.
+      GS_FCAT-CFIELDNAME = 'CURRENCY'.
+    ENDIF.
+
+
+    MODIFY GT_FCAT FROM GS_FCAT.
+  ENDLOOP.
+
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  FCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0375   text
+*      -->P_0376   text
+*      -->P_0377   text
+*----------------------------------------------------------------------*
+FORM FCAT  USING    VALUE(P_FIELDNAME)
+                    VALUE(P_COLPOS)
+                    VALUE(P_COLTEXT).
+
+  DATA LS_FCAT LIKE LINE OF GT_FCAT.
+
+  " 전표번호
+  LS_FCAT-FIELDNAME = P_FIELDNAME.
+  LS_FCAT-COL_POS = P_COLPOS.
+  LS_FCAT-COLTEXT = P_COLTEXT.
+  APPEND LS_FCAT TO GT_FCAT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_BDC
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_BDC .
+
+  DATA: LV_DEBIT  TYPE STRING,
+        LV_CREDIT TYPE STRING.
+
+  CLEAR GS_EXCEL.
+
+
+
+
+  LOOP AT GT_EXCEL INTO GS_EXCEL.
+
+
+
+*    CLEAR GT_BDC.
+*    AT FIRST.
+
+*      CONTINUE.
+*    ENDAT.
+
+*------------ 정보 입력 후 등록 -------------*
+    " 헤더 추가
+    IF GS_EXCEL-HFLAG = 'X'.
+*------------ 100번에서 등록 클릭 -------------*
+      PERFORM BDC USING:
+                    'X' 'SAPMZSSFI01' '0100',
+*                  ' ' 'BDC_CURSOR'  'ZSSSFI0101-RGDATB',
+                    ' ' 'BDC_OKCODE'  '=REGIST'.
+*                  ' ' 'ZSSSFI0101-RGDATB'  '2025.09.01',
+*                  ' ' 'ZSSSFI0101-RGDATE'  '2025.09.24'.
+
+      PERFORM BDC USING:
+                    'X' 'SAPMZSSFI01' '0200',
+*                  ' ' 'BDC_CURSOR'  'ZSSSFI0102-JTYPE',
+                    ' ' 'BDC_OKCODE'  '=BADD',
+                    ' ' 'ZSSSFI0102-RGDAT'    GS_EXCEL-RGDAT,
+                    ' ' 'ZSSSFI0102-JTYPE'    GS_EXCEL-JTYPE,
+                    ' ' 'ZSSSFI0102-RGTOR'    GS_EXCEL-RGTOR.
+
+*      CLEAR GS_EXCEL.
+      CONTINUE.
+    ENDIF.
+
+    " 아이템 추가
+
+    IF GS_EXCEL-HFLAG IS INITIAL.
+
+
+
+      " 엔터
+      PERFORM BDC USING:
+                    'X' 'SAPMZSSFI01' '0210',
+                    ' ' 'BDC_OKCODE'    '=CHECK',
+                    ' ' 'BDC_SUBSCR'    'SAPMZSSFI01                             0201SUB',
+*                  ' ' 'BDC_CURSOR'  'ZSSSFI0103-DEBIT',
+                    ' ' 'ZSSSFI0103-GLACC'    GS_EXCEL-GLACC.
+*                    ' ' 'ZSSSFI0103-DEBIT'    LV_DEBIT.
+
+      IF GS_EXCEL-DEBIT IS INITIAL.
+        MOVE GS_EXCEL-CREDIT TO LV_CREDIT.
+        REPLACE ALL OCCURRENCES OF REGEX '[^0-9]' IN LV_CREDIT WITH ''.
+        PERFORM BDC USING ' ' 'ZSSSFI0103-CREDIT' LV_CREDIT.
+
+      ELSE.
+        MOVE GS_EXCEL-DEBIT TO LV_DEBIT.
+        REPLACE ALL OCCURRENCES OF REGEX '[^0-9]' IN LV_DEBIT WITH ''.
+        PERFORM BDC USING ' ' 'ZSSSFI0103-DEBIT' LV_DEBIT.
+      ENDIF.
+
+      " 저장
+      PERFORM BDC USING:
+                    'X' 'SAPMZSSFI01' '0210',
+                    ' ' 'BDC_OKCODE'  '=SAVE'.
+**                  ' ' 'BDC_CURSOR'  'ZSSSFI0103-GLACC',
+*                    ' ' 'ZSSSFI0103-GLACC'    GS_EXCEL-GLACC,
+*                    ' ' 'ZSSSFI0103-DEBIT'    LV_DEBIT.
+
+      " 아이템의 플래그가 x아닐때
+      IF GS_EXCEL-EFLAG IS INITIAL.
+        " 팝업 열기
+        PERFORM BDC USING:
+                      'X' 'SAPMZSSFI01' '0200',
+*                  ' ' 'BDC_CURSOR'  'ZSSSFI0102-JTYPE',
+                      ' ' 'BDC_OKCODE'  '=BADD'.
+
+
+      ENDIF.
+
+      " 아이템의 플래그가 x일 때
+
+*------------ 최종 전표 생성 -------------*
+      IF GS_EXCEL-EFLAG = 'X'.
+
+        PERFORM BDC USING:
+                      'X' 'SAPMZSSFI01' '0200',
+*                  ' ' 'BDC_CURSOR'  'ZSSSFI0102-RGDAT',
+                      ' ' 'BDC_OKCODE'  '=INSERT'.
+*                      ' ' 'ZSSSFI0102-RGDAT'  GS_EXCEL-RGDAT,
+*                      ' ' 'ZSSSFI0102-JTYPE'  GS_EXCEL-JTYPE,
+*                      ' ' 'ZSSSFI0102-RGTOR'  GS_EXCEL-RGTOR.
+
+        CALL TRANSACTION 'ZSSFI01' " 실행할 프로그램
+          USING GT_BDC
+            MODE 'A' "A, E, N
+         MESSAGES INTO GT_BDCMSG.
+
+        CLEAR GT_BDC.
+
+        DATA: LV_MESSAGE TYPE CHAR100.
+*        LOOP AT GT_BDCMSG.
+*
+*          CALL FUNCTION 'MESSAGE_TEXT_BUILD'
+*            EXPORTING
+*              MSGID               = GT_BDCMSG-MSGID
+*              MSGNR               = GT_BDCMSG-MSGNR
+*              MSGV1               = GT_BDCMSG-MSGV1
+*              MSGV2               = GT_BDCMSG-MSGV2
+*              MSGV3               = GT_BDCMSG-MSGV3
+*              MSGV4               = GT_BDCMSG-MSGV4
+*            IMPORTING
+*              MESSAGE_TEXT_OUTPUT = LV_MESSAGE.
+*
+**          WRITE: LV_MESSAGE.
+*        ENDLOOP.
+
+
+**  WRITE SY-SUBRC.
+      ENDIF.
+    ENDIF.
+
+  ENDLOOP.
+
+
+ENDFORM.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

@@ -1,0 +1,360 @@
+*&---------------------------------------------------------------------*
+*&  Include           MZSSFI01I01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Module  EXIT  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE EXIT INPUT.
+
+  CASE OK_CODE.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+
+    WHEN 'CANC'.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0100 INPUT.
+
+  CASE OK_CODE.
+
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'ENTER'.
+
+      " 등록자명 취득
+      PERFORM GET_RGTOR_NAME USING ZSSSFI0101-RGTOR
+                             CHANGING ZSSSFI0101-RGTOR_T.
+
+      PERFORM CHECK_RGTOR_DEPID USING ZSSSFI0101-RGTOR.
+
+
+    WHEN 'HINFO'.
+
+      PERFORM CHANGE_ALV_MODE_0100.
+
+    WHEN 'UPDATE'.
+
+      LOOP AT GT_HDATA INTO GS_HDATA.
+        " JENUM 기준 업데이트, STEXT만 반영
+        UPDATE ZTSSJEH SET STEXT = GS_HDATA-STEXT
+          WHERE JENUM = GS_HDATA-JENUM.
+        IF SY-SUBRC <> 0.
+          MESSAGE 'DB 갱신 중 오류 발생' TYPE 'E'.
+        ENDIF.
+      ENDLOOP.
+
+      COMMIT WORK.
+
+
+
+    WHEN 'SEARCH'.
+
+      " 회계전표번호가 입력되었을 경우, 회계연도와 무조건 함께 오도록
+      IF ZSSSFI0101-FYEAR IS INITIAL AND ZSSSFI0101-JENUM IS NOT INITIAL.
+*        MESSAGE
+        RETURN.
+      ENDIF.
+
+      " 전표 조회
+      PERFORM SET_DATA_0100.
+
+      PERFORM GET_DATA.
+
+    WHEN 'REGIST'.
+      " 전표 생성
+      PERFORM SET_DATA_0200.
+
+      CALL SCREEN 0200.
+
+    WHEN 'DETAIL'.
+      " 전표 상세조회
+      PERFORM SEL_ROWS_0100.
+
+      PERFORM SET_DATA_0300.
+
+      CALL SCREEN 0300.
+
+    WHEN 'INIT'.
+      " 새로고침
+      CLEAR: ZSSSFI0101, GT_HDATA.
+
+
+      PERFORM SET_INIT.
+
+    WHEN 'ZXLUP'. " 엑셀 업로드 버튼 클릭 시 동작
+      PERFORM OPEN_EXCEL_UPLOAD_POPUP.
+
+      " 팝업 띄우기
+**      CALL SCREEN 110 STARTING AT 5 5 ENDING AT 120 30.
+      " 팝업 말고 엑셀업로드 프로그램을 만들어서 화면을 콜트랜잭션 할까
+      CALL TRANSACTION 'ZRBSSFI01'.
+
+    WHEN OTHERS.
+
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0200  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0200 INPUT.
+*  TABSTRIP-ACTIVETAB = OK_CODE.
+
+  CASE OK_CODE.
+    WHEN 'BACK'.
+      CLEAR: ZSSSFI0102, GT_IDATA.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'ENTER'.
+
+      " 필수값 유효성 체크
+      IF ZSSSFI0102-RGTOR IS INITIAL OR
+         ZSSSFI0102-JTYPE IS INITIAL OR
+         ZSSSFI0102-RGDAT IS INITIAL.
+        MESSAGE S999(ZMCSS) WITH '등록자, 전표유형, 전기일을 모두 입력해 주세요.'
+         DISPLAY LIKE 'E'.
+        RETURN.
+      ENDIF.
+
+
+      PERFORM GET_RGTOR_NAME USING ZSSSFI0102-RGTOR
+                             CHANGING ZSSSFI0102-RGTOR_T.
+
+      PERFORM CHECK_RGTOR_DEPID USING ZSSSFI0102-RGTOR.
+
+
+
+
+    WHEN 'INSERT'.
+
+      " 채번 후 생성
+      PERFORM CHECK_DATA_0200 CHANGING GV_SUBRC.
+      IF GV_SUBRC = 4.
+        CLEAR GV_SUBRC.
+        RETURN.
+      ENDIF.
+
+      PERFORM INSERT_DATA.
+
+
+    WHEN 'CLEAR'.
+      " 초기화
+
+    WHEN 'BADD'.
+      IF ZSSSFI0102-RGTOR IS INITIAL
+        OR ZSSSFI0102-JTYPE IS INITIAL
+        OR ZSSSFI0102-RGDAT IS INITIAL.
+
+        MESSAGE S999(ZMCSS) WITH '등록자, 전표유형, 전기일을 모두 입력해 주세요.'
+              DISPLAY LIKE 'E'.
+        RETURN.
+      ENDIF.
+
+      CLEAR ZSSSFI0103.
+      ZSSSFI0103-CURKY = 'KRW'.
+
+      CALL SCREEN 210 STARTING AT 5 5 ENDING AT 120 30.
+
+
+    WHEN 'BEDIT'.
+      PERFORM CHANGE_ALV_MODE_0200.
+
+      LOOP AT GT_IDATA INTO GS_IDATA.
+        MODIFY GT_IDATA FROM GS_IDATA.
+        IF SY-SUBRC <> 0.
+          MESSAGE 'ALV 갱신 중 오류 발생' TYPE 'E'.
+        ENDIF.
+      ENDLOOP.
+
+
+
+    WHEN 'BDEL'.
+      " 라인아이템 삭제
+      DATA: LV_LINE2 TYPE I.
+
+      PERFORM SEL_ROWS_0200.
+
+      IF SY-SUBRC = 0.
+        " GT_IDATA에서 선택한 행 삭제
+        DELETE GT_IDATA INDEX GS_ROWS-INDEX.
+
+        " 필요시 COMMIT WORK 및 ALV 리프레시 수행
+*        PERFORM REFRESH_ALV.
+      ELSE.
+        MESSAGE S999(ZMCSS) WITH '선택한 데이터가 존재하지 않습니다.' DISPLAY LIKE 'E'.
+      ENDIF.
+
+    WHEN OTHERS.
+
+  ENDCASE.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0300  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0300 INPUT.
+
+  CASE OK_CODE.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'ENTER'.
+
+      " 등록자명 취득
+      PERFORM GET_RGTOR_NAME USING ZSSSFI0102-RGTOR
+                             CHANGING ZSSSFI0102-RGTOR_T.
+
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0101  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0101 INPUT.
+
+  CASE SY-UCOMM.
+    WHEN 'ENTER'.
+
+    WHEN 'SAVE'.
+
+    WHEN 'EDIT'.
+
+    WHEN 'DELETE'.
+
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0102  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0102 INPUT.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  EXIT_MODAL  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE EXIT_MODAL INPUT.
+
+  CASE OK_CODE.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+
+    WHEN 'CANC' OR 'CLOSE'.
+      LEAVE TO SCREEN 0.
+
+    WHEN OTHERS.
+
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0210  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0210 INPUT.
+
+  CASE OK_CODE.
+    WHEN 'SAVE'.
+*      GV_SUB = 'SAVE'.
+
+      " 입력된 정보 ALV로 넘기기
+      PERFORM SET_JEI_DATA.
+
+
+      " 차/대변 총 금액
+
+      DATA: LV_DEBIT2  TYPE ZSSSFI0103-DEBIT,
+            LV_CREDIT2 TYPE ZSSSFI0103-CREDIT.
+
+      CLEAR: LV_DEBIT2, LV_CREDIT2.
+      LOOP AT GT_IDATA INTO DATA(LS_IDATA).
+        LV_DEBIT2 = LV_DEBIT2 + LS_IDATA-DEBIT.
+        LV_CREDIT2 = LV_CREDIT2 + LS_IDATA-CREDIT.
+      ENDLOOP.
+
+      ZSSSFI0103-DEBIT = LV_DEBIT2.
+      ZSSSFI0103-CREDIT = LV_CREDIT2.
+
+*    IF SY-BINPT NE 'X'.
+      LEAVE TO SCREEN 0.
+*    ENDIF.
+*      SET SCREEN 0.
+
+    WHEN 'CLOSE'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'CHECK'.
+      " G/L 계정명 취득
+      PERFORM GET_GL_NAME USING ZSSSFI0103-GLACC
+                          CHANGING ZSSSFI0103-ACTNM.
+
+
+    WHEN OTHERS.
+
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0201  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0201 INPUT.
+
+  CASE SY-UCOMM.
+    WHEN 'ENTER'.
+
+    WHEN 'SAVE'.
+
+    WHEN 'EDIT'.
+
+    WHEN 'DELETE'.
+
+
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0110  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0110 INPUT.
+
+  CASE OK_CODE.
+    WHEN 'SAVE'.
+
+    WHEN 'CLOSE'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'CHECK'.
+
+
+    WHEN OTHERS.
+
+  ENDCASE.
+
+ENDMODULE.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

@@ -1,0 +1,43 @@
+*&---------------------------------------------------------------------*
+*&  Include           MZSSMD03C01
+*&---------------------------------------------------------------------*
+" CLASS
+CLASS LCL_EVENT_HANDLER DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS: ON_DOUBLE_CLICK
+      FOR EVENT DOUBLE_CLICK
+                  OF CL_GUI_ALV_GRID
+      IMPORTING ES_ROW_NO E_COLUMN.
+
+    METHODS DATA_CHANGED
+          FOR EVENT DATA_CHANGED OF CL_GUI_ALV_GRID
+      IMPORTING
+          ER_DATA_CHANGED
+          E_ONF4
+          E_ONF4_BEFORE
+          E_ONF4_AFTER.
+
+ENDCLASS.
+CLASS LCL_EVENT_HANDLER IMPLEMENTATION.
+  METHOD ON_DOUBLE_CLICK.
+*    MESSAGE i016(pn) WITH e_column-fieldname es_row_no-row_id.
+
+    PERFORM GET_DOUBLE_CLICK USING ES_ROW_NO E_COLUMN.
+  ENDMETHOD.
+
+  METHOD DATA_CHANGED.
+    PERFORM ALV_DATA_CHANGED
+          USING
+            ER_DATA_CHANGED
+            E_ONF4
+            E_ONF4_BEFORE
+            E_ONF4_AFTER.
+
+  ENDMETHOD.
+
+ENDCLASS.
+
+DATA: GO_EVENT TYPE REF TO LCL_EVENT_HANDLER.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

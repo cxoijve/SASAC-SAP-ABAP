@@ -1,0 +1,222 @@
+*&---------------------------------------------------------------------*
+*&  Include           MZSSMD03O01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0100 OUTPUT.
+  SET PF-STATUS 'S100'.
+  SET TITLEBAR 'T100'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_ALV_0100  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE SET_ALV_0100 OUTPUT.
+
+  PERFORM CREATE_ALV_0100.
+
+  PERFORM SET_LAYO.
+
+  PERFORM SET_SORT.
+
+  PERFORM SET_FCAT.
+
+  PERFORM SET_EVENT.
+
+  PERFORM EVENT_OPTION.
+
+  PERFORM DISPLAY_ALV_0100.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_ALV_0100 .
+
+  CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+*     I_BUFFER_ACTIVE =
+*     I_BYPASSING_BUFFER            =
+*     I_CONSISTENCY_CHECK           =
+*     I_STRUCTURE_NAME              =
+*     IS_VARIANT      =
+*     I_SAVE          =
+*     I_DEFAULT       = 'X'
+      IS_LAYOUT       = GS_LAYO
+*     IS_PRINT        =
+*     IT_SPECIAL_GROUPS             =
+*     IT_TOOLBAR_EXCLUDING          =
+*     IT_HYPERLINK    =
+*     IT_ALV_GRAPHICS =
+*     IT_EXCEPT_QINFO =
+*     IR_SALV_ADAPTER =
+    CHANGING
+      IT_OUTTAB       = GT_HDATA
+      IT_FIELDCATALOG = GT_FCAT
+      IT_SORT         = GT_SORT
+*     IT_FILTER       =
+*  EXCEPTIONS
+*     INVALID_PARAMETER_COMBINATION = 1
+*     PROGRAM_ERROR   = 2
+*     TOO_MANY_LINES  = 3
+*     OTHERS          = 4
+    .
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0200  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0200 OUTPUT.
+  SET PF-STATUS 'S200'.
+  SET TITLEBAR 'T200'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_ALV_0200  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE SET_ALV_0200 OUTPUT.
+
+  PERFORM CREATE_ALV_0200.
+
+  PERFORM SET_LAYO.
+
+  PERFORM SET_SORT.
+
+  PERFORM SET_FCAT_0200.
+
+  PERFORM SET_EVENT_0200.
+
+  PERFORM EVENT_OPTION_0200.
+
+  PERFORM DISPLAY_ALV_0200.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_DYNNR  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE SET_DYNNR OUTPUT.
+
+*  CASE TABSTRIP-ACTIVETAB.
+*    WHEN 'TAB1'.
+*      GV_DYNNR = '0101'. " 서브스크린 "
+*    WHEN 'TAB2'.
+*      GV_DYNNR = '0102'. " 서브스크린 "
+*    WHEN OTHERS.
+*      GV_DYNNR = '0101'.
+*      TABSTRIP-ACTIVETAB = 'TAB1'.
+*  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0300  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0300 OUTPUT.
+  SET PF-STATUS 'S300'.
+  SET TITLEBAR 'T300'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_ALV_0300  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE SET_ALV_0300 OUTPUT.
+  PERFORM CREATE_ALV_0300.
+  PERFORM SET_LAYO.
+  PERFORM SET_SORT.
+  PERFORM SET_FCAT_0300.
+  PERFORM DISPLAY_ALV_0300.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0101  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0101 OUTPUT.
+  SET PF-STATUS 'S101'.
+  SET TITLEBAR 'T101'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0102  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0102 OUTPUT.
+  SET PF-STATUS 'S102'.
+  SET TITLEBAR 'T102'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0210  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0210 OUTPUT.
+  SET PF-STATUS 'S210'.
+  SET TITLEBAR 'T210'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  MODIFY_SCREEN_0200  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE MODIFY_SCREEN_0200 OUTPUT.
+
+  IF GV_SUB = 'SAVE'.
+**    LOOP AT SCREEN.
+**      IF SCREEN-NAME = ''.
+**        SCREEN-INPUT = 0.
+**      ENDIF.
+**      IF SCREEN-NAME = ''.
+**        SCREEN-INPUT = 0.
+**      ENDIF.
+**      MODIFY SCREEN.
+**    ENDLOOP.
+  ENDIF.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  MODIFY_SCREEN_0100  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE MODIFY_SCREEN_0100 OUTPUT.
+  LOOP AT SCREEN.
+    IF SCREEN-NAME = 'B_BUTTON2'.
+      IF GV_FLAG = 'X'.
+        SCREEN-ACTIVE = 1.
+      ELSE.
+        SCREEN-ACTIVE = 0.
+      ENDIF.
+    ENDIF.
+    MODIFY SCREEN.
+  ENDLOOP.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0110  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0110 OUTPUT.
+  SET PF-STATUS 'S110'.
+  SET TITLEBAR 'T110'.
+ENDMODULE.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

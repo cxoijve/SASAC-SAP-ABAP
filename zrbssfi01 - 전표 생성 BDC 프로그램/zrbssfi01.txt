@@ -1,0 +1,53 @@
+*&---------------------------------------------------------------------*
+*& Report  ZRBSSFI01
+*&
+*&---------------------------------------------------------------------*
+*&
+*&
+*&---------------------------------------------------------------------*
+
+INCLUDE ZRBSSFI01TOP.
+INCLUDE ZRBSSFI01O01.
+INCLUDE ZRBSSFI01I01.
+INCLUDE ZRBSSFI01F01.
+
+INITIALIZATION.
+  PERFORM INITIALIZATION.
+*
+AT SELECTION-SCREEN OUTPUT.
+  PERFORM AT_SELECTION_SCREEN_OUTPUT.
+*
+  " Search Help // Selection Screen 안에서 취하는 액션
+
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR PA_FILE.
+  PERFORM GET_FILE CHANGING PA_FILE.
+*
+AT SELECTION-SCREEN.
+  PERFORM AT_SELECTION_SCREEN.
+*
+*
+START-OF-SELECTION.
+  PERFORM START_OF_SELECTION.
+
+
+  CALL SCREEN '0100'.
+
+*GUI Texts
+*----------------------------------------------------------
+* T100 --> 업로드된 엑셀 데이터 확인
+* T100 --> 업로드된 엑셀 데이터 확인
+
+
+*Selection texts
+*----------------------------------------------------------
+* PA_FILE         파일 이름
+
+
+*Messages
+*----------------------------------------------------------
+*
+* Message class: Hard coded
+*   엑셀 파일을 선택하셨습니다.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750
