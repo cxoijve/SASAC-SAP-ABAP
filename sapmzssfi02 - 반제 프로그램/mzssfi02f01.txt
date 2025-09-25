@@ -1,0 +1,485 @@
+*&---------------------------------------------------------------------*
+*&      Form  SET_LAYO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_LAYO .
+  CLEAR GS_LAYO.
+
+  GS_LAYO-CWIDTH_OPT = 'X'.
+  GS_LAYO-ZEBRA = 'X'.
+  GS_LAYO-SEL_MODE = 'A'.
+
+  CLEAR GS_LAYO2.
+
+  GS_LAYO2-CWIDTH_OPT = 'X'.
+  GS_LAYO2-ZEBRA = 'X'.
+  GS_LAYO2-SEL_MODE = 'A'.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_SORT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_SORT .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_FCAT .
+
+  CLEAR: GT_FCAT.
+
+  PERFORM FCAT USING:
+        'JENUM' '3' '전표번호',
+        'FYEAR' '4' '회계연도',
+        'IVNUM' '5' '송장 문서 번호',
+        'IVDAT' '6' '송장 검증일',
+        'TOPRC' '7' '총 금액',
+        'STEXT' '8' '비고',
+        'CURKY' '9' '통화 키',
+        'RGDAT' '10' '등록일',
+        'RGTOR' '11' '등록자',
+        'APNUM' '1' '지급 전표번호',
+        'APFYR' '2' '지급 회계연도'.
+
+  CLEAR GS_FCAT.
+
+  LOOP AT GT_FCAT INTO GS_FCAT.
+    IF GS_FCAT-FIELDNAME = 'TOPRC'.
+      GS_FCAT-CFIELDNAME = 'CURKY'.
+    ENDIF.
+
+    MODIFY GT_FCAT FROM GS_FCAT.
+  ENDLOOP.
+
+  CLEAR: GT_FCAT2.
+
+  PERFORM FCAT2 USING:
+        'JENUM' '3' '전표번호',
+        'FYEAR' '4' '회계연도',
+        'BINUM' '5' '청구 문서 번호',
+        'BIDAT' '6' '청구일',
+        'TOPRC' '7' '총 금액',
+        'STEXT' '8' '비고',
+        'CURKY' '9' '통화 키',
+        'RGDAT' '10' '등록일',
+        'RGTOR' '11' '등록자',
+        'ARNUM' '1' '수금 전표번호',
+        'ARFYR' '2' '수금 회계연도'.
+
+  CLEAR GS_FCAT2.
+
+  LOOP AT GT_FCAT2 INTO GS_FCAT2.
+    IF GS_FCAT2-FIELDNAME = 'TOPRC'.
+      GS_FCAT2-CFIELDNAME = 'CURKY'.
+    ENDIF.
+
+    MODIFY GT_FCAT2 FROM GS_FCAT2.
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  FCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0025   text
+*      -->P_0026   text
+*      -->P_0027   text
+*----------------------------------------------------------------------*
+FORM FCAT  USING    VALUE(P_FIELDNAME)
+                    VALUE(P_COLPOS)
+                    VALUE(P_COLTEXT).
+
+  DATA LS_FCAT LIKE LINE OF GT_FCAT.
+
+  LS_FCAT-FIELDNAME = P_FIELDNAME.
+  LS_FCAT-COL_POS = P_COLPOS.
+  LS_FCAT-COLTEXT = P_COLTEXT.
+  APPEND LS_FCAT TO GT_FCAT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_INIT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_INIT .
+  ZSBFI02-COND3 = 'X'.
+
+
+  SELECT *
+    FROM ZTSSMIVH
+    INTO CORRESPONDING FIELDS OF TABLE GT_MHDATA.
+
+  SELECT *
+    FROM ZTSSSIVH
+    INTO CORRESPONDING FIELDS OF TABLE GT_SHDATA.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  FCAT2
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0106   text
+*      -->P_0107   text
+*      -->P_0108   text
+*----------------------------------------------------------------------*
+FORM FCAT2  USING    VALUE(P_FIELDNAME)
+                    VALUE(P_COLPOS)
+                    VALUE(P_COLTEXT).
+
+  DATA LS_FCAT2 LIKE LINE OF GT_FCAT2.
+
+  LS_FCAT2-FIELDNAME = P_FIELDNAME.
+  LS_FCAT2-COL_POS = P_COLPOS.
+  LS_FCAT2-COLTEXT = P_COLTEXT.
+  APPEND LS_FCAT2 TO GT_FCAT2.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SEL_ROWS_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SEL_ROWS_0100 .
+
+  " 행 선택 처리
+  DATA: LV_LINE TYPE I.
+
+  PERFORM GET_SELECTED_ROWS CHANGING GT_ROWS.
+
+  DESCRIBE TABLE GT_ROWS LINES LV_LINE.
+  CASE LV_LINE.
+    WHEN '0'.
+      MESSAGE S999(ZMCSS) WITH '수정할 데이터를 선택해주세요.' DISPLAY LIKE 'E'.
+      RETURN.
+    WHEN '1'.
+
+      READ TABLE GT_ROWS INDEX 1 INTO GS_ROWS.
+
+    WHEN OTHERS.
+      MESSAGE S999(ZMCSS) WITH '데이터를 한 행만 선택하세요.' DISPLAY LIKE 'E'.
+      RETURN.
+  ENDCASE.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_SELECTED_ROWS
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_GT_ROWS  text
+*----------------------------------------------------------------------*
+FORM GET_SELECTED_ROWS CHANGING PT_ROWS TYPE LVC_T_ROW.
+
+  CLEAR: PT_ROWS.
+
+  CALL METHOD GO_ALV->GET_SELECTED_ROWS
+    IMPORTING
+      ET_INDEX_ROWS = PT_ROWS.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_ALV_0400
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CREATE_ALV_0400 .
+
+  " 객체가 있을 시 미생성
+  IF GO_CON IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON
+    EXPORTING
+*     PARENT                      =
+      CONTAINER_NAME              = 'CON'
+*     STYLE                       =
+*     LIFETIME                    = lifetime_default
+*     REPID                       =
+*     DYNNR                       =
+*     NO_AUTODEF_PROGID_DYNNR     =
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV
+    EXPORTING
+*     I_SHELLSTYLE      = 0
+*     I_LIFETIME        =
+      I_PARENT          = GO_CON
+*     I_APPL_EVENTS     = space
+*     I_PARENTDBG       =
+*     I_APPLOGPARENT    =
+*     I_GRAPHICSPARENT  =
+*     I_NAME            =
+*     I_FCAT_COMPLETE   = SPACE
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT_0400
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_FCAT_0400 .
+
+  CLEAR: GT_FCAT.
+
+  PERFORM FCAT USING:
+        'JENUM' '1' '전표번호',
+        'FYEAR' '2' '회계연도',
+        'IVNUM' '3' '송장 문서 번호',
+        'IVDAT' '4' '송장 검증일',
+        'TOPRC' '5' '총 금액',
+        'STEXT' '6' '비고',
+        'CURKY' '7' '통화 키',
+        'RGDAT' '8' '등록일',
+        'RGTOR' '9' '등록자',
+        'APNUM' '10' '지급 전표번호',
+        'APFYR' '11' '지급 회계연도'.
+
+  CLEAR GS_FCAT.
+
+  LOOP AT GT_FCAT INTO GS_FCAT.
+    IF GS_FCAT-FIELDNAME = 'TOPRC'.
+      GS_FCAT-CFIELDNAME = 'CURKY'.
+    ENDIF.
+
+    MODIFY GT_FCAT FROM GS_FCAT.
+  ENDLOOP.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV_0400
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_ALV_0400 .
+
+  CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+*     I_BUFFER_ACTIVE =
+*     I_BYPASSING_BUFFER   =
+*     I_CONSISTENCY_CHECK  =
+*     I_STRUCTURE_NAME     =
+*     IS_VARIANT      =
+*     I_SAVE          =
+*     I_DEFAULT       = 'X'
+      IS_LAYOUT       = GS_LAYO
+*     IS_PRINT        =
+*     IT_SPECIAL_GROUPS    =
+*     IT_TOOLBAR_EXCLUDING = GT_EXCLUDE
+*     IT_HYPERLINK    =
+*     IT_ALV_GRAPHICS =
+*     IT_EXCEPT_QINFO =
+*     IR_SALV_ADAPTER =
+    CHANGING
+      IT_OUTTAB       = GT_MHDATA
+      IT_FIELDCATALOG = GT_FCAT
+      IT_SORT         = GT_SORT
+*     IT_FILTER       =
+*  EXCEPTIONS
+*     INVALID_PARAMETER_COMBINATION = 1
+*     PROGRAM_ERROR   = 2
+*     TOO_MANY_LINES  = 3
+*     OTHERS          = 4
+    .
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_ALV_0500
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CREATE_ALV_0500 .
+
+  " 객체가 있을 시 미생성
+  IF GO_CON2 IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON2
+    EXPORTING
+*     PARENT                      =
+      CONTAINER_NAME              = 'CON2'
+*     STYLE                       =
+*     LIFETIME                    = lifetime_default
+*     REPID                       =
+*     DYNNR                       =
+*     NO_AUTODEF_PROGID_DYNNR     =
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV2
+    EXPORTING
+*     I_SHELLSTYLE      = 0
+*     I_LIFETIME        =
+      I_PARENT          = GO_CON2
+*     I_APPL_EVENTS     = space
+*     I_PARENTDBG       =
+*     I_APPLOGPARENT    =
+*     I_GRAPHICSPARENT  =
+*     I_NAME            =
+*     I_FCAT_COMPLETE   = SPACE
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT_0500
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_FCAT_0500 .
+
+  CLEAR: GT_FCAT2.
+
+  PERFORM FCAT2 USING:
+        'JENUM' '1' '전표번호',
+        'FYEAR' '2' '회계연도',
+        'BINUM' '3' '청구 문서 번호',
+        'BIDAT' '4' '청구일',
+        'TOPRC' '5' '총 금액',
+        'STEXT' '6' '비고',
+        'CURKY' '7' '통화 키',
+        'RGDAT' '8' '등록일',
+        'RGTOR' '9' '등록자',
+        'ARNUM' '10' '수금 전표번호',
+        'ARFYR' '11' '수금 회계연도'.
+
+  CLEAR GS_FCAT2.
+
+  LOOP AT GT_FCAT2 INTO GS_FCAT2.
+    IF GS_FCAT2-FIELDNAME = 'TOPRC'.
+      GS_FCAT2-CFIELDNAME = 'CURKY'.
+    ENDIF.
+
+    MODIFY GT_FCAT2 FROM GS_FCAT2.
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV_0500
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_ALV_0500 .
+
+
+  CALL METHOD GO_ALV2->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+*     I_BUFFER_ACTIVE =
+*     I_BYPASSING_BUFFER   =
+*     I_CONSISTENCY_CHECK  =
+*     I_STRUCTURE_NAME     =
+*     IS_VARIANT      =
+*     I_SAVE          =
+*     I_DEFAULT       = 'X'
+      IS_LAYOUT       = GS_LAYO2
+*     IS_PRINT        =
+*     IT_SPECIAL_GROUPS    =
+*     IT_TOOLBAR_EXCLUDING = GT_EXCLUDE
+*     IT_HYPERLINK    =
+*     IT_ALV_GRAPHICS =
+*     IT_EXCEPT_QINFO =
+*     IR_SALV_ADAPTER =
+    CHANGING
+      IT_OUTTAB       = GT_SHDATA
+      IT_FIELDCATALOG = GT_FCAT2
+      IT_SORT         = GT_SORT
+*     IT_FILTER       =
+*  EXCEPTIONS
+*     INVALID_PARAMETER_COMBINATION = 1
+*     PROGRAM_ERROR   = 2
+*     TOO_MANY_LINES  = 3
+*     OTHERS          = 4
+    .
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

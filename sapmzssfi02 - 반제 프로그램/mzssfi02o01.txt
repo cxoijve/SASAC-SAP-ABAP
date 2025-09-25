@@ -1,0 +1,163 @@
+*&---------------------------------------------------------------------*
+*&  Include           MZSSFI02O01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0100  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0100 OUTPUT.
+  SET PF-STATUS 'S100'.
+  SET TITLEBAR 'T100'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  ALV_CL_PROCESS_0200  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE ALV_CL_PROCESS_0200 OUTPUT.
+  CREATE OBJECT GO_DOCK_CONT01
+    EXPORTING
+      REPID     = SY-REPID        " 프로그램 명 "
+      DYNNR     = SY-DYNNR        " 스크린 넘버 "
+      SIDE      = CL_GUI_DOCKING_CONTAINER=>DOCK_AT_LEFT " Left, Top, Bottom, Right "
+      EXTENSION = 1500.              " 크기 "
+
+
+  CREATE OBJECT GO_SPLIT
+    EXPORTING
+      PARENT  = GO_DOCK_CONT01
+      ROWS    = 2                 " 몇 개의 가로(행) 분할 할 것인지 "
+      COLUMNS = 1.             " 몇 개의 세로(열) 분할 할 것인지 "
+
+
+  CALL METHOD GO_SPLIT->GET_CONTAINER
+    EXPORTING
+      ROW       = 1
+      COLUMN    = 1
+    RECEIVING
+      CONTAINER = GO_CONT01.
+
+  CALL METHOD GO_SPLIT->GET_CONTAINER
+    EXPORTING
+      ROW       = 2
+      COLUMN    = 1
+    RECEIVING
+      CONTAINER = GO_CONT02.
+
+
+  CREATE OBJECT GO_GRID01
+    EXPORTING
+      I_PARENT = GO_CONT01.
+
+  CREATE OBJECT GO_GRID02
+    EXPORTING
+      I_PARENT = GO_CONT02.
+
+
+  CALL METHOD GO_GRID01->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+      IS_LAYOUT       = GS_LAYO
+    CHANGING
+      IT_OUTTAB       = GT_MHDATA
+      IT_FIELDCATALOG = GT_FCAT
+      IT_SORT         = GT_SORT.
+
+
+  CALL METHOD GO_GRID02->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+      IS_LAYOUT       = GS_LAYO2
+    CHANGING
+      IT_OUTTAB       = GT_SHDATA
+      IT_FIELDCATALOG = GT_FCAT2
+      IT_SORT         = GT_SORT2.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_ALV_0200  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE SET_ALV_0200 OUTPUT.
+
+  PERFORM SET_LAYO.
+
+  PERFORM SET_SORT.
+
+  PERFORM SET_FCAT.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0200  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0200 OUTPUT.
+  SET PF-STATUS 'S200'.
+  SET TITLEBAR 'T200'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0300  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0300 OUTPUT.
+  SET PF-STATUS 'S300'.
+  SET TITLEBAR 'T300'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0400  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0400 OUTPUT.
+  SET PF-STATUS 'S400'.
+  SET TITLEBAR 'T400'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_ALV_0400  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE SET_ALV_0400 OUTPUT.
+
+  PERFORM CREATE_ALV_0400.
+
+  PERFORM SET_LAYO.
+
+  PERFORM SET_SORT.
+
+  PERFORM SET_FCAT_0400.
+
+  PERFORM DISPLAY_ALV_0400.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_ALV_0500  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE SET_ALV_0500 OUTPUT.
+
+  PERFORM CREATE_ALV_0500.
+
+  PERFORM SET_LAYO.
+
+  PERFORM SET_SORT.
+
+  PERFORM SET_FCAT_0500.
+
+  PERFORM DISPLAY_ALV_0500.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  STATUS_0500  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE STATUS_0500 OUTPUT.
+  SET PF-STATUS 'S500'.
+  SET TITLEBAR 'T500'.
+ENDMODULE.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

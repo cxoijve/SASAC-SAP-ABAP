@@ -92,12 +92,15 @@ MODULE USER_COMMAND_0100 INPUT.
       PERFORM SET_INIT.
 
     WHEN 'ZXLUP'. " 엑셀 업로드 버튼 클릭 시 동작
-      PERFORM OPEN_EXCEL_UPLOAD_POPUP.
+**      PERFORM OPEN_EXCEL_UPLOAD_POPUP.
 
       " 팝업 띄우기
 **      CALL SCREEN 110 STARTING AT 5 5 ENDING AT 120 30.
       " 팝업 말고 엑셀업로드 프로그램을 만들어서 화면을 콜트랜잭션 할까
       CALL TRANSACTION 'ZRBSSFI01'.
+
+    WHEN 'CLEARING'.
+      CALL TRANSACTION 'ZSSFI02'.
 
     WHEN OTHERS.
 
