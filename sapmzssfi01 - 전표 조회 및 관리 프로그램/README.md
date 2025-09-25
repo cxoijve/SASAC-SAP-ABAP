@@ -10,6 +10,10 @@
   - CALL TRANSACTION 'ZRBSSFI01'. 구문을 통해 엑셀 업로드 프로그램으로 이동  ([zrbssfi01 - 전표 생성 BDC 프로그램](https://github.com/cxoijve/SeSAC_PROJ/tree/main/zrbssfi01%20-%20%EC%A0%84%ED%91%9C%20%EC%83%9D%EC%84%B1%20BDC%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8))
     - <img width="1033" height="837" alt="img 13" src="https://github.com/user-attachments/assets/a20ce219-e61d-4991-b1ff-422a363f8a25" />
 
+- 반제(Clearing) 처리를 위한 기능 추가
+  - CALL TRANSACTION 'zssfi02'. 구문을 통해 반제 프로그램으로 이동
+    - <img width="1025" height="831" alt="img11" src="https://github.com/user-attachments/assets/78d96aa6-f153-4d29-835f-4e92fcfcc54e" />
+
 
 ### 상세조회 화면(Screen 0300)
 - 조회 결과 화면에서 한 행 선택 후 상세조회 클릭
