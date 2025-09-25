@@ -11,7 +11,7 @@
     - <img width="1033" height="837" alt="img 13" src="https://github.com/user-attachments/assets/a20ce219-e61d-4991-b1ff-422a363f8a25" />
 
 - 반제(Clearing) 처리를 위한 기능 추가
-  - CALL TRANSACTION 'zssfi02'. 구문을 통해 반제 프로그램으로 이동
+  - CALL TRANSACTION 'ZSSFI02'. 구문을 통해 반제 프로그램으로 이동
     - <img width="1025" height="831" alt="img11" src="https://github.com/user-attachments/assets/78d96aa6-f153-4d29-835f-4e92fcfcc54e" />
 
 
