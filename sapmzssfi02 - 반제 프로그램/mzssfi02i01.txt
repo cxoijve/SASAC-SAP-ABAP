@@ -74,12 +74,77 @@ MODULE USER_COMMAND_0300 INPUT.
     WHEN 'BACK'.
       LEAVE TO SCREEN 0.
 
-    WHEN 'CLEARING'.
+    WHEN 'ENTER'.
 
+      " 등록자명 취득
+      PERFORM GET_RGTOR_NAME USING ZSSSFI0205-RGTOR
+                                                   CHANGING ZSSSFI0205-RGTOR_T.
+
+      PERFORM CHECK_RGTOR_DEPID USING ZSSSFI0205-RGTOR.
+
+
+    WHEN 'BAP'.
+
+      " 반제전표 INSERT 및 정보 취득
+      PERFORM CHECK_DATA_0300 CHANGING GV_SUBRC.
+      IF GV_SUBRC = 4.
+        CLEAR GV_SUBRC.
+        RETURN.
+      ENDIF.
+
+
+      IF GV_FLAG = 'X'.
+
+        MESSAGE S999(ZMCSS) WITH '이미 전표가 생성되었습니다' DISPLAY LIKE 'E'.
+        RETURN.
+
+      ELSE.
+        " 채번 후 생성
+        PERFORM INSERT_DATA.
+
+      ENDIF.
+
+
+
+    WHEN 'CLEARING'.
+      " 미결항목처리 버튼 누르면 반제전표 생성과 동시에 클리어링 처리 완료
+      " 지급 전표 생성되면, 전표 번호를 IV의 ap 전표번호에 넣어줘야 함. (생성일도)
+
+      READ TABLE GT_MHDATA INTO GS_MHDATA WITH KEY JENUM = GS_ZTSSJEH-JENUM.
+      GS_MHDATA-APNUM = GS_ZTSSJEH-JENUM.
+      GS_MHDATA-APFYR = GS_ZTSSJEH-FYEAR.
+
+      MESSAGE S999(ZMCSS) WITH '반제 처리 되었습니다.'.
+
+      GS_ZTSSMIVH-APNUM = GS_MHDATA-APNUM.
+      GS_ZTSSMIVH-APFYR = GS_MHDATA-APFYR.
+
+
+      UPDATE ZTSSMIVH SET APNUM = GS_ZTSSMIVH-APNUM
+                                         APFYR = GS_ZTSSMIVH-APFYR
+                                    WHERE JENUM = ZSSSFI0203-JENUM.
+      IF SY-SUBRC <> 0.
+        ROLLBACK WORK.
+        MESSAGE S999(ZMCSS) WITH '지급 전표 정보 추가 오류' DISPLAY LIKE 'E'.
+        EXIT.
+      ENDIF.
+
+      COMMIT WORK. " <-- LOOP 밖 (성공시 한 번만)
+      MESSAGE S999(ZMCSS) WITH '반제 처리 되었습니다.'.
+
+
+      SELECT *
+        FROM ZTSSMIVH
+        INTO CORRESPONDING FIELDS OF TABLE GT_MHDATA.
+
+
+      LEAVE TO SCREEN 0.
 
     WHEN OTHERS.
 
   ENDCASE.
+
+**  CLEAR OK_CODE.
 
 ENDMODULE.
 *&---------------------------------------------------------------------*
@@ -99,6 +164,8 @@ MODULE USER_COMMAND_0400 INPUT.
       PERFORM SEL_ROWS_0100.
 
       READ TABLE GT_MHDATA INTO GS_MHDATA INDEX GS_ROWS-INDEX .
+
+      PERFORM SET_DATA_0400.
 
       CALL SCREEN 0300.
 

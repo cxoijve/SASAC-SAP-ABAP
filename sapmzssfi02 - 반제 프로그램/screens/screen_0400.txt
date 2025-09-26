@@ -8,7 +8,7 @@ SAPMZSSFI02
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI02                             0400 0400     21116192 37  0  0 27121  0G E                              20250925153629																																
+SAPMZSSFI02                             0400 0400     21116192 37  0  0 27121  0G E                              20250926101846																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
@@ -20,4 +20,4 @@ PROCESS BEFORE OUTPUT.
   MODULE SET_ALV_0400.																																
 *																																
 PROCESS AFTER INPUT.																																
- MODULE USER_COMMAND_0400.																																
+  MODULE USER_COMMAND_0400.																																
