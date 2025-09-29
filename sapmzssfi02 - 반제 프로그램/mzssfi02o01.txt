@@ -176,6 +176,24 @@ MODULE SET_ALV_0300 OUTPUT.
   PERFORM DISPLAY_ALV_0300.
 
 ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_ALV_0600  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE SET_ALV_0600 OUTPUT.
+
+  PERFORM CREATE_ALV_0600.
+
+  PERFORM SET_LAYO.
+
+  PERFORM SET_SORT.
+
+  PERFORM SET_FCAT_0600.
+
+  PERFORM DISPLAY_ALV_0600.
+
+ENDMODULE.
 
 ----------------------------------------------------------------------------------
 Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

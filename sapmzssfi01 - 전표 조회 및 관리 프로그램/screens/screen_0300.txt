@@ -8,7 +8,7 @@ SAPMZSSFI01
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI01                             0300 0300     27117192 37  0  0 27126  0G E                              20250919112734																																
+SAPMZSSFI01                             0300 0300     27117192 37  0  0 27127  0G E                              20250929095631																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
@@ -31,9 +31,9 @@ ZSSSFI0102-RGTOR_T	C	CHAR	 22	B0	02	80	31	00	  8	 28		  0	  0	  0		  0					 80	 
 B_BOX2		CHAR	115	00	00	00	30	00	 10	  4		  0	  0	  0		 18	R				  0	  0	102							∂Û¿Œ		
 CON2			112	00	00	00	30	00	 11	  5		  0	  0	  0		 14	U				  1	  1	103									
 ZSSSFI0104-DEBIT	0	CHAR	  5	30	00	00	30	00	 26	 55		  0	  0	  0		  0					  0	  0								Debit	                                                                                                                                                                                                                                                        X	
-ZSSSFI0104-DEBIT	P	CURR	 18	B0	00	80	30	00	 26	 61		  0	  0	  0		  0					 15	  2		ZTSSJEI-CURKY						__________________	                                       00	
+ZSSSFI0104-DEBIT	P	CURR	 19	B0	00	80	30	00	 26	 61		  0	  0	  0		  0					 15	  2		ZSSSFI0104-CURKY						__________________V	                                       00	
 ZSSSFI0104-CREDIT	0	CHAR	  6	30	00	00	30	00	 26	 82		  0	  0	  0		  0					  0	  0								Credit	                                                                                                                                                                                                                                                        X	
-ZSSSFI0104-CREDIT	P	CURR	 18	B0	00	80	30	00	 26	 89		  0	  0	  0		  0					 15	  2		ZTSSJEI-CURKY						__________________	                                       00	
+ZSSSFI0104-CREDIT	P	CURR	 19	B0	00	80	30	00	 26	 89		  0	  0	  0		  0					 15	  2		ZSSSFI0104-CURKY						__________________V	                                       00	
 ZSSSFI0104-CURKY	C	CUKY	  5	A0	00	80	31	00	 26	110		  0	  0	  0		  0					 10	  0								_____	                                       00	
 OK_CODE		CHAR	 20	80	10	00	00	00	255	  1	O	  0	  0	  0		  0					  0	  0								____________________		
 %_FLOWLOGIC																																

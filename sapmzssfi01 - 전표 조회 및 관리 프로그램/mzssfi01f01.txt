@@ -121,20 +121,26 @@ FORM SET_FCAT .
 
 
   CASE GV_CHECK.
-    WHEN 0.
+    WHEN 0. " 조회모드
       GS_FCAT-FIELDNAME = 'STEXT'.
-*      GS_FCAT-EDIT = 'X'.
-
+*      GS_FCAT-EDIT = ''.
       IF GV_FLAG = 'X'.
         GS_FCAT-EDIT = 'X'.
+      ELSE.
+
+        GS_FCAT-EDIT = ''.
       ENDIF.
 
       GS_FCAT-COL_POS = 4.
       GS_FCAT-COLTEXT = '비고'.
       APPEND GS_FCAT TO GT_FCAT.
 
-    WHEN 1.
+    WHEN 1. " 편집모드
       GS_FCAT-FIELDNAME = 'STEXT'.
+*      GS_FCAT-EDIT = 'X'.
+      IF GV_FLAG = 'X' AND GV_FLAG2 = 'X'.
+        GS_FCAT-EDIT = ''.
+      ENDIF.
       GS_FCAT-COL_POS = 4.
       GS_FCAT-COLTEXT = '비고'.
       APPEND GS_FCAT TO GT_FCAT.
@@ -557,6 +563,7 @@ FORM SET_DATA_0300 .
 
   CLEAR ZSSSFI0102.
 
+
   MOVE-CORRESPONDING GS_HDATA TO ZSSSFI0102.
 
   PERFORM GET_RGTOR_NAME USING ZSSSFI0102-RGTOR
@@ -701,24 +708,35 @@ ENDFORM.
 *  <--  p2        text
 *----------------------------------------------------------------------*
 FORM CHANGE_ALV_MODE_0100 .
+*  CLEAR: GV_FLAG, GV_CHECK.
+*  DATA : LV_CHECK_C.
+
   " 헤더 정보 변경 버튼
   " HINFO 버튼 눌렀을 때만 편집모드 활성화
   GV_CHECK = GO_ALV->IS_READY_FOR_INPUT( ).
 
   CASE GV_CHECK.
-    WHEN 0.  " 조회모드일때 "
+    WHEN 0.  " 현재 조회모드일때
       CALL METHOD GO_ALV->SET_READY_FOR_INPUT " 조회모드 -> 편집모드 "
         EXPORTING
-          I_READY_FOR_INPUT = 1. " Edit 활성화 "
+          I_READY_FOR_INPUT = 1. " Edit 활성화
+
+*      LV_CHECK_C = GO_ALV->IS_READY_FOR_INPUT( ).
 
       GV_FLAG = 'X'.
 
-    WHEN 1.  " 편집모드일때 "
+
+    WHEN 1.  " 현재 편집모드일때
       CALL METHOD GO_ALV->SET_READY_FOR_INPUT " 편집모드 -> 조회모드 "
         EXPORTING
-          I_READY_FOR_INPUT = 0. " Edit 비활성화 "
+          I_READY_FOR_INPUT = 0. " Edit 비활성화
+
+      GV_FLAG2 = 'X'.
 
 
+
+
+*      LV_CHECK_C = GO_ALV->IS_READY_FOR_INPUT( ).
   ENDCASE.
 
   " ALV Refresh 필요시 호출
@@ -775,9 +793,24 @@ FORM SET_FCAT_0300 .
         'JESEQ' '3' '전표 아이템 번호',
         'GLACC' '4' 'G/L 계정',
         'ACTNM' '5' 'G/L 계정명',
-        'CURKY' '6' '통화 키',
-        'DEBIT' '7' '차변',
-        'CREDIT' '8' '대변'.
+        'CURKY' '6' '통화 키'.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'DEBIT'.
+  GS_FCAT-COL_POS = '7'.
+  GS_FCAT-COLTEXT = '차변'.
+  GS_FCAT-NO_SIGN = ''.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'CREDIT'.
+  GS_FCAT-COL_POS = '8'.
+  GS_FCAT-COLTEXT = '대변'.
+  GS_FCAT-NO_SIGN = ''.
+  APPEND GS_FCAT TO GT_FCAT.
+
+*        'DEBIT' '7' '차변',
+*        'CREDIT' '8' '대변'.
 
   CLEAR GS_FCAT.
 

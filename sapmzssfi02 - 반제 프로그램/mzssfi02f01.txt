@@ -127,6 +127,8 @@ FORM SET_INIT .
 
   PERFORM GET_MIVH_DATA.
 
+  PERFORM GET_SIVH_DATA.
+
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  FCAT2
@@ -157,7 +159,7 @@ ENDFORM.
 *  -->  p1        text
 *  <--  p2        text
 *----------------------------------------------------------------------*
-FORM SEL_ROWS_0100 .
+FORM SEL_ROWS_0400 .
 
   " 행 선택 처리
   DATA: LV_LINE TYPE I.
@@ -474,8 +476,16 @@ FORM SET_DATA_0400 .
   " 송장검증 IV의 전표번호 헤더 정보 취득
   PERFORM GET_JEH_DATA.
 
+  READ TABLE GT_HDATA INTO GS_HDATA WITH KEY JENUM = GS_MHDATA-JENUM.
+  MOVE-CORRESPONDING GS_HDATA TO ZSSSFI0203.
+
+
+  PERFORM GET_RGTOR_NAME USING ZSSSFI0203-RGTOR
+                         CHANGING ZSSSFI0203-RGTOR_T.
+
+
   " 송장검증 IV의 라인아이템 정보 취득
-  PERFORM GET_JEI_DATA.
+  PERFORM GET_MJEI_DATA.
 
 
   " 송장검증 IV 전표 차/대 분개 표시
@@ -502,7 +512,7 @@ ENDFORM.
 *  -->  p1        text
 *  <--  p2        text
 *----------------------------------------------------------------------*
-FORM GET_JEI_DATA .
+FORM GET_MJEI_DATA .
 
   " 라인아이템 정보 취득
   SELECT JENUM FYEAR JESEQ DEBIT CREDIT CURKY GLACC
@@ -689,9 +699,6 @@ FORM SET_FCAT_0300 .
     MODIFY GT_FCAT2 FROM GS_FCAT2.
   ENDLOOP.
 
-
-
-
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  DISPLAY_ALV_0300
@@ -727,10 +734,6 @@ FORM DISPLAY_ALV_0300 .
 * Implement suitable error handling here
   ENDIF.
 
-
-
-
-
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  GET_RGTOR_NAME
@@ -765,20 +768,13 @@ ENDFORM.
 *  -->  p1        text
 *  <--  p2        text
 *----------------------------------------------------------------------*
-FORM GET_JEH_DATA .
+FORM GET_JEH_DATA.
 
   SELECT JENUM FYEAR JTYPE STEXT CURKY RGDAT RGTOR
                 REV RRSON RJNUM
     FROM ZTSSJEH
     INTO CORRESPONDING FIELDS OF TABLE GT_HDATA.
-*    WHERE JENUM = GS_MHDATA-JENUM.
 
-  READ TABLE GT_HDATA INTO GS_HDATA WITH KEY JENUM = GS_MHDATA-JENUM.
-  MOVE-CORRESPONDING GS_HDATA TO ZSSSFI0203.
-
-
-  PERFORM GET_RGTOR_NAME USING ZSSSFI0203-RGTOR
-                         CHANGING ZSSSFI0203-RGTOR_T.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -814,14 +810,14 @@ FORM CHECK_DATA_0300  CHANGING PV_SUBRC.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
-*&      Form  INSERT_DATA
+*&      Form  INSERT_AP_DATA
 *&---------------------------------------------------------------------*
 *       text
 *----------------------------------------------------------------------*
 *  -->  p1        text
 *  <--  p2        text
 *----------------------------------------------------------------------*
-FORM INSERT_DATA .
+FORM INSERT_AP_DATA .
   " 반제전표 정보 입력 ZSSSFI0205
 
   MOVE-CORRESPONDING ZSSSFI0205 TO GS_ZTSSJEH.
@@ -957,14 +953,24 @@ FORM SET_AP_INIT .
   ZSSSFI0205-JTYPE = 'KZ'.
   ZSSSFI0205-RGTOR = ZSSSFI0203-RGTOR.
   ZSSSFI0205-RGTOR_T = ZSSSFI0203-RGTOR_T.
+
   IF ZSSSFI0203-STEXT IS NOT INITIAL.
     ZSSSFI0205-STEXT = ZSSSFI0203-STEXT.
 
-    " 끝에 'IV'가 있으면 'AP'로 변경
-    REPLACE REGEX 'IV' IN ZSSSFI0205-STEXT WITH 'AP'.
-  ELSE.
-    ZSSSFI0205-STEXT = ZSSSFI0203-STEXT.
+    IF  ZSSSFI0205-STEXT CP '*IV'  OR ZSSSFI0205-STEXT CP 'IV*' .
+      " 끝에 'IV'가 있으면 'AP'로 변경
+      REPLACE ALL OCCURRENCES OF REGEX '\M*IV\M*' IN ZSSSFI0205-STEXT WITH 'AP'.
+
+**      REPLACE REGEX 'IV' IN ZSSSFI0205-STEXT WITH 'AR'.
+    ELSE.
+      CONCATENATE 'AP' ZSSSFI0205-STEXT INTO ZSSSFI0205-STEXT SEPARATED BY ''..
+*    ZSSSFI0205-STEXT = ZSSSFI0203-STEXT.
+    ENDIF.
+
   ENDIF.
+
+
+
 
   " 아이템
   CLEAR GT_CIDATA.
@@ -1042,9 +1048,456 @@ FORM GET_MIVH_DATA .
     FROM ZTSSMIVH
     INTO CORRESPONDING FIELDS OF TABLE GT_MHDATA.
 
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_DATA_0500
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_DATA_0500 .
+  CLEAR ZSSSFI0203.
+
+  " 청구 IV의 전표번호 헤더 정보 취득
+  PERFORM GET_JEH_DATA.
+
+  READ TABLE GT_HDATA INTO GS_HDATA WITH KEY JENUM = GS_SHDATA-JENUM.
+  MOVE-CORRESPONDING GS_HDATA TO ZSSSFI0203.
+
+
+  PERFORM GET_RGTOR_NAME USING ZSSSFI0203-RGTOR
+                         CHANGING ZSSSFI0203-RGTOR_T.
+
+  " 청구 IV의 라인아이템 정보 취득
+  PERFORM GET_SJEI_DATA.
+
+  " 청구 IV의 전표 차/대 분개 표시
+  PERFORM CAL_SUM_DC CHANGING ZSSSFI0204-DEBIT
+                              ZSSSFI0204-CREDIT.
+
+  ZSSSFI0204-CURKY = ZSSSFI0203-CURKY.
+
+
+  " 반제전표 생성(기본값)
+  PERFORM SET_AR_INIT.
+
+  PERFORM CAL_SUM_DC CHANGING ZSSSFI0206-DEBIT
+                                                        ZSSSFI0206-CREDIT.
+
+  ZSSSFI0206-CURKY = ZSSSFI0205-CURKY.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT_0600
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_FCAT_0600 .
+
+  CLEAR: GT_FCAT.
+
+  PERFORM FCAT USING:
+        'JENUM' '1' '전표번호',
+        'FYEAR' '2' '회계연도',
+        'JESEQ' '3' '전표 아이템 번호',
+        'DEBIT' '4' '차변',
+        'CREDIT' '5' '대변',
+        'CURKY' '6' '통화 키',
+        'GLACC' '7' 'G/L 계정',
+        'ACTNM' '8' 'G/L 계정명'.
+
+  CLEAR GS_FCAT.
+
+  LOOP AT GT_FCAT INTO GS_FCAT.
+    IF GS_FCAT-FIELDNAME = 'JESEQ'.
+      GS_FCAT-LZERO = 'X'.
+    ELSEIF GS_FCAT-FIELDNAME = 'JENUM' OR GS_FCAT-FIELDNAME = 'FYEAR' .
+      GS_FCAT-NO_OUT = 'X'.
+    ELSEIF GS_FCAT-FIELDNAME = 'DEBIT' OR GS_FCAT-FIELDNAME = 'CREDIT'.
+      GS_FCAT-CFIELDNAME = 'CURKY'.
+    ENDIF.
+
+    MODIFY GT_FCAT FROM GS_FCAT.
+  ENDLOOP.
+
+
+  CLEAR: GT_FCAT2.
+
+  PERFORM FCAT2 USING:
+        'JENUM' '1' '전표번호',
+        'FYEAR' '2' '회계연도',
+        'JESEQ' '3' '전표 아이템 번호',
+        'DEBIT' '4' '차변',
+        'CREDIT' '5' '대변',
+        'CURKY' '6' '통화 키',
+        'GLACC' '7' 'G/L 계정',
+        'ACTNM' '8' 'G/L 계정명'.
+
+  CLEAR GS_FCAT2.
+
+  LOOP AT GT_FCAT2 INTO GS_FCAT2.
+    IF GS_FCAT2-FIELDNAME = 'JESEQ'.
+      GS_FCAT2-LZERO = 'X'.
+    ELSEIF GS_FCAT2-FIELDNAME = 'JENUM' OR GS_FCAT2-FIELDNAME = 'FYEAR' .
+      GS_FCAT2-NO_OUT = 'X'.
+    ELSEIF GS_FCAT2-FIELDNAME = 'DEBIT' OR GS_FCAT2-FIELDNAME = 'CREDIT'.
+      GS_FCAT2-CFIELDNAME = 'CURKY'.
+    ENDIF.
+
+    MODIFY GT_FCAT2 FROM GS_FCAT2.
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_ALV_0600
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CREATE_ALV_0600 .
+
+  " 객체가 있을 시 미생성
+  IF GO_CON5 IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON5
+    EXPORTING
+      CONTAINER_NAME              = 'CON5'
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV5
+    EXPORTING
+      I_PARENT          = GO_CON5
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+
+
+
+  " 객체가 있을 시 미생성
+  IF GO_CON6 IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON6
+    EXPORTING
+      CONTAINER_NAME              = 'CON6'
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV6
+    EXPORTING
+      I_PARENT          = GO_CON6
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV_0600
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_ALV_0600 .
+
+  CALL METHOD GO_ALV5->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+      IS_LAYOUT       = GS_LAYO
+    CHANGING
+      IT_OUTTAB       = GT_ADATA
+      IT_FIELDCATALOG = GT_FCAT
+      IT_SORT         = GT_SORT.
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+
+
+  CALL METHOD GO_ALV6->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+      IS_LAYOUT       = GS_LAYO
+    CHANGING
+      IT_OUTTAB       = GT_CIDATA
+      IT_FIELDCATALOG = GT_FCAT2
+      IT_SORT         = GT_SORT.
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SEL_ROWS_0500
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SEL_ROWS_0500 .
+
+  " 행 선택 처리
+  DATA: LV_LINE TYPE I.
+
+  PERFORM GET_SELECTED_ROWS_0500 CHANGING GT_ROWS.
+
+  DESCRIBE TABLE GT_ROWS LINES LV_LINE.
+  CASE LV_LINE.
+    WHEN '0'.
+      MESSAGE S999(ZMCSS) WITH '수정할 데이터를 선택해주세요.' DISPLAY LIKE 'E'.
+      RETURN.
+    WHEN '1'.
+
+      READ TABLE GT_ROWS INDEX 1 INTO GS_ROWS.
+
+    WHEN OTHERS.
+      MESSAGE S999(ZMCSS) WITH '데이터를 한 행만 선택하세요.' DISPLAY LIKE 'E'.
+      RETURN.
+  ENDCASE.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_SELECTED_ROWS_0500
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_GT_ROWS  text
+*----------------------------------------------------------------------*
+FORM GET_SELECTED_ROWS_0500 CHANGING PT_ROWS TYPE LVC_T_ROW.
+
+  CLEAR: PT_ROWS.
+
+  CALL METHOD GO_ALV2->GET_SELECTED_ROWS
+    IMPORTING
+      ET_INDEX_ROWS = PT_ROWS.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_SIVH_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_SIVH_DATA .
+
   SELECT *
-    FROM ZTSSSIVH
-    INTO CORRESPONDING FIELDS OF TABLE GT_SHDATA.
+      FROM ZTSSSIVH
+      INTO CORRESPONDING FIELDS OF TABLE GT_SHDATA.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_SJEI_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_SJEI_DATA .
+
+  " 라인아이템 정보 취득
+  SELECT JENUM FYEAR JESEQ DEBIT CREDIT CURKY GLACC
+    FROM ZTSSJEI
+    INTO CORRESPONDING FIELDS OF TABLE GT_ADATA
+    WHERE JENUM = GS_SHDATA-JENUM
+      AND FYEAR = GS_SHDATA-FYEAR.
+
+  " G/L 계정명 취득
+  LOOP AT GT_ADATA INTO GS_ADATA.
+    PERFORM GET_GL_NAME USING GS_ADATA-GLACC
+                        CHANGING GS_ADATA-ACTNM.
+
+    MODIFY GT_ADATA FROM GS_ADATA.
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_AR_INIT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_AR_INIT .
+
+  " 헤더
+  ZSSSFI0205-FYEAR = SY-DATUM+0(4).
+  ZSSSFI0205-RGDAT = SY-DATUM.
+  ZSSSFI0205-CURKY = 'KRW'.
+  ZSSSFI0205-JTYPE = 'DZ'.
+  ZSSSFI0205-RGTOR = ZSSSFI0203-RGTOR.
+  ZSSSFI0205-RGTOR_T = ZSSSFI0203-RGTOR_T.
+  IF ZSSSFI0203-STEXT IS NOT INITIAL.
+    ZSSSFI0205-STEXT = ZSSSFI0203-STEXT.
+
+    IF  ZSSSFI0205-STEXT CP '*IV'  OR ZSSSFI0205-STEXT CP 'IV*' .
+      " 끝에 'IV'가 있으면 'AR'로 변경
+      REPLACE ALL OCCURRENCES OF REGEX '\S*IV\S*' IN ZSSSFI0205-STEXT WITH 'AR'.
+
+**      REPLACE REGEX 'IV' IN ZSSSFI0205-STEXT WITH 'AR'.
+    ELSE.
+      CONCATENATE 'AR' ZSSSFI0205-STEXT INTO ZSSSFI0205-STEXT SEPARATED BY ''..
+*    ZSSSFI0205-STEXT = ZSSSFI0203-STEXT.
+    ENDIF.
+
+  ENDIF.
+
+  " 아이템
+  CLEAR GT_CIDATA.
+
+  CLEAR GS_CIDATA.
+  GS_CIDATA-JESEQ = '001'.
+  GS_CIDATA-CREDIT = GS_SHDATA-TOPRC.
+  GS_CIDATA-GLACC = '110000'.
+  GS_CIDATA-ACTNM = '은행'.
+  GS_CIDATA-CURKY = 'KRW'.
+  APPEND GS_CIDATA TO GT_CIDATA.
+
+  CLEAR GS_CIDATA.
+  GS_CIDATA-JESEQ = '002'.
+  GS_CIDATA-DEBIT = GS_SHDATA-TOPRC.
+  GS_CIDATA-GLACC = '140000'.
+  GS_CIDATA-ACTNM = '외상매출금'.
+  GS_CIDATA-CURKY = 'KRW'.
+  APPEND GS_CIDATA TO GT_CIDATA.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CHECK_DATA_0600
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_GV_SUBRC  text
+*----------------------------------------------------------------------*
+FORM CHECK_DATA_0600  CHANGING PV_SUBRC.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  INSERT_AR_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM INSERT_AR_DATA .
+  " 반제전표 정보 입력 ZSSSFI0205
+
+  MOVE-CORRESPONDING ZSSSFI0205 TO GS_ZTSSJEH.
+  MOVE-CORRESPONDING GS_CIDATA TO GS_ZTSSJEI.
+
+  " 헤더
+  " 전표 번호 채번
+  DATA: LV_NUM(6)   TYPE N,
+        LV_NUM2(13) TYPE C.
+  CALL FUNCTION 'NUMBER_GET_NEXT'
+    EXPORTING
+      NR_RANGE_NR             = '01'
+      OBJECT                  = 'ZNRSSFI01'
+      TOYEAR                  = SY-DATUM+0(4)
+    IMPORTING
+      NUMBER                  = LV_NUM
+    EXCEPTIONS  " M TYPE -> A
+      INTERVAL_NOT_FOUND      = 1
+      NUMBER_RANGE_NOT_INTERN = 2
+      OBJECT_NOT_FOUND        = 3
+      QUANTITY_IS_0           = 4
+      QUANTITY_IS_NOT_1       = 5
+      INTERVAL_OVERFLOW       = 6
+      BUFFER_OVERFLOW         = 7
+      OTHERS                  = 8.
+  IF SY-SUBRC = 0.
+    LV_NUM2 = 'J' && SY-DATUM+0(4) && LV_NUM.
+*    WRITE LV_NUM2.
+  ENDIF.
+
+
+  " 반제전표 헤더-라인 정보가 있을 경우만 인서트 되도록
+  IF GT_CIDATA IS NOT INITIAL.
+    IF ZSSSFI0206-DEBIT = ZSSSFI0206-CREDIT.
+
+      GS_ZTSSJEH-JENUM = LV_NUM2.      " 전표번호 자동채번
+      GS_ZTSSJEH-STEXT = ZSSSFI0205-STEXT.
+      GS_ZTSSJEH-RGDAT = ZSSSFI0205-RGDAT.
+      GS_ZTSSJEH-RGTOR = ZSSSFI0205-RGTOR.
+
+      " 전표 헤더 정보 인서트
+      INSERT ZTSSJEH FROM GS_ZTSSJEH.
+      IF SY-SUBRC <> 0.
+        ROLLBACK WORK.
+        MESSAGE S999(ZMCSS) WITH '이미 존재하는 전표입니다.' DISPLAY LIKE 'E'.
+      ELSE.
+        LOOP AT GT_CIDATA INTO DATA(LV_ITEM).
+          CLEAR GS_ZTSSJEI.
+          MOVE-CORRESPONDING LV_ITEM TO GS_ZTSSJEI.
+          GS_ZTSSJEI-JENUM = GS_ZTSSJEH-JENUM.
+          GS_ZTSSJEI-FYEAR = GS_ZTSSJEH-FYEAR.
+          INSERT ZTSSJEI FROM GS_ZTSSJEI.
+          IF SY-SUBRC <> 0.
+            ROLLBACK WORK.
+            MESSAGE S999(ZMCSS) WITH '아이템 생성 오류' DISPLAY LIKE 'E'.
+            EXIT.
+          ENDIF.
+        ENDLOOP.
+
+        COMMIT WORK.
+        MESSAGE S999(ZMCSS) WITH '수금 전표가 생성되었습니다'.
+
+      ENDIF.
+    ELSE.
+      MESSAGE S999(ZMCSS) WITH '차변과 대변 금액이 일치하지 않습니다.' DISPLAY LIKE 'E'.
+    ENDIF.
+  ELSE.
+    MESSAGE S999(ZMCSS) WITH '라인 아이템을 추가하세요.' DISPLAY LIKE 'E'.
+  ENDIF.
 
 ENDFORM.
 

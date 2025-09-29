@@ -39,8 +39,13 @@ MODULE USER_COMMAND_0100 INPUT.
 
 
     WHEN 'HINFO'.
-
-      PERFORM CHANGE_ALV_MODE_0100.
+      IF GV_FLAG = ''.
+        PERFORM CHANGE_ALV_MODE_0100.
+        GV_FLAG = 'X'.
+      ELSE.
+        MESSAGE '변경 완료를 클릭해 주세요.' TYPE 'E'.
+        RETURN.
+      ENDIF.
 
     WHEN 'UPDATE'.
 
@@ -54,7 +59,11 @@ MODULE USER_COMMAND_0100 INPUT.
       ENDLOOP.
 
       COMMIT WORK.
+*
 
+      PERFORM CHANGE_ALV_MODE_0100.
+
+      CLEAR GV_FLAG.
 
 
     WHEN 'SEARCH'.

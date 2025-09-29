@@ -36,6 +36,7 @@ MODULE USER_COMMAND_0100 INPUT.
       ELSE.
         CALL SCREEN 0500.
       ENDIF.
+
     WHEN 'DETAIL'.
       CALL SCREEN 0200.
 
@@ -100,7 +101,7 @@ MODULE USER_COMMAND_0300 INPUT.
 
       ELSE.
         " 채번 후 생성
-        PERFORM INSERT_DATA.
+        PERFORM INSERT_AP_DATA.
 
       ENDIF.
 
@@ -161,9 +162,20 @@ MODULE USER_COMMAND_0400 INPUT.
 
     WHEN 'OPEN'.
 
-      PERFORM SEL_ROWS_0100.
+      PERFORM SEL_ROWS_0400.
 
       READ TABLE GT_MHDATA INTO GS_MHDATA INDEX GS_ROWS-INDEX .
+
+      " 지급전표번호와 지급회계연도가 빈 값만 선택 가능하도록
+      " APNUM, APFYR 둘 다 비어있는지 검사
+      IF GS_MHDATA-APNUM IS INITIAL AND GS_MHDATA-APFYR IS INITIAL.
+
+        MESSAGE S999(ZMCSS) WITH GS_MHDATA-IVNUM '송장 문서를 선택 했습니다.'.
+      ELSE.
+        MESSAGE S999(ZMCSS) WITH '미결 항목만 선택 가능합니다.' DISPLAY LIKE 'E'.
+        RETURN.
+      ENDIF.
+
 
       PERFORM SET_DATA_0400.
 
@@ -187,16 +199,111 @@ MODULE USER_COMMAND_0500 INPUT.
 
     WHEN 'OPEN'.
 
-      PERFORM SEL_ROWS_0100.
+      PERFORM SEL_ROWS_0500.
 
       READ TABLE GT_SHDATA INTO GS_SHDATA INDEX GS_ROWS-INDEX .
 
-      CALL SCREEN 0300.
+      " 수금전표번호와 수금회계연도가 빈 값만 선택 가능하도록
+      " ARNUM, ARFYR 둘 다 비어있는지 검사
+      IF GS_SHDATA-ARNUM IS INITIAL AND GS_SHDATA-ARFYR IS INITIAL.
+
+        MESSAGE S999(ZMCSS) WITH GS_SHDATA-BINUM '송장 문서를 선택 했습니다.'.
+      ELSE.
+        MESSAGE S999(ZMCSS) WITH '미결 항목만 선택 가능합니다.' DISPLAY LIKE 'E'.
+        RETURN.
+      ENDIF.
+
+
+      PERFORM SET_DATA_0500.
+
+      CALL SCREEN 0600.
 
 
     WHEN OTHERS.
 
   ENDCASE.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0600  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0600 INPUT.
+  CASE OK_CODE.
+
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'ENTER'.
+
+      " 등록자명 취득
+      PERFORM GET_RGTOR_NAME USING ZSSSFI0205-RGTOR
+                                                   CHANGING ZSSSFI0205-RGTOR_T.
+
+      PERFORM CHECK_RGTOR_DEPID USING ZSSSFI0205-RGTOR.
+
+
+    WHEN 'BAP'.
+
+      " 반제전표 INSERT 및 정보 취득
+      PERFORM CHECK_DATA_0600 CHANGING GV_SUBRC.
+      IF GV_SUBRC = 4.
+        CLEAR GV_SUBRC.
+        RETURN.
+      ENDIF.
+
+
+      IF GV_FLAG = 'X'.
+
+        MESSAGE S999(ZMCSS) WITH '이미 전표가 생성되었습니다' DISPLAY LIKE 'E'.
+        RETURN.
+
+      ELSE.
+        " 채번 후 생성
+        PERFORM INSERT_AR_DATA.
+
+      ENDIF.
+
+
+
+    WHEN 'CLEARING'.
+***      " 미결항목처리 버튼 누르면 반제전표 생성과 동시에 클리어링 처리 완료
+***      " 지급 전표 생성되면, 전표 번호를 IV의 ap 전표번호에 넣어줘야 함. (생성일도)
+***
+***      READ TABLE GT_MHDATA INTO GS_MHDATA WITH KEY JENUM = GS_ZTSSJEH-JENUM.
+***      GS_MHDATA-APNUM = GS_ZTSSJEH-JENUM.
+***      GS_MHDATA-APFYR = GS_ZTSSJEH-FYEAR.
+***
+***      MESSAGE S999(ZMCSS) WITH '반제 처리 되었습니다.'.
+***
+***      GS_ZTSSMIVH-APNUM = GS_MHDATA-APNUM.
+***      GS_ZTSSMIVH-APFYR = GS_MHDATA-APFYR.
+***
+***
+***      UPDATE ZTSSMIVH SET APNUM = GS_ZTSSMIVH-APNUM
+***                                         APFYR = GS_ZTSSMIVH-APFYR
+***                                    WHERE JENUM = ZSSSFI0203-JENUM.
+***      IF SY-SUBRC <> 0.
+***        ROLLBACK WORK.
+***        MESSAGE S999(ZMCSS) WITH '지급 전표 정보 추가 오류' DISPLAY LIKE 'E'.
+***        EXIT.
+***      ENDIF.
+***
+***      COMMIT WORK. " <-- LOOP 밖 (성공시 한 번만)
+***      MESSAGE S999(ZMCSS) WITH '반제 처리 되었습니다.'.
+***
+***
+***      SELECT *
+***        FROM ZTSSMIVH
+***        INTO CORRESPONDING FIELDS OF TABLE GT_MHDATA.
+***
+***
+***      LEAVE TO SCREEN 0.
+***
+***    WHEN OTHERS.
+
+  ENDCASE.
+
 ENDMODULE.
 
 ----------------------------------------------------------------------------------

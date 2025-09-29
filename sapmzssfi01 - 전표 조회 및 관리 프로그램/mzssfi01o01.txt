@@ -197,6 +197,7 @@ ENDMODULE.
 *       text
 *----------------------------------------------------------------------*
 MODULE MODIFY_SCREEN_0100 OUTPUT.
+
   LOOP AT SCREEN.
     IF SCREEN-NAME = 'B_BUTTON2'.
       IF GV_FLAG = 'X'.
@@ -205,6 +206,7 @@ MODULE MODIFY_SCREEN_0100 OUTPUT.
         SCREEN-ACTIVE = 0.
       ENDIF.
     ENDIF.
+
     MODIFY SCREEN.
   ENDLOOP.
 ENDMODULE.
