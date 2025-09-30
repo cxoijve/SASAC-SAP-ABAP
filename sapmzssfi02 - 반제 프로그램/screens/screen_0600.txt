@@ -8,7 +8,7 @@ SAPMZSSFI02
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI02                             0600 0600     30 93192 37  0  0 37195  0G E                              20250929111514																																
+SAPMZSSFI02                             0600 0600     30 93192 37  0  0 37195  0G E                              20250930183915																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
@@ -50,7 +50,7 @@ ZSSSFI0205-CURKY	C	CUKY	  5	A0	00	84	30	08	 20	 61		  0	  0	  0		  0					 10	  0
 ZSSSFI0205-RGDAT	2	CHAR	 20	30	00	00	30	00	 21	  6		  0	  0	  0		  0					  0	  0				GR1				등록일	                                                                                                                                                                                                                                                        X	
 ZSSSFI0205-RGDAT	D	DATE	 10	A0	00	80	00	08	 21	 27		  0	  0	  0		  0					 16	  0				GR1				__________	X                                      00	
 ZSSSFI0205-RGTOR	2	CHAR	 20	30	00	04	30	00	 21	 40		  0	  0	  0		  0					  0	  0				GR1				등록자	                                                                                                                                                                                                                                                        X	
-ZSSSFI0205-RGTOR	C	CHAR	  8	A0	00	84	00	08	 21	 61		  0	  0	  0		  0					 16	  0				GR1				________	X                                      00	
+ZSSSFI0205-RGTOR	C	CHAR	  8	A0	00	84	30	08	 21	 61		  0	  0	  0		  0					 16	  0				GR1				________	X                                      00	
 ZSSSFI0205-RGTOR_T	C	CHAR	 20	B0	02	80	31	00	 21	 70		  0	  0	  0		  0					 80	  0								____________________	                                       00	
 B_BOX6		CHAR	 89	00	00	00	30	00	 23	  4		  0	  0	  0		  6	R				  0	  0	108							아이템		
 CON6			 82	00	00	00	30	00	 24	  7		  0	  0	  0		  4	U				  1	  1	109									

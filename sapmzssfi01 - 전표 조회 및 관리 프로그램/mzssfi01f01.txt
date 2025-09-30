@@ -12,8 +12,13 @@ FORM GET_DATA .
 
   PERFORM GET_JEH_DATA.     " 전표 헤더 정보 취득
 
-  PERFORM MODIFY_DATA.      " 추가 정보 취득
+  LOOP AT GT_HDATA INTO GS_HDATA.
 
+    PERFORM MODIFY_DATA.      " 추가 정보 취득
+
+    MODIFY GT_HDATA FROM GS_HDATA.
+
+  ENDLOOP.
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  CREATE_ALV_0100
@@ -111,11 +116,12 @@ FORM SET_FCAT .
   PERFORM FCAT USING:
         'JENUM' '1' '전표번호',
         'FYEAR' '2' '회계연도',
-        'JTYPE' '3' '전표 유형',
-*        'STEXT' '4' '비고',
-        'CURKY' '5' '통화 키',
-        'RGDAT' '6' '전기일',
-        'RGTOR' '7' '등록자'.
+        'JTYPE' '4' '전표 유형 코드',
+        'JTYPE_T' '5' '전표 유형',
+        'CURKY' '7' '통화 키',
+        'RGDAT' '3' '전기일',
+        'RGTOR' '7' '등록자 코드',
+        'RGTOR_T' '8' '등록자명'.
 
   CLEAR GS_FCAT.
 
@@ -131,7 +137,7 @@ FORM SET_FCAT .
         GS_FCAT-EDIT = ''.
       ENDIF.
 
-      GS_FCAT-COL_POS = 4.
+      GS_FCAT-COL_POS = 6.
       GS_FCAT-COLTEXT = '비고'.
       APPEND GS_FCAT TO GT_FCAT.
 
@@ -141,10 +147,35 @@ FORM SET_FCAT .
       IF GV_FLAG = 'X' AND GV_FLAG2 = 'X'.
         GS_FCAT-EDIT = ''.
       ENDIF.
-      GS_FCAT-COL_POS = 4.
+      GS_FCAT-COL_POS = 6.
       GS_FCAT-COLTEXT = '비고'.
       APPEND GS_FCAT TO GT_FCAT.
   ENDCASE.
+
+
+
+
+  CLEAR GS_FCAT.
+
+  LOOP AT GT_FCAT INTO GS_FCAT.
+    IF GS_FCAT-FIELDNAME = 'JENUM'.
+      GS_FCAT-HOTSPOT = 'X'. " 핫스팟
+    ENDIF.
+
+    IF GS_FCAT-FIELDNAME = 'JTYPE_T'.
+      GS_FCAT-HOTSPOT = 'X'. " 핫스팟
+    ENDIF.
+
+    IF GS_FCAT-FIELDNAME = 'RGTOR'.
+      GS_FCAT-NO_OUT = 'X'.
+    ENDIF.
+
+    IF GS_FCAT-FIELDNAME = 'JTYPE'.
+      GS_FCAT-NO_OUT = 'X'.
+    ENDIF.
+
+    MODIFY GT_FCAT FROM GS_FCAT.
+  ENDLOOP.
 
 
   " 따로 뺄 예정
@@ -178,8 +209,24 @@ ENDFORM.
 *  -->  p1        text
 *  <--  p2        text
 *----------------------------------------------------------------------*
-FORM SET_SORT .
+FORM SET_SORT_0100 .
+  CLEAR GT_SORT2.
+  GS_SORT2-SPOS = '1'.
+  GS_SORT2-FIELDNAME = 'JENUM'.
+  GS_SORT2-DOWN = 'X'.
+  APPEND GS_SORT2 TO GT_SORT2.
 
+*  CLEAR GT_SORT2.
+*  GS_SORT2-SPOS = '2'.
+*  GS_SORT2-FIELDNAME = 'FYEAR'.
+*  GS_SORT2-DOWN = 'X'.
+*  APPEND GS_SORT2 TO GT_SORT2.
+*
+*  CLEAR GT_SORT2.
+*  GS_SORT2-SPOS = '3'.
+*  GS_SORT2-FIELDNAME = 'RGDAT'.
+*  GS_SORT2-DOWN = 'X'.
+*  APPEND GS_SORT2 TO GT_SORT2.
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  GET_JEH_DATA
@@ -191,8 +238,6 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM GET_JEH_DATA.
 
-*  IF ZSSSFI0101-RGDATB IS INITIAL AND ZSSSFI0101-RGDATE IS INITIAL.
-  " 전기일이 빈 값일 경우
   SELECT JENUM FYEAR JTYPE STEXT CURKY RGDAT
              RGTOR REV RRSON RJNUM
          FROM ZTSSJEH
@@ -202,22 +247,6 @@ FORM GET_JEH_DATA.
           AND RGDAT IN GT_RRGDAT
           AND JTYPE IN GT_RJTYPE
           AND RGTOR IN GT_RRGTOR.
-
-**  ELSE.
-**
-***    " 전기일로 조회할 경우
-**    SELECT JENUM FYEAR JTYPE STEXT CURKY RGDAT
-**           RGTOR REV RRSON RJNUM
-**       FROM ZTSSJEH
-**       INTO CORRESPONDING FIELDS OF TABLE GT_HDATA
-**      WHERE RGDAT IN GT_RRGDAT.
-***
-***
-***  ELSEIF ZSSSFI0101-RGDATB IS INITIAL AND ZSSSFI0101-RGDATE IS INITIAL.
-***    " 회계연도+전표번호로 검색할 경우
-**
-**
-**  ENDIF.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -229,8 +258,27 @@ ENDFORM.
 *  <--  p2        text
 *----------------------------------------------------------------------*
 FORM MODIFY_DATA .
+  " DOMAIN
+  PERFORM GET_DOMAIN_VALUE USING 'ZDSSJTYPE' CHANGING GT_DOMAIN.
+
+  CLEAR GS_DOMAIN.
+  READ TABLE GT_DOMAIN INTO GS_DOMAIN WITH KEY DOMVALUE_L = GS_HDATA-JTYPE.
+
+  IF SY-SUBRC = 0.
+    GS_HDATA-JTYPE_T = GS_DOMAIN-DDTEXT.
+  ENDIF.
 
 
+
+  " 등록자명 취득
+  PERFORM GET_RGTOR_NAME USING GS_HDATA-RGTOR
+                         CHANGING GS_HDATA-RGTOR_T.
+
+
+  " 자동전표일 경우, 등록자명 AutoFIBot
+  IF GS_HDATA-RGTOR IS INITIAL.
+    GS_HDATA-RGTOR_T = 'AutoFIBot'.
+  ENDIF.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -499,6 +547,11 @@ FORM SET_INIT .
   ZSSSFI0101-RGDATB = SY-DATUM+0(6) && '01'. " 월 1일
   ZSSSFI0101-RGDATE = SY-DATUM.              " 현재일
 
+  IF ZSSSFI0101-RGDATB IS INITIAL AND ZSSSFI0101-RGDATE IS INITIAL
+      AND ZSSSFI0101-JTYPE IS INITIAL AND ZSSSFI0101-RGTOR IS INITIAL.
+
+  ENDIF.
+
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  GET_RGTOR_NAME
@@ -569,6 +622,11 @@ FORM SET_DATA_0300 .
   PERFORM GET_RGTOR_NAME USING ZSSSFI0102-RGTOR
                          CHANGING ZSSSFI0102-RGTOR_T.
 
+  " 자동전표일 경우, 등록자명 AutoFIBot
+  IF ZSSSFI0102-RGTOR IS INITIAL.
+    ZSSSFI0102-RGTOR_T = 'AutoFIBot'.
+  ENDIF.
+
   PERFORM GET_JEI_DATA.
 
   PERFORM CAL_SUM_DC CHANGING ZSSSFI0104-DEBIT
@@ -585,6 +643,16 @@ ENDFORM.
 *      <--P_GV_SUBRC  text
 *----------------------------------------------------------------------*
 FORM CHECK_DATA_0200  CHANGING PV_SUBRC.
+
+  " 필수값 유효성 체크
+  IF ZSSSFI0102-RGTOR IS INITIAL OR
+     ZSSSFI0102-JTYPE IS INITIAL OR
+     ZSSSFI0102-RGDAT IS INITIAL.
+    MESSAGE S999(ZMCSS) WITH '등록자, 전표유형, 전기일을 모두 입력해 주세요.'
+     DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+  ENDIF.
 
 
   IF ZSSSFI0102-RGTOR IS INITIAL.
@@ -606,7 +674,6 @@ FORM CHECK_DATA_0200  CHANGING PV_SUBRC.
     RETURN.
 
   ENDIF.
-
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -645,6 +712,7 @@ FORM INSERT_DATA .
     LV_NUM2 = 'J' && SY-DATUM+0(4) && LV_NUM.
     WRITE LV_NUM2.
   ENDIF.
+
 
 
   " 아이템 정보가 있을 경우만 인서트 되도록
@@ -686,17 +754,6 @@ FORM INSERT_DATA .
     MESSAGE S999(ZMCSS) WITH '라인 아이템을 추가하세요.' DISPLAY LIKE 'E'.
   ENDIF.
 
-
-ENDFORM.
-*&---------------------------------------------------------------------*
-*&      Form  SET_DATA_0100
-*&---------------------------------------------------------------------*
-*       text
-*----------------------------------------------------------------------*
-*  -->  p1        text
-*  <--  p2        text
-*----------------------------------------------------------------------*
-FORM SET_DATA_0100 .
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -751,7 +808,7 @@ ENDFORM.
 *  -->  p1        text
 *  <--  p2        text
 *----------------------------------------------------------------------*
-FORM SEL_ROWS_0100 .
+FORM SEL_ROWS_0100  CHANGING PV_SUBRC.
   " 행 선택 처리
   DATA: LV_LINE TYPE I.
 
@@ -761,13 +818,16 @@ FORM SEL_ROWS_0100 .
   CASE LV_LINE.
     WHEN '0'.
       MESSAGE S999(ZMCSS) WITH '수정할 데이터를 선택해주세요.' DISPLAY LIKE 'E'.
+      PV_SUBRC = 4.
       RETURN.
+*      EXIT.
     WHEN '1'.
 
       READ TABLE GT_ROWS INDEX 1 INTO GS_ROWS.
 
     WHEN OTHERS.
       MESSAGE S999(ZMCSS) WITH '데이터를 한 행만 선택하세요.' DISPLAY LIKE 'E'.
+      PV_SUBRC = 4.
       RETURN.
   ENDCASE.
 
@@ -892,7 +952,7 @@ FORM CHECK_RGTOR_DEPID USING VALUE(P_RGTOR).
 
     DATA LV_DEPID TYPE C LENGTH 4.
 
-    " ZSSSFI0102-RGTOR 값에 해당하는 사원의 부서를 찾아서 읽어와
+    " ZSSSFI0102-RGTOR 값에 해당하는 사원의 부서를 찾아서 읽음
     SELECT SINGLE DEPID
       INTO @LV_DEPID
       FROM ZTSSEMP
@@ -901,7 +961,8 @@ FORM CHECK_RGTOR_DEPID USING VALUE(P_RGTOR).
     " 해당되는 사원의 부서가 'D001'이 아닐 경우 에러
     IF SY-SUBRC = 0.
       IF LV_DEPID <> 'D001'.
-        MESSAGE S999(ZMCSS) WITH '회계부서 사원만 가능합니다. ' DISPLAY LIKE 'E'.
+        MESSAGE S999(ZMCSS) WITH '등록자는 회계부서 사원만 가능합니다. ' DISPLAY LIKE 'E'.
+        GV_SUBRC = 4.
         RETURN.
 
       ELSE.
@@ -1120,10 +1181,12 @@ ENDFORM.
 *  <--  p2        text
 *----------------------------------------------------------------------*
 FORM SET_EVENT .
+
   CREATE OBJECT GO_EVENT.
 
   SET HANDLER:
   GO_EVENT->DATA_CHANGED FOR GO_ALV.
+
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  MODIFY_RANGE
@@ -1141,15 +1204,35 @@ FORM MODIFY_RANGE .
     GS_RRGDAT-LOW = ZSSSFI0101-RGDATB.
     GS_RRGDAT-HIGH = ZSSSFI0101-RGDATE.
     APPEND GS_RRGDAT TO GT_RRGDAT.
+
+  ELSE.
+    " RGDATE가 없으면
+    CLEAR: GS_RFYEAR, GT_RFYEAR, GS_RJENUM, GT_RJENUM.
+    IF ZSSSFI0101-FYEAR IS NOT INITIAL.
+      GS_RFYEAR-SIGN   = 'I'.
+      GS_RFYEAR-OPTION = 'EQ'.
+      GS_RFYEAR-LOW    = ZSSSFI0101-FYEAR.
+      APPEND GS_RFYEAR TO GT_RFYEAR.
+    ENDIF.
+
+    IF ZSSSFI0101-JENUM IS NOT INITIAL.
+      GS_RJENUM-SIGN   = 'I'.
+      GS_RJENUM-OPTION = 'EQ'.
+      GS_RJENUM-LOW    = ZSSSFI0101-JENUM.
+      APPEND GS_RJENUM TO GT_RJENUM.
+    ENDIF.
   ENDIF.
 
-  CLEAR: GS_RRGDAT.
-  IF  ZSSSFI0101-RGDATE IS INITIAL.
-    GS_RRGDAT-SIGN = 'I'.
-    GS_RRGDAT-OPTION = 'EQ'.
-    GS_RRGDAT-LOW = ZSSSFI0101-RGDATB.
-    APPEND GS_RRGDAT TO GT_RRGDAT.
-  ENDIF.
+*ENDIF.
+
+*  CLEAR: GS_RRGDAT.
+*  IF  ZSSSFI0101-RGDATE IS INITIAL.
+*    GS_RRGDAT-SIGN = 'I'.
+*    GS_RRGDAT-OPTION = 'EQ'.
+*    GS_RRGDAT-LOW = ZSSSFI0101-RGDATB.
+*    APPEND GS_RRGDAT TO GT_RRGDAT.
+*  ENDIF.
+
 
   CLEAR: GS_RFYEAR, GT_RFYEAR.
   IF  ZSSSFI0101-FYEAR IS NOT INITIAL.
@@ -1286,6 +1369,86 @@ FORM SET_EVENT_0200 .
   SET HANDLER:
   GO_EVENT->DATA_CHANGED FOR GO_ALV3.
 
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CHECK_DATA_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_GV_SUBRC  text
+*----------------------------------------------------------------------*
+FORM CHECK_DATA_0100  CHANGING PV_SUBRC.
+
+  IF ZSSSFI0101-JENUM IS NOT INITIAL.
+    ZSSSFI0101-FYEAR = ZSSSFI0101-JENUM+1(4).
+    CLEAR: ZSSSFI0101-RGDATB, ZSSSFI0101-RGDATE.
+    MESSAGE S999(ZMCSS) WITH '전표번호는 함께 조회됩니다.'.
+
+  ENDIF.
+
+  " 날짜 조건
+  IF ZSSSFI0101-FYEAR IS NOT INITIAL
+    AND ZSSSFI0101-RGDATB IS NOT INITIAL
+    AND ZSSSFI0101-RGDATE IS NOT INITIAL.
+    " 회계연도가 시작일자와 종료일자의 앞 4자리 연도 범위 안에 없으면 에러
+    IF ZSSSFI0101-FYEAR >= ZSSSFI0101-RGDATB+0(4)
+      AND ZSSSFI0101-FYEAR <= ZSSSFI0101-RGDATE+0(4).
+
+    ELSE.
+      MESSAGE S999(ZMCSS) WITH '회계연도가 전기일 범위 내에 있어야 합니다.' DISPLAY LIKE  'E'.
+      PV_SUBRC = 4.
+      RETURN.
+    ENDIF.
+  ENDIF.
+
+  IF ZSSSFI0101-RGDATB > ZSSSFI0101-RGDATE.
+    MESSAGE S999(ZMCSS) WITH '전기일을 다시 확인해 주세요.' DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_RGTOR_INFO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_RGTOR_INFO .
+  PERFORM GET_RGTOR_NAME USING ZSSSFI0102-RGTOR
+                         CHANGING ZSSSFI0102-RGTOR_T.
+
+  PERFORM CHECK_RGTOR_DEPID USING ZSSSFI0102-RGTOR.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_SORT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_SORT .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_DOMAIN_VALUE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0299   text
+*      <--P_GT_DOMAIN  text
+*----------------------------------------------------------------------*
+FORM GET_DOMAIN_VALUE  USING    VALUE(PV_DOMNAME)
+                       CHANGING PT_DOMAIN TYPE DD07V_T.
+  CALL FUNCTION 'GET_DOMAIN_VALUES'
+    EXPORTING
+      DOMNAME    = PV_DOMNAME
+    TABLES
+      VALUES_TAB = PT_DOMAIN.
 ENDFORM.
 
 ----------------------------------------------------------------------------------

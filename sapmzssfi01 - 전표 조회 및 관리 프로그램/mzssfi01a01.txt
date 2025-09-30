@@ -1,3 +1,59 @@
+*&---------------------------------------------------------------------*
+*&      Form  ALV_CL_HOTSPOT_CLICK
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_E_ROW_ID  text
+*      -->P_E_COLUMN_ID  text
+*----------------------------------------------------------------------*
+FORM ALV_CL_HOTSPOT_CLICK  USING    P_E_ROW_ID
+                                    P_E_COLUMN_ID.
+
+  READ TABLE GT_HDATA INTO GS_HDATA INDEX P_E_ROW_ID.
+
+  " 전표번호 핫스팟
+  IF P_E_COLUMN_ID = 'JENUM'.
+    PERFORM SET_DATA_0300.
+
+    CALL SCREEN 0300.
+
+  ELSEIF P_E_COLUMN_ID = 'JTYPE_T'.
+    " 전표유형 핫스팟
+    CASE GS_HDATA-JTYPE.
+      WHEN 'DR'. " 청구
+
+      WHEN 'DZ'. " 수금
+
+      WHEN 'KR'. " 송장검증
+
+      WHEN 'KZ'. " 지급
+
+      WHEN 'WA'. " 출고
+
+      WHEN 'WE'. " 입고
+
+    ENDCASE.
+
+
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_EVENT2
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_EVENT2 .
+
+  CREATE OBJECT G_EVENT_RECEIVER01.
+
+  SET HANDLER
+    G_EVENT_RECEIVER01->HANDLE_HOTSPOT_CLICK FOR GO_ALV.
+
+ENDFORM.
 
 ----------------------------------------------------------------------------------
 Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

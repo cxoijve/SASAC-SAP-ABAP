@@ -159,7 +159,7 @@ ENDFORM.
 *  -->  p1        text
 *  <--  p2        text
 *----------------------------------------------------------------------*
-FORM SEL_ROWS_0400 .
+FORM SEL_ROWS_0400   CHANGING PV_SUBRC.
 
   " 행 선택 처리
   DATA: LV_LINE TYPE I.
@@ -170,6 +170,7 @@ FORM SEL_ROWS_0400 .
   CASE LV_LINE.
     WHEN '0'.
       MESSAGE S999(ZMCSS) WITH '수정할 데이터를 선택해주세요.' DISPLAY LIKE 'E'.
+      PV_SUBRC = 4.
       RETURN.
     WHEN '1'.
 
@@ -177,6 +178,7 @@ FORM SEL_ROWS_0400 .
 
     WHEN OTHERS.
       MESSAGE S999(ZMCSS) WITH '데이터를 한 행만 선택하세요.' DISPLAY LIKE 'E'.
+      PV_SUBRC = 4.
       RETURN.
   ENDCASE.
 
@@ -483,6 +485,10 @@ FORM SET_DATA_0400 .
   PERFORM GET_RGTOR_NAME USING ZSSSFI0203-RGTOR
                          CHANGING ZSSSFI0203-RGTOR_T.
 
+  " 자동전표일 경우, 등록자명 AutoFIBot
+  IF ZSSSFI0203-RGTOR IS INITIAL.
+    ZSSSFI0203-RGTOR_T = 'AutoFIBot'.
+  ENDIF.
 
   " 송장검증 IV의 라인아이템 정보 취득
   PERFORM GET_MJEI_DATA.
@@ -786,26 +792,32 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM CHECK_DATA_0300  CHANGING PV_SUBRC.
 
+  IF ZSSSFI0205-RGTOR IS INITIAL.
 
-**  IF ZSSSFI0102-RGTOR IS INITIAL.
-**
-**    MESSAGE S999(ZMCSS) WITH '등록자는 필수값입니다.' DISPLAY LIKE 'E'.
-**    PV_SUBRC = 4.
-**    RETURN.
-**
-**  ELSEIF ZSSSFI0102-RGDAT IS INITIAL.
-**
-**    MESSAGE S999(ZMCSS) WITH '전기일은 필수값입니다.' DISPLAY LIKE 'E'.
-**    PV_SUBRC = 4.
-**    RETURN.
-**
-**  ELSEIF ZSSSFI0102-JTYPE IS INITIAL.
-**
-**    MESSAGE S999(ZMCSS) WITH '전표 유형은 필수값입니다.' DISPLAY LIKE 'E'.
-**    PV_SUBRC = 4.
-**    RETURN.
+    MESSAGE S999(ZMCSS) WITH '등록자는 필수값입니다.' DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
 
-**  ENDIF.
+  ELSEIF ZSSSFI0205-RGDAT IS INITIAL.
+
+    MESSAGE S999(ZMCSS) WITH '등록일을 입력해 주세요.' DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+
+  ELSEIF ZSSSFI0205-RGDAT NE SY-DATUM.
+
+    MESSAGE S999(ZMCSS) WITH '등록일은 ' SY-DATUM '입니다.' DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+
+
+  ELSEIF ZSSSFI0205-STEXT IS INITIAL.
+
+    MESSAGE S999(ZMCSS) WITH '비고란을 입력해 주세요.' DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+
+  ENDIF.
 
 
 ENDFORM.
@@ -951,8 +963,14 @@ FORM SET_AP_INIT .
   ZSSSFI0205-RGDAT = SY-DATUM.
   ZSSSFI0205-CURKY = 'KRW'.
   ZSSSFI0205-JTYPE = 'KZ'.
-  ZSSSFI0205-RGTOR = ZSSSFI0203-RGTOR.
-  ZSSSFI0205-RGTOR_T = ZSSSFI0203-RGTOR_T.
+
+  IF ZSSSFI0203-RGTOR IS INITIAL AND ZSSSFI0203-RGTOR_T = 'AutoFIBot'.
+    ZSSSFI0205-RGTOR = 'E0000001'.
+    ZSSSFI0205-RGTOR_T = '최지예'.
+  ELSE.
+    ZSSSFI0205-RGTOR = ZSSSFI0203-RGTOR.
+    ZSSSFI0205-RGTOR_T = ZSSSFI0203-RGTOR_T.
+  ENDIF.
 
   IF ZSSSFI0203-STEXT IS NOT INITIAL.
     ZSSSFI0205-STEXT = ZSSSFI0203-STEXT.
@@ -1008,7 +1026,7 @@ FORM CHECK_RGTOR_DEPID USING VALUE(P_RGTOR).
 
     DATA LV_DEPID TYPE C LENGTH 4.
 
-    " ZSSSFI0102-RGTOR 값에 해당하는 사원의 부서를 찾아서 읽어와
+    " ZSSSFI0102-RGTOR 값에 해당하는 사원의 부서를 찾음
     SELECT SINGLE DEPID
       INTO @LV_DEPID
       FROM ZTSSEMP
@@ -1017,6 +1035,7 @@ FORM CHECK_RGTOR_DEPID USING VALUE(P_RGTOR).
     " 해당되는 사원의 부서가 'D001'이 아닐 경우 에러
     IF SY-SUBRC = 0.
       IF LV_DEPID <> 'D001'.
+
         MESSAGE S999(ZMCSS) WITH '회계부서 사원만 가능합니다. ' DISPLAY LIKE 'E'.
         RETURN.
 
@@ -1070,6 +1089,11 @@ FORM SET_DATA_0500 .
   PERFORM GET_RGTOR_NAME USING ZSSSFI0203-RGTOR
                          CHANGING ZSSSFI0203-RGTOR_T.
 
+  " 자동전표일 경우, 등록자명 AutoFIBot
+  IF ZSSSFI0203-RGTOR IS INITIAL.
+    ZSSSFI0203-RGTOR_T = 'AutoFIBot'.
+  ENDIF.
+
   " 청구 IV의 라인아이템 정보 취득
   PERFORM GET_SJEI_DATA.
 
@@ -1084,7 +1108,7 @@ FORM SET_DATA_0500 .
   PERFORM SET_AR_INIT.
 
   PERFORM CAL_SUM_DC CHANGING ZSSSFI0206-DEBIT
-                                                        ZSSSFI0206-CREDIT.
+                              ZSSSFI0206-CREDIT.
 
   ZSSSFI0206-CURKY = ZSSSFI0205-CURKY.
 
@@ -1279,7 +1303,7 @@ ENDFORM.
 *  -->  p1        text
 *  <--  p2        text
 *----------------------------------------------------------------------*
-FORM SEL_ROWS_0500 .
+FORM SEL_ROWS_0500  CHANGING PV_SUBRC.
 
   " 행 선택 처리
   DATA: LV_LINE TYPE I.
@@ -1290,6 +1314,7 @@ FORM SEL_ROWS_0500 .
   CASE LV_LINE.
     WHEN '0'.
       MESSAGE S999(ZMCSS) WITH '수정할 데이터를 선택해주세요.' DISPLAY LIKE 'E'.
+      PV_SUBRC = 4.
       RETURN.
     WHEN '1'.
 
@@ -1297,6 +1322,7 @@ FORM SEL_ROWS_0500 .
 
     WHEN OTHERS.
       MESSAGE S999(ZMCSS) WITH '데이터를 한 행만 선택하세요.' DISPLAY LIKE 'E'.
+      PV_SUBRC = 4.
       RETURN.
   ENDCASE.
 
@@ -1499,6 +1525,20 @@ FORM INSERT_AR_DATA .
     MESSAGE S999(ZMCSS) WITH '라인 아이템을 추가하세요.' DISPLAY LIKE 'E'.
   ENDIF.
 
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_RGTOR_INFO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_RGTOR_INFO .
+  PERFORM GET_RGTOR_NAME USING ZSSSFI0205-RGTOR
+                         CHANGING ZSSSFI0205-RGTOR_T.
+
+  PERFORM CHECK_RGTOR_DEPID USING ZSSSFI0205-RGTOR.
 ENDFORM.
 
 ----------------------------------------------------------------------------------

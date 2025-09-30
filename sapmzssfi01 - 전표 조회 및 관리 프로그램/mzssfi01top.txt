@@ -1,9 +1,12 @@
 *&---------------------------------------------------------------------*
-*& Include MZSSMD03TOP                                       Module Pool      SAPMZSSMD03
+*& Include MZSSFI01TOP                                       Module Pool      SAPMZSSMD03
 *&
 *&---------------------------------------------------------------------*
-PROGRAM SAPMZSSMD03.
+PROGRAM SAPMZSSFI01.
 
+" µµ∏ﬁ¿Œ
+DATA: GT_DOMAIN TYPE TABLE OF DD07V,
+      GS_DOMAIN TYPE DD07V.
 
 DATA GV_CHECK TYPE I.
 
@@ -103,6 +106,8 @@ DATA: GO_CON     TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
       GS_LAYO    TYPE LVC_S_LAYO,
       GT_SORT    TYPE LVC_T_SORT,
       GS_SORT    TYPE LVC_S_SORT,
+      GT_SORT2    TYPE LVC_T_SORT,
+      GS_SORT2    TYPE LVC_S_SORT,
       GT_FCAT    TYPE LVC_T_FCAT,
       GS_FCAT    TYPE LVC_S_FCAT,
       GT_EXCLUDE TYPE UI_FUNCTIONS.
@@ -113,6 +118,8 @@ DATA: GT_ROWS TYPE LVC_T_ROW,
 " Flag
 DATA: GV_FLAG,
       GV_FLAG2,
+      GV_FLAG3,
+      GV_FLAG4,
       GV_SUB TYPE STRING.
 
 " Tabstrip
