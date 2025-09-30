@@ -17,7 +17,7 @@ FORM ALV_CL_HOTSPOT_CLICK  USING    P_E_ROW_ID
 
     CALL SCREEN 0300.
 
-  ELSEIF P_E_COLUMN_ID = 'JTYPE_T'.
+  ELSEIF P_E_COLUMN_ID = 'REFDOC'.
     " ÀüÇ¥À¯Çü ÇÖ½ºÆÌ
     CASE GS_HDATA-JTYPE.
       WHEN 'DR'. " Ã»±¸
@@ -36,22 +36,6 @@ FORM ALV_CL_HOTSPOT_CLICK  USING    P_E_ROW_ID
 
 
   ENDIF.
-
-ENDFORM.
-*&---------------------------------------------------------------------*
-*&      Form  SET_EVENT2
-*&---------------------------------------------------------------------*
-*       text
-*----------------------------------------------------------------------*
-*  -->  p1        text
-*  <--  p2        text
-*----------------------------------------------------------------------*
-FORM SET_EVENT2 .
-
-  CREATE OBJECT G_EVENT_RECEIVER01.
-
-  SET HANDLER
-    G_EVENT_RECEIVER01->HANDLE_HOTSPOT_CLICK FOR GO_ALV.
 
 ENDFORM.
 

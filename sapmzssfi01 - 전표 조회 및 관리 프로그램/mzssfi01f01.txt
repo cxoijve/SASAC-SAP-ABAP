@@ -12,7 +12,38 @@ FORM GET_DATA .
 
   PERFORM GET_JEH_DATA.     " 전표 헤더 정보 취득
 
+  PERFORM GET_REFDOC_DATA.  " 참조문서 정보 취득
+
   LOOP AT GT_HDATA INTO GS_HDATA.
+    CASE GS_HDATA-JTYPE.
+      WHEN 'WE'. " 입고
+        READ TABLE GT_ZTSSGRH INTO GS_ZTSSGRH WITH KEY JENUM = GS_HDATA-JENUM.
+        GS_HDATA-REFDOC = GS_ZTSSGRH-GRNUM.
+
+      WHEN 'KR'. " 송장검증
+        READ TABLE GT_ZTSSMIVH INTO GS_ZTSSMIVH WITH KEY JENUM = GS_HDATA-JENUM.
+        GS_HDATA-REFDOC = GS_ZTSSMIVH-IVNUM.
+
+      WHEN 'KZ'. " 지급
+        READ TABLE GT_ZTSSMIVH INTO GS_ZTSSMIVH WITH KEY APNUM = GS_HDATA-JENUM.
+        GS_HDATA-REFDOC = GS_ZTSSMIVH-JENUM.
+
+      WHEN 'WA'. " 출고
+        READ TABLE GT_ZTSSGIH INTO GS_ZTSSGIH WITH KEY JENUM = GS_HDATA-JENUM.
+        GS_HDATA-REFDOC = GS_ZTSSGIH-GINUM.
+
+      WHEN 'DR'. " 청구
+        READ TABLE GT_ZTSSSIVH INTO GS_ZTSSSIVH WITH KEY JENUM = GS_HDATA-JENUM.
+        GS_HDATA-REFDOC = GS_ZTSSSIVH-BINUM.
+
+      WHEN 'DZ'. " 수금
+        READ TABLE GT_ZTSSSIVH INTO GS_ZTSSSIVH WITH KEY ARNUM = GS_HDATA-JENUM.
+        GS_HDATA-REFDOC = GS_ZTSSSIVH-JENUM.
+
+    ENDCASE.
+
+
+
 
     PERFORM MODIFY_DATA.      " 추가 정보 취득
 
@@ -118,10 +149,11 @@ FORM SET_FCAT .
         'FYEAR' '2' '회계연도',
         'JTYPE' '4' '전표 유형 코드',
         'JTYPE_T' '5' '전표 유형',
-        'CURKY' '7' '통화 키',
+        'CURKY' '8' '통화 키',
         'RGDAT' '3' '전기일',
         'RGTOR' '7' '등록자 코드',
-        'RGTOR_T' '8' '등록자명'.
+        'RGTOR_T' '9' '등록자명',
+        'REFDOC' '6' '참조문서'.
 
   CLEAR GS_FCAT.
 
@@ -137,7 +169,7 @@ FORM SET_FCAT .
         GS_FCAT-EDIT = ''.
       ENDIF.
 
-      GS_FCAT-COL_POS = 6.
+      GS_FCAT-COL_POS = 7.
       GS_FCAT-COLTEXT = '비고'.
       APPEND GS_FCAT TO GT_FCAT.
 
@@ -147,7 +179,7 @@ FORM SET_FCAT .
       IF GV_FLAG = 'X' AND GV_FLAG2 = 'X'.
         GS_FCAT-EDIT = ''.
       ENDIF.
-      GS_FCAT-COL_POS = 6.
+      GS_FCAT-COL_POS = 7.
       GS_FCAT-COLTEXT = '비고'.
       APPEND GS_FCAT TO GT_FCAT.
   ENDCASE.
@@ -162,7 +194,7 @@ FORM SET_FCAT .
       GS_FCAT-HOTSPOT = 'X'. " 핫스팟
     ENDIF.
 
-    IF GS_FCAT-FIELDNAME = 'JTYPE_T'.
+    IF GS_FCAT-FIELDNAME = 'DOCREF'.
       GS_FCAT-HOTSPOT = 'X'. " 핫스팟
     ENDIF.
 
@@ -248,6 +280,7 @@ FORM GET_JEH_DATA.
           AND JTYPE IN GT_RJTYPE
           AND RGTOR IN GT_RRGTOR.
 
+
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  MODIFY_DATA
@@ -258,6 +291,7 @@ ENDFORM.
 *  <--  p2        text
 *----------------------------------------------------------------------*
 FORM MODIFY_DATA .
+
   " DOMAIN
   PERFORM GET_DOMAIN_VALUE USING 'ZDSSJTYPE' CHANGING GT_DOMAIN.
 
@@ -267,8 +301,6 @@ FORM MODIFY_DATA .
   IF SY-SUBRC = 0.
     GS_HDATA-JTYPE_T = GS_DOMAIN-DDTEXT.
   ENDIF.
-
-
 
   " 등록자명 취득
   PERFORM GET_RGTOR_NAME USING GS_HDATA-RGTOR
@@ -1185,7 +1217,8 @@ FORM SET_EVENT .
   CREATE OBJECT GO_EVENT.
 
   SET HANDLER:
-  GO_EVENT->DATA_CHANGED FOR GO_ALV.
+  GO_EVENT->DATA_CHANGED FOR GO_ALV,
+  GO_EVENT->HANDLE_HOTSPOT_CLICK FOR GO_ALV.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -1449,6 +1482,36 @@ FORM GET_DOMAIN_VALUE  USING    VALUE(PV_DOMNAME)
       DOMNAME    = PV_DOMNAME
     TABLES
       VALUES_TAB = PT_DOMAIN.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_REFDOC_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_REFDOC_DATA .
+
+
+  SELECT GRNUM JENUM
+    FROM ZTSSGRH
+    INTO CORRESPONDING FIELDS OF TABLE GT_ZTSSGRH.
+
+  SELECT IVNUM JENUM APNUM
+    FROM ZTSSMIVH
+    INTO CORRESPONDING FIELDS OF TABLE GT_ZTSSMIVH.
+
+  SELECT GINUM JENUM
+    FROM ZTSSGIH
+    INTO CORRESPONDING FIELDS OF TABLE GT_ZTSSGIH.
+
+  SELECT BINUM JENUM ARNUM
+    FROM ZTSSSIVH
+    INTO CORRESPONDING FIELDS OF TABLE GT_ZTSSSIVH.
+
+
+
 ENDFORM.
 
 ----------------------------------------------------------------------------------
