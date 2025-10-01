@@ -1,34 +1,40 @@
 # 전표 조회 및 관리 프로그램
 ### 조회 화면(Screen 0100)
-- '전기일' 조건에 따른 조회 결과
-  - <img width="820" height="822" alt="img1" src="https://github.com/user-attachments/assets/3575bcc5-6d4b-445a-8ab7-5fec0f021cd8" />
+- 입력 조건에 따른 조회 결과
+  - <img width="1027" height="830" alt="img1" src="https://github.com/user-attachments/assets/29e750ed-abe1-433f-9906-7b1425102baa" />
 
 - 버튼 클릭 시 ALV EDIT 기능 구현
   - '변경' 버튼 누르면 편집 모드 활성화
-    - <img width="838" height="834" alt="img4" src="https://github.com/user-attachments/assets/c818ea54-eed8-4ac0-9ea1-b21d174bd816" />
+    - <img width="1027" height="830" alt="img4" src="https://github.com/user-attachments/assets/09f1db87-9be0-4393-9135-183c20986aa6" />
+
   - '완료' 버튼 누르면 조회 모드 활성화
-    - <img width="846" height="833" alt="img5" src="https://github.com/user-attachments/assets/9ff220c8-a83f-41ef-9ee0-3bb8673c9ac0" />
+    - <img width="1023" height="825" alt="img5" src="https://github.com/user-attachments/assets/466b2737-d0ab-4294-9936-310dd465d64a" />
+
 
 - 대량 전표 생성을 위한 엑셀 업로드 기능 추가
   - CALL TRANSACTION 'ZRBSSFI01'. 구문을 통해 엑셀 업로드 프로그램으로 이동  ([zrbssfi01 - 전표 생성 BDC 프로그램](https://github.com/cxoijve/SeSAC_PROJ/tree/main/zrbssfi01%20-%20%EC%A0%84%ED%91%9C%20%EC%83%9D%EC%84%B1%20BDC%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8))
-    - <img width="1015" height="831" alt="img7" src="https://github.com/user-attachments/assets/3ad35e84-b3c7-4bcb-a88b-c936bbd9303d" />
+    - <img width="1027" height="830" alt="img7" src="https://github.com/user-attachments/assets/a7d6c515-8dbc-4e13-934f-aee1d09dce84" />
+
 
 - 반제(Clearing) 처리를 위한 기능 추가
   - CALL TRANSACTION 'ZSSFI02'. 구문을 통해 반제 프로그램으로 이동   ([zrbssfi02 - 반제(Clearing) 프로그램](https://github.com/cxoijve/SeSAC_PROJ/tree/main/sapmzssfi02%20-%20%EB%B0%98%EC%A0%9C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8))
-    - <img width="1010" height="827" alt="img8" src="https://github.com/user-attachments/assets/6e8d86bf-fdde-46d1-a036-bf9a6a634ccf" />
+    - <img width="1027" height="830" alt="img8" src="https://github.com/user-attachments/assets/24ffb823-7213-46b8-8695-73655d9f8a5a" />
+
 
 
 
 ### 상세조회 화면(Screen 0300)
 - 조회 결과 화면에서 한 행 선택 후 상세조회 클릭
-  - <img width="835" height="836" alt="img2" src="https://github.com/user-attachments/assets/87112607-1fe7-4afd-940d-f8180f7e1b15" />
+  - <img width="1019" height="827" alt="img2" src="https://github.com/user-attachments/assets/79966b01-d27b-4540-a75e-cbc08890634b" />
 
 -  선택한 헤더-라인아이템 정보 상세조회
-  - <img width="965" height="674" alt="img3" src="https://github.com/user-attachments/assets/9cc8a32b-f14d-4630-80ab-ed36cfa714ec" />
+  -  <img width="961" height="675" alt="img3" src="https://github.com/user-attachments/assets/3293fdf3-a6d6-4b8c-a579-59c50be7c5db" />
+
 
 ### 생성 화면(Screen 0200)
 - 조회 화면에서 생성 클릭
-  - <img width="1011" height="826" alt="img6" src="https://github.com/user-attachments/assets/be6203e5-65c2-4186-8a23-ea2b43bbfcc9" />
+  - <img width="1027" height="830" alt="img6" src="https://github.com/user-attachments/assets/84b1bcb4-0749-4df9-b39a-3fa15a4f18c3" />
+
 
 - 회계부서 사원만 나오도록 Search Help 출력
   - <img width="948" height="721" alt="img5" src="https://github.com/user-attachments/assets/98dac132-4d30-492c-8edb-206983e13150" />
