@@ -1,0 +1,72 @@
+*&---------------------------------------------------------------------*
+*& Include MZSSMD03TOP                                       Module Pool      SAPMZSSMD03
+*&
+*&---------------------------------------------------------------------*
+PROGRAM SAPMZSSMD03.
+
+* Dropdown
+DATA: GT_DROPDOWN TYPE VRM_VALUES,
+      GS_DROPDOWN LIKE LINE OF GT_DROPDOWN.
+
+" Domain
+***TYPES: BEGIN OF TY_S_LIST.
+***    INCLUDE STRUCTURE ZSSSMD0302.
+***
+***TYPES:   EDOM_T(30),    " Domain Value TEXT를 담을 필드 설정 "
+***END OF TY_S_LIST.
+***
+***DATA: LT_LIST TYPE STANDARD TABLE OF TY_S_LIST,
+***      LS_LIST TYPE TY_S_LIST.
+
+" Common
+DATA: GV_SUBRC TYPE SY-SUBRC,
+      GV_DYNNR TYPE SY-DYNNR,
+      OK_CODE  TYPE SY-UCOMM.
+
+" COND
+TABLES: ZSSSMD0301,  " 벤더 조회 조건
+        ZSSSMD0303.  " 벤더 등록
+
+" RES
+DATA: BEGIN OF GS_DATA.
+    INCLUDE STRUCTURE ZSSSMD0302.
+DATA: END OF GS_DATA,
+GT_DATA LIKE TABLE OF GS_DATA.
+
+" 벤더명
+DATA: GS_VNAME TYPE ZSSSMD0301,
+      GT_VNAME TYPE TABLE OF ZSSSMD0301.
+
+" 담당 사원
+DATA: GS_VPNME TYPE ZSSSMD0301,
+      GT_VPNME TYPE TABLE OF ZSSSMD0301.
+
+
+" Read Table
+DATA: GT_EDOM TYPE TABLE OF ZTSSDOM,
+      GS_EDOM LIKE LINE OF GT_EDOM.
+
+DATA: GT_EMP TYPE TABLE OF ZTSSEMP,
+      GS_EMP LIKE LINE OF GT_EMP.
+
+DATA: GT_ZTSSVEND TYPE TABLE OF ZTSSVEND,
+      GS_ZTSSVEND TYPE ZTSSVEND.
+
+
+" ALV
+DATA: GO_CON     TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_ALV     TYPE REF TO CL_GUI_ALV_GRID,
+      GS_LAYO    TYPE LVC_S_LAYO,
+      GT_SORT    TYPE LVC_T_SORT,
+      GS_SORT    TYPE LVC_S_SORT,
+      GT_FCAT    TYPE LVC_T_FCAT,
+      GS_FCAT    TYPE LVC_S_FCAT,
+      GT_EXCLUDE TYPE UI_FUNCTIONS.
+
+DATA: GT_ROWS TYPE LVC_T_ROW,
+      GS_ROWS TYPE LVC_S_ROW.
+
+DATA: GV_FLAG.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

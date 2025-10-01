@@ -12,6 +12,8 @@ FORM GET_DATA .
 
   PERFORM GET_JEH_DATA.     " 전표 헤더 정보 취득
 
+  PERFORM GET_TOPRC_INFO.   " 전표 아이템 금액 가져오기
+
   PERFORM GET_REFDOC_DATA.  " 참조문서 정보 취득
 
   LOOP AT GT_HDATA INTO GS_HDATA.
@@ -42,8 +44,14 @@ FORM GET_DATA .
 
     ENDCASE.
 
+    " 차변이 없을 경우 대변 정보를 가져와야 해
+    READ TABLE GT_TOPRC INTO GS_TOPRC WITH KEY JENUM = GS_HDATA-JENUM.
 
+    GS_HDATA-TOPRC = GS_TOPRC-DEBIT.
 
+    IF GS_HDATA-TOPRC  = 0.
+      GS_HDATA-TOPRC = GS_TOPRC-CREDIT.
+    ENDIF.
 
     PERFORM MODIFY_DATA.      " 추가 정보 취득
 
@@ -68,13 +76,7 @@ FORM CREATE_ALV_0100 .
 
   CREATE OBJECT GO_CON
     EXPORTING
-*     PARENT                      =
       CONTAINER_NAME              = 'CON'
-*     STYLE                       =
-*     LIFETIME                    = lifetime_default
-*     REPID                       =
-*     DYNNR                       =
-*     NO_AUTODEF_PROGID_DYNNR     =
     EXCEPTIONS
       CNTL_ERROR                  = 1
       CNTL_SYSTEM_ERROR           = 2
@@ -89,15 +91,7 @@ FORM CREATE_ALV_0100 .
 
   CREATE OBJECT GO_ALV
     EXPORTING
-*     I_SHELLSTYLE      = 0
-*     I_LIFETIME        =
       I_PARENT          = GO_CON
-*     I_APPL_EVENTS     = space
-*     I_PARENTDBG       =
-*     I_APPLOGPARENT    =
-*     I_GRAPHICSPARENT  =
-*     I_NAME            =
-*     I_FCAT_COMPLETE   = SPACE
     EXCEPTIONS
       ERROR_CNTL_CREATE = 1
       ERROR_CNTL_INIT   = 2
@@ -149,11 +143,12 @@ FORM SET_FCAT .
         'FYEAR' '2' '회계연도',
         'JTYPE' '4' '전표 유형 코드',
         'JTYPE_T' '5' '전표 유형',
-        'CURKY' '8' '통화 키',
+        'TOPRC' '8' '총 금액',
+        'CURKY' '9' '통화 키',
         'RGDAT' '3' '전기일',
         'RGTOR' '7' '등록자 코드',
-        'RGTOR_T' '9' '등록자명',
-        'REFDOC' '6' '참조문서'.
+        'RGTOR_T' '6' '등록자명',
+        'REFDOC' '10' '참조문서'.
 
   CLEAR GS_FCAT.
 
@@ -190,23 +185,25 @@ FORM SET_FCAT .
   CLEAR GS_FCAT.
 
   LOOP AT GT_FCAT INTO GS_FCAT.
+
     IF GS_FCAT-FIELDNAME = 'JENUM'.
       GS_FCAT-HOTSPOT = 'X'. " 핫스팟
-    ENDIF.
 
-    IF GS_FCAT-FIELDNAME = 'DOCREF'.
+    ELSEIF GS_FCAT-FIELDNAME = 'TOPRC'.
+      GS_FCAT-CFIELDNAME = 'CURKY'.
+
+    ELSEIF GS_FCAT-FIELDNAME = 'REFDOC'.
       GS_FCAT-HOTSPOT = 'X'. " 핫스팟
-    ENDIF.
 
-    IF GS_FCAT-FIELDNAME = 'RGTOR'.
+    ELSEIF GS_FCAT-FIELDNAME = 'RGTOR'.
       GS_FCAT-NO_OUT = 'X'.
-    ENDIF.
 
-    IF GS_FCAT-FIELDNAME = 'JTYPE'.
+    ELSEIF GS_FCAT-FIELDNAME = 'JTYPE'.
       GS_FCAT-NO_OUT = 'X'.
     ENDIF.
 
     MODIFY GT_FCAT FROM GS_FCAT.
+
   ENDLOOP.
 
 
@@ -253,7 +250,7 @@ FORM SET_SORT_0100 .
 *  GS_SORT2-FIELDNAME = 'FYEAR'.
 *  GS_SORT2-DOWN = 'X'.
 *  APPEND GS_SORT2 TO GT_SORT2.
-*
+
 *  CLEAR GT_SORT2.
 *  GS_SORT2-SPOS = '3'.
 *  GS_SORT2-FIELDNAME = 'RGDAT'.
@@ -391,13 +388,7 @@ FORM CREATE_ALV_0200 .
 
   CREATE OBJECT GO_CON3
     EXPORTING
-*     PARENT                      =
       CONTAINER_NAME              = 'CON3'
-*     STYLE                       =
-*     LIFETIME                    = lifetime_default
-*     REPID                       =
-*     DYNNR                       =
-*     NO_AUTODEF_PROGID_DYNNR     =
     EXCEPTIONS
       CNTL_ERROR                  = 1
       CNTL_SYSTEM_ERROR           = 2
@@ -412,15 +403,7 @@ FORM CREATE_ALV_0200 .
 
   CREATE OBJECT GO_ALV3
     EXPORTING
-*     I_SHELLSTYLE      = 0
-*     I_LIFETIME        =
       I_PARENT          = GO_CON3
-*     I_APPL_EVENTS     = space
-*     I_PARENTDBG       =
-*     I_APPLOGPARENT    =
-*     I_GRAPHICSPARENT  =
-*     I_NAME            =
-*     I_FCAT_COMPLETE   = SPACE
     EXCEPTIONS
       ERROR_CNTL_CREATE = 1
       ERROR_CNTL_INIT   = 2
@@ -445,32 +428,11 @@ FORM DISPLAY_ALV_0200 .
 
   CALL METHOD GO_ALV3->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-*     I_BUFFER_ACTIVE =
-*     I_BYPASSING_BUFFER   =
-*     I_CONSISTENCY_CHECK  =
-*     I_STRUCTURE_NAME     =
-*     IS_VARIANT      =
-*     I_SAVE          =
-*     I_DEFAULT       = 'X'
       IS_LAYOUT       = GS_LAYO
-*     IS_PRINT        =
-*     IT_SPECIAL_GROUPS    =
-*     IT_TOOLBAR_EXCLUDING = GT_EXCLUDE
-*     IT_HYPERLINK    =
-*     IT_ALV_GRAPHICS =
-*     IT_EXCEPT_QINFO =
-*     IR_SALV_ADAPTER =
     CHANGING
       IT_OUTTAB       = GT_IDATA
       IT_FIELDCATALOG = GT_FCAT
-      IT_SORT         = GT_SORT
-*     IT_FILTER       =
-*  EXCEPTIONS
-*     INVALID_PARAMETER_COMBINATION = 1
-*     PROGRAM_ERROR   = 2
-*     TOO_MANY_LINES  = 3
-*     OTHERS          = 4
-    .
+      IT_SORT         = GT_SORT.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
@@ -576,13 +538,26 @@ ENDFORM.
 FORM SET_INIT .
 
   " 날짜 기본값 설정
-  ZSSSFI0101-RGDATB = SY-DATUM+0(6) && '01'. " 월 1일
-  ZSSSFI0101-RGDATE = SY-DATUM.              " 현재일
+  DATA: LV_DATE      LIKE SY-DATUM,
+        LV_CALC_DATE LIKE SY-DATUM.
 
-  IF ZSSSFI0101-RGDATB IS INITIAL AND ZSSSFI0101-RGDATE IS INITIAL
-      AND ZSSSFI0101-JTYPE IS INITIAL AND ZSSSFI0101-RGTOR IS INITIAL.
+  LV_DATE      = SY-DATUM.
 
-  ENDIF.
+  CALL FUNCTION 'RP_CALC_DATE_IN_INTERVAL'
+    EXPORTING
+      DATE      = LV_DATE
+      DAYS      = '00'
+      MONTHS    = 1
+      SIGNUM    = '-'
+      YEARS     = '00'
+    IMPORTING
+      CALC_DATE = LV_CALC_DATE.
+
+  ZSSSFI0101-RGDATB = LV_CALC_DATE.        " 1달 전
+
+  ZSSSFI0101-RGDATE = SY-DATUM.            " 현재일
+
+  ZSSSFI0101-FYEAR = SY-DATUM+0(4).
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -999,7 +974,7 @@ FORM CHECK_RGTOR_DEPID USING VALUE(P_RGTOR).
 
       ELSE.
 
-        MESSAGE S999(ZMCSS) WITH '회계부서 사원 확인 되었습니다. 라인 아이템을 추가하세요.'.
+        MESSAGE S999(ZMCSS) WITH '회계부서 사원 확인 되었습니다.'.
       ENDIF.
 
     ELSE.
@@ -1230,72 +1205,45 @@ ENDFORM.
 *  <--  p2        text
 *----------------------------------------------------------------------*
 FORM MODIFY_RANGE .
-  CLEAR: GS_RRGDAT, GT_RRGDAT.
-  IF ZSSSFI0101-RGDATE IS NOT INITIAL.
-    GS_RRGDAT-SIGN = 'I'.
-    GS_RRGDAT-OPTION = 'BT'.
-    GS_RRGDAT-LOW = ZSSSFI0101-RGDATB.
-    GS_RRGDAT-HIGH = ZSSSFI0101-RGDATE.
-    APPEND GS_RRGDAT TO GT_RRGDAT.
-
-  ELSE.
-    " RGDATE가 없으면
-    CLEAR: GS_RFYEAR, GT_RFYEAR, GS_RJENUM, GT_RJENUM.
-    IF ZSSSFI0101-FYEAR IS NOT INITIAL.
-      GS_RFYEAR-SIGN   = 'I'.
-      GS_RFYEAR-OPTION = 'EQ'.
-      GS_RFYEAR-LOW    = ZSSSFI0101-FYEAR.
-      APPEND GS_RFYEAR TO GT_RFYEAR.
-    ENDIF.
-
-    IF ZSSSFI0101-JENUM IS NOT INITIAL.
-      GS_RJENUM-SIGN   = 'I'.
-      GS_RJENUM-OPTION = 'EQ'.
-      GS_RJENUM-LOW    = ZSSSFI0101-JENUM.
-      APPEND GS_RJENUM TO GT_RJENUM.
-    ENDIF.
-  ENDIF.
-
-*ENDIF.
-
-*  CLEAR: GS_RRGDAT.
-*  IF  ZSSSFI0101-RGDATE IS INITIAL.
-*    GS_RRGDAT-SIGN = 'I'.
-*    GS_RRGDAT-OPTION = 'EQ'.
-*    GS_RRGDAT-LOW = ZSSSFI0101-RGDATB.
-*    APPEND GS_RRGDAT TO GT_RRGDAT.
-*  ENDIF.
-
 
   CLEAR: GS_RFYEAR, GT_RFYEAR.
-  IF  ZSSSFI0101-FYEAR IS NOT INITIAL.
-    GS_RFYEAR-SIGN = 'I'.
+  IF ZSSSFI0101-FYEAR IS NOT INITIAL.
+    GS_RFYEAR-SIGN   = 'I'.
     GS_RFYEAR-OPTION = 'EQ'.
-    GS_RFYEAR-LOW = ZSSSFI0101-FYEAR.
+    GS_RFYEAR-LOW    = ZSSSFI0101-FYEAR.
     APPEND GS_RFYEAR TO GT_RFYEAR.
   ENDIF.
 
+  CLEAR: GS_RRGDAT, GT_RRGDAT.
+  IF ZSSSFI0101-RGDATB IS NOT INITIAL AND ZSSSFI0101-RGDATE IS NOT INITIAL.
+    GS_RRGDAT-SIGN   = 'I'.
+    GS_RRGDAT-OPTION = 'BT'.
+    GS_RRGDAT-LOW    = ZSSSFI0101-RGDATB.
+    GS_RRGDAT-HIGH   = ZSSSFI0101-RGDATE.
+    APPEND GS_RRGDAT TO GT_RRGDAT.
+  ENDIF.
+
   CLEAR: GS_RJENUM, GT_RJENUM.
-  IF  ZSSSFI0101-JENUM IS NOT INITIAL.
-    GS_RJENUM-SIGN = 'I'.
+  IF ZSSSFI0101-JENUM IS NOT INITIAL.
+    GS_RJENUM-SIGN   = 'I'.
     GS_RJENUM-OPTION = 'EQ'.
-    GS_RJENUM-LOW = ZSSSFI0101-JENUM.
+    GS_RJENUM-LOW    = ZSSSFI0101-JENUM.
     APPEND GS_RJENUM TO GT_RJENUM.
   ENDIF.
 
   CLEAR: GS_RRGTOR, GT_RRGTOR.
-  IF  ZSSSFI0101-RGTOR IS NOT INITIAL.
-    GS_RRGTOR-SIGN = 'I'.
+  IF ZSSSFI0101-RGTOR IS NOT INITIAL.
+    GS_RRGTOR-SIGN   = 'I'.
     GS_RRGTOR-OPTION = 'EQ'.
-    GS_RRGTOR-LOW = ZSSSFI0101-RGTOR.
+    GS_RRGTOR-LOW    = ZSSSFI0101-RGTOR.
     APPEND GS_RRGTOR TO GT_RRGTOR.
   ENDIF.
 
   CLEAR: GS_RJTYPE, GT_RJTYPE.
-  IF  ZSSSFI0101-JTYPE IS NOT INITIAL.
-    GS_RJTYPE-SIGN = 'I'.
+  IF ZSSSFI0101-JTYPE IS NOT INITIAL.
+    GS_RJTYPE-SIGN   = 'I'.
     GS_RJTYPE-OPTION = 'EQ'.
-    GS_RJTYPE-LOW = ZSSSFI0101-JTYPE.
+    GS_RJTYPE-LOW    = ZSSSFI0101-JTYPE.
     APPEND GS_RJTYPE TO GT_RJTYPE.
   ENDIF.
 
@@ -1414,21 +1362,19 @@ FORM CHECK_DATA_0100  CHANGING PV_SUBRC.
 
   IF ZSSSFI0101-JENUM IS NOT INITIAL.
     ZSSSFI0101-FYEAR = ZSSSFI0101-JENUM+1(4).
-    CLEAR: ZSSSFI0101-RGDATB, ZSSSFI0101-RGDATE.
-    MESSAGE S999(ZMCSS) WITH '전표번호는 함께 조회됩니다.'.
-
+    MESSAGE S999(ZMCSS) WITH '전표번호는 회계연도와 함께 조회됩니다.'.
   ENDIF.
 
   " 날짜 조건
   IF ZSSSFI0101-FYEAR IS NOT INITIAL
     AND ZSSSFI0101-RGDATB IS NOT INITIAL
     AND ZSSSFI0101-RGDATE IS NOT INITIAL.
-    " 회계연도가 시작일자와 종료일자의 앞 4자리 연도 범위 안에 없으면 에러
+    " 전기일이 회계연도 범위 내에 없으면 에러
     IF ZSSSFI0101-FYEAR >= ZSSSFI0101-RGDATB+0(4)
       AND ZSSSFI0101-FYEAR <= ZSSSFI0101-RGDATE+0(4).
 
     ELSE.
-      MESSAGE S999(ZMCSS) WITH '회계연도가 전기일 범위 내에 있어야 합니다.' DISPLAY LIKE  'E'.
+      MESSAGE S999(ZMCSS) WITH '전기일이 회계연도 범위 내에 있어야 합니다.' DISPLAY LIKE  'E'.
       PV_SUBRC = 4.
       RETURN.
     ENDIF.
@@ -1449,11 +1395,12 @@ ENDFORM.
 *  -->  p1        text
 *  <--  p2        text
 *----------------------------------------------------------------------*
-FORM GET_RGTOR_INFO .
+FORM GET_RGTOR_INFO_0200 .
   PERFORM GET_RGTOR_NAME USING ZSSSFI0102-RGTOR
                          CHANGING ZSSSFI0102-RGTOR_T.
 
   PERFORM CHECK_RGTOR_DEPID USING ZSSSFI0102-RGTOR.
+
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -1511,6 +1458,38 @@ FORM GET_REFDOC_DATA .
     INTO CORRESPONDING FIELDS OF TABLE GT_ZTSSSIVH.
 
 
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_TOPRC_INFO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_TOPRC_INFO .
+  SELECT JENUM JESEQ DEBIT CREDIT
+         FROM ZTSSJEI
+         INTO CORRESPONDING FIELDS OF TABLE GT_TOPRC.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_RGTOR_INFO_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_RGTOR_INFO_0100 .
+  PERFORM GET_RGTOR_NAME USING ZSSSFI0101-RGTOR
+                         CHANGING ZSSSFI0101-RGTOR_T.
+
+  PERFORM CHECK_RGTOR_DEPID USING ZSSSFI0101-RGTOR.
+
+
+  " 휴직이나 퇴사인 회계부서 사원 체크
 
 ENDFORM.
 

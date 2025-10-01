@@ -8,14 +8,14 @@ SAPMZSSFI01
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI01                             0300 0300     27117192 37  0  0 27127  0G E                              20250929095631																																
+SAPMZSSFI01                             0300 0300     27117192 37  0  0 27128  0G E                              20251001175014																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
-B_BOX		CHAR	115	00	00	00	30	00	  2	  4		  0	  0	  0		  8	R				  0	  0	101							헤더		
+B_BOX		CHAR	115	00	00	00	30	00	  2	  4		  0	  0	  0		  8	R				  0	  0	101							전표 헤더		
 ZSSSFI0102-FYEAR	2	CHAR	 20	30	00	00	30	00	  3	  8		  0	  0	  0		  0					  0	  0								회계연도	                                                                                                                                                                                                                                                        X	
 ZSSSFI0102-FYEAR	N	NUMC	  4	A0	00	80	30	00	  3	 29		  0	  0	  0		  0					  8	  0								____	                                       00	
-ZSSSFI0102-JTYPE	0	CHAR	  9	30	00	01	30	00	  4	 59		  0	  0	  0		  0					  0	  0								전표 유형	                                                                                                                                                                                                                                                        X	
+ZSSSFI0102-JTYPE	0	CHAR	  8	30	00	01	30	00	  4	 59		  0	  0	  0		  0					  0	  0								전표유형	                                                                                                                                                                                                                                                        X	
 ZSSSFI0102-JTYPE	C	CHAR	 10	B0	00	81	30	18	  4	 69		  0	  0	  0		  0					  4	  0								__________	X                                      00	
 ZSSSFI0102-RGDAT	0	CHAR	 16	30	00	00	30	00	  5	  8		  0	  0	  0		  0					  0	  0								전기일	                                                                                                                                                                                                                                                        X	
 ZSSSFI0102-RGDAT	D	DATE	 10	A0	00	80	30	08	  5	 29		  0	  0	  0		  0					 16	  0								__________	X                                      00	
@@ -28,7 +28,7 @@ ZSSSFI0102-STEXT	C	CHAR	 28	B0	02	80	30	00	  7	 69		  0	  0	  0		  0					120	  0
 ZSSSFI0102-RGTOR	0	CHAR	  8	30	00	00	30	00	  8	  8		  0	  0	  0		  0					  0	  0								등록자	                                                                                                                                                                                                                                                        X	
 ZSSSFI0102-RGTOR	C	CHAR	  8	A0	00	84	30	08	  8	 18		  0	  0	  0		  0					 16	  0								________	X                                      00	
 ZSSSFI0102-RGTOR_T	C	CHAR	 22	B0	02	80	31	00	  8	 28		  0	  0	  0		  0					 80	  0								______________________	                                       00	
-B_BOX2		CHAR	115	00	00	00	30	00	 10	  4		  0	  0	  0		 18	R				  0	  0	102							라인		
+B_BOX2		CHAR	115	00	00	00	30	00	 10	  4		  0	  0	  0		 18	R				  0	  0	102							전표 아이템		
 CON2			112	00	00	00	30	00	 11	  5		  0	  0	  0		 14	U				  1	  1	103									
 ZSSSFI0104-DEBIT	0	CHAR	  5	30	00	00	30	00	 26	 55		  0	  0	  0		  0					  0	  0								Debit	                                                                                                                                                                                                                                                        X	
 ZSSSFI0104-DEBIT	P	CURR	 19	B0	00	80	30	00	 26	 61		  0	  0	  0		  0					 15	  2		ZSSSFI0104-CURKY						__________________V	                                       00	

@@ -38,7 +38,7 @@ MODULE USER_COMMAND_0100 INPUT.
       ENDIF.
 
       " 등록자명 취득
-      PERFORM GET_RGTOR_INFO.
+      PERFORM GET_RGTOR_INFO_0100.
       IF GV_SUBRC = 4.
         CLEAR GV_SUBRC.
         RETURN.
@@ -72,18 +72,18 @@ MODULE USER_COMMAND_0100 INPUT.
 
       CLEAR GV_FLAG.
 
-
-    WHEN 'NSEARCH'.
-      CLEAR: ZSSSFI0101-RGDATB, ZSSSFI0101-RGDATE,
-             ZSSSFI0101-JTYPE,ZSSSFI0101-RGTOR, ZSSSFI0101-RGTOR_T.
-
-      IF ZSSSFI0101-JENUM IS NOT INITIAL.
-        ZSSSFI0101-FYEAR = ZSSSFI0101-JENUM+1(4).
-        CLEAR: ZSSSFI0101-RGDATB, ZSSSFI0101-RGDATE.
-      ELSEIF ZSSSFI0101-FYEAR IS NOT INITIAL AND ZSSSFI0101-JENUM IS INITIAL.
-        MESSAGE '전표번호를 입력해 주세요.' TYPE 'E'.
-        RETURN.
-      ENDIF.
+      " 삭제함 - 버튼 코드
+***    WHEN 'NSEARCH'.
+***      CLEAR: ZSSSFI0101-RGDATB, ZSSSFI0101-RGDATE,
+***             ZSSSFI0101-JTYPE,ZSSSFI0101-RGTOR, ZSSSFI0101-RGTOR_T.
+***
+***      IF ZSSSFI0101-JENUM IS NOT INITIAL.
+***        ZSSSFI0101-FYEAR = ZSSSFI0101-JENUM+1(4).
+***        CLEAR: ZSSSFI0101-RGDATB, ZSSSFI0101-RGDATE.
+***      ELSEIF ZSSSFI0101-FYEAR IS NOT INITIAL AND ZSSSFI0101-JENUM IS INITIAL.
+***        MESSAGE '전표번호를 입력해 주세요.' TYPE 'E'.
+***        RETURN.
+***      ENDIF.
 
     WHEN 'SEARCH'.
 
@@ -94,7 +94,7 @@ MODULE USER_COMMAND_0100 INPUT.
       ENDIF.
 
       " 등록자명 취득
-      PERFORM GET_RGTOR_INFO.
+      PERFORM GET_RGTOR_INFO_0100.
       IF GV_SUBRC = 4.
         CLEAR GV_SUBRC.
         RETURN.
@@ -103,16 +103,16 @@ MODULE USER_COMMAND_0100 INPUT.
       " 전표 조회
       PERFORM GET_DATA.
 
-      IF ZSSSFI0101-RGDATB IS INITIAL AND ZSSSFI0101-RGDATE IS INITIAL
-         AND ZSSSFI0101-JTYPE IS INITIAL AND ZSSSFI0101-RGTOR IS INITIAL.
-
-        GV_FLAG3 = 'X'.
-
-      ELSE.
-*
-*        GV_FLAG4 = 'X'.
-
-      ENDIF.
+***      IF ZSSSFI0101-RGDATB IS INITIAL AND ZSSSFI0101-RGDATE IS INITIAL
+***         AND ZSSSFI0101-JTYPE IS INITIAL AND ZSSSFI0101-RGTOR IS INITIAL.
+***
+***        GV_FLAG3 = 'X'.
+***
+***      ELSE.
+****
+****        GV_FLAG4 = 'X'.
+***
+***      ENDIF.
 
     WHEN 'REGIST'.
       " 전표 생성
@@ -149,7 +149,7 @@ MODULE USER_COMMAND_0100 INPUT.
 
       " 팝업 띄우기
 **      CALL SCREEN 110 STARTING AT 5 5 ENDING AT 120 30.
-      " 팝업 말고 엑셀업로드 프로그램을 만들어서 화면을 콜트랜잭션 할까
+      " 팝업 말고 엑셀업로드 프로그램 화면 콜트랜잭션
       CALL TRANSACTION 'ZRBSSFI01'.
 
     WHEN 'CLEARING'.
@@ -182,7 +182,7 @@ MODULE USER_COMMAND_0200 INPUT.
       ENDIF.
 
       " 등록자명 취득
-      PERFORM GET_RGTOR_INFO.
+      PERFORM GET_RGTOR_INFO_0200.
       IF GV_SUBRC = 4.
         CLEAR GV_SUBRC.
         RETURN.
@@ -203,12 +203,11 @@ MODULE USER_COMMAND_0200 INPUT.
       ZSSSFI0103-CURKY = 'KRW'.
 
       " 등록자명 취득
-      PERFORM GET_RGTOR_INFO.
+      PERFORM GET_RGTOR_INFO_0200.
       IF GV_SUBRC = 4.
         CLEAR GV_SUBRC.
         RETURN.
       ENDIF.
-
 
 
       CALL SCREEN 210 STARTING AT 5 5 ENDING AT 120 30.
@@ -252,7 +251,6 @@ MODULE USER_COMMAND_0200 INPUT.
         CLEAR GV_SUBRC.
         RETURN.
       ENDIF.
-
 
       PERFORM INSERT_DATA.
 
@@ -304,14 +302,6 @@ MODULE USER_COMMAND_0101 INPUT.
 
 ENDMODULE.
 *&---------------------------------------------------------------------*
-*&      Module  USER_COMMAND_0102  INPUT
-*&---------------------------------------------------------------------*
-*       text
-*----------------------------------------------------------------------*
-MODULE USER_COMMAND_0102 INPUT.
-
-ENDMODULE.
-*&---------------------------------------------------------------------*
 *&      Module  EXIT_MODAL  INPUT
 *&---------------------------------------------------------------------*
 *       text
@@ -340,6 +330,200 @@ MODULE USER_COMMAND_0210 INPUT.
   CASE OK_CODE.
     WHEN 'SAVE'.
 
+      CASE ZSSSFI0102-JTYPE.
+        WHEN 'WE'. " 입고
+          IF ZSSSFI0103-GLACC <> '310000' AND ZSSSFI0103-GLACC <> '910000' .
+            MESSAGE I999(ZMCSS) WITH '계정을 다시 확인해 주세요.(재고 자산 or GR/IR 조정계정)' DISPLAY LIKE 'E'.
+            GV_SUBRC = 4.
+            RETURN.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '310000'.
+            IF ZSSSFI0103-DEBIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '차변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-CREDIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-CREDIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '910000'.
+            IF ZSSSFI0103-CREDIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '대변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-DEBIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-DEBIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+        WHEN 'KR'. " 송장검증
+          IF ZSSSFI0103-GLACC <> '910000' AND ZSSSFI0103-GLACC <> '240000' .
+            MESSAGE I999(ZMCSS) WITH '계정을 다시 확인해 주세요.(GR/IR 조정계정 or 외상매입금)' DISPLAY LIKE 'E'.
+            GV_SUBRC = 4.
+            RETURN.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '910000'.
+            IF ZSSSFI0103-DEBIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '차변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-CREDIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-CREDIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '240000'.
+            IF ZSSSFI0103-CREDIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '대변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-DEBIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-DEBIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+
+        WHEN 'KZ'. " 지급
+          IF ZSSSFI0103-GLACC <> '240000' AND ZSSSFI0103-GLACC <> '110000' .
+            MESSAGE I999(ZMCSS) WITH '계정을 다시 확인해 주세요.(DR: 외상매입금 or CR: 현금)' DISPLAY LIKE 'E'.
+            GV_SUBRC = 4.
+            RETURN.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '240000'.
+            IF ZSSSFI0103-DEBIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '차변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-CREDIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-CREDIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '110000'.
+            IF ZSSSFI0103-CREDIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '대변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-DEBIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-DEBIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+        WHEN 'WA'. " 출고
+          IF ZSSSFI0103-GLACC <> '510000' AND ZSSSFI0103-GLACC <> '310000' .
+            MESSAGE I999(ZMCSS) WITH '계정을 다시 확인해 주세요.(DR: 매출원가 or CR: 재고 자산)' DISPLAY LIKE 'E'.
+            GV_SUBRC = 4.
+            RETURN.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '510000'.
+            IF ZSSSFI0103-DEBIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '차변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-CREDIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-CREDIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '310000'.
+            IF ZSSSFI0103-CREDIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '대변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-DEBIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-DEBIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+
+        WHEN 'DR'. " 청구
+          IF ZSSSFI0103-GLACC <> '140000' AND ZSSSFI0103-GLACC <> '410000' .
+            MESSAGE I999(ZMCSS) WITH '계정을 다시 확인해 주세요.(DR: 외상매출금 or CR: 매출)' DISPLAY LIKE 'E'.
+            GV_SUBRC = 4.
+            RETURN.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '140000'.
+            IF ZSSSFI0103-DEBIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '차변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-CREDIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-CREDIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '410000'.
+            IF ZSSSFI0103-CREDIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '대변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-DEBIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-DEBIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+
+        WHEN 'DZ'. " 수금
+          IF ZSSSFI0103-GLACC <> '110000' AND ZSSSFI0103-GLACC <> '140000' .
+            MESSAGE I999(ZMCSS) WITH '계정을 다시 확인해 주세요.(DR: 은행 or CR: 외상매출금)' DISPLAY LIKE 'E'.
+            GV_SUBRC = 4.
+            RETURN.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '110000'.
+            IF ZSSSFI0103-DEBIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '차변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-CREDIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-CREDIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+          IF ZSSSFI0103-GLACC = '140000'.
+            IF ZSSSFI0103-CREDIT IS INITIAL.
+              MESSAGE I999(ZMCSS) WITH '대변에 금액을 입력해 주세요'.
+              CLEAR ZSSSFI0103-DEBIT.
+              GV_SUBRC = 4.
+              RETURN.
+            ELSEIF ZSSSFI0103-DEBIT IS NOT INITIAL.
+              GV_SUBRC = 4.
+              RETURN.
+            ENDIF.
+          ENDIF.
+
+      ENDCASE.
+
+
+
       "차/대변 금액 검증
       IF ZSSSFI0103-DEBIT IS INITIAL AND ZSSSFI0103-CREDIT IS INITIAL.
         MESSAGE I999(ZMCSS) WITH '금액을 입력하세요.' DISPLAY LIKE 'E'.
@@ -351,6 +535,14 @@ MODULE USER_COMMAND_0210 INPUT.
         GV_SUBRC = 4.
         RETURN.
       ENDIF.
+
+      " 계정명이 비어있는 경우 에러
+      IF ZSSSFI0103-ACTNM IS INITIAL.
+        MESSAGE I999(ZMCSS) WITH '입력 완료 버튼을 클릭하세요.' DISPLAY LIKE 'E'.
+        GV_SUBRC = 4.
+        RETURN.
+      ENDIF.
+
 
       " 입력된 정보 ALV로 넘기기
       PERFORM SET_JEI_DATA.

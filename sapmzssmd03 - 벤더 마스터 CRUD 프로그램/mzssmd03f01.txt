@@ -1,0 +1,971 @@
+*&---------------------------------------------------------------------*
+*&  Include           MZSSMD03F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_ALV_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CREATE_ALV_0100 .
+
+  " 객체가 있을 시 미생성
+  IF GO_CON IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON
+    EXPORTING
+*     PARENT                      =
+      CONTAINER_NAME              = 'CON'
+*     STYLE                       =
+*     LIFETIME                    = lifetime_default
+*     REPID                       =
+*     DYNNR                       =
+*     NO_AUTODEF_PROGID_DYNNR     =
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV
+    EXPORTING
+*     I_SHELLSTYLE      = 0
+*     I_LIFETIME        =
+      I_PARENT          = GO_CON
+*     I_APPL_EVENTS     = space
+*     I_PARENTDBG       =
+*     I_APPLOGPARENT    =
+*     I_GRAPHICSPARENT  =
+*     I_NAME            =
+*     I_FCAT_COMPLETE   = SPACE
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_LAYO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_LAYO .
+
+  CLEAR GS_LAYO.
+
+  GS_LAYO-CWIDTH_OPT = 'X'.
+  GS_LAYO-ZEBRA = 'X'.
+  GS_LAYO-SEL_MODE = 'A'.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_SORT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_SORT .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_FCAT .
+  " 벤더코드
+  CLEAR: GT_FCAT, GS_FCAT.
+  GS_FCAT-FIELDNAME = 'VENID'.
+  GS_FCAT-COL_POS = 1.
+  GS_FCAT-COLTEXT = '벤더코드'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  " 벤더명
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'VNAME'.
+  GS_FCAT-COL_POS = 2.
+  GS_FCAT-COLTEXT = '벤더명'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  " 계약시작일
+  CLEAR: GS_FCAT.
+  GS_FCAT-FIELDNAME = 'BEGDA'.
+  GS_FCAT-COL_POS = 3.
+  GS_FCAT-COLTEXT = '계약시작일'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  " 계약종료일
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'ENDDA'.
+  GS_FCAT-COL_POS = 4.
+  GS_FCAT-COLTEXT = '계약종료일'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  " 우리담당자코드
+  CLEAR: GS_FCAT.
+  GS_FCAT-FIELDNAME = 'PENID'.
+  GS_FCAT-COL_POS = 5.
+  GS_FCAT-COLTEXT = '우리담당자코드'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  " 벤더담당자명
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'VPNME'.
+  GS_FCAT-COL_POS = 6.
+  GS_FCAT-COLTEXT = '벤더담당자명'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  " 벤더주소
+  CLEAR: GS_FCAT.
+  GS_FCAT-FIELDNAME = 'VADDR'.
+  GS_FCAT-COL_POS = 7.
+  GS_FCAT-COLTEXT = '벤더주소'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+  " 벤더 이메일
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'VEMAIL'.
+  GS_FCAT-COL_POS = 8.
+  GS_FCAT-COLTEXT = '벤더 이메일'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+**  " 계약종료 플래그 -> 추후 예정
+  CLEAR GS_FCAT.
+  GS_FCAT-FIELDNAME = 'ENDFLAG'.
+  GS_FCAT-COL_POS = 9.
+  GS_FCAT-COLTEXT = '계약종료 여부'.
+  APPEND GS_FCAT TO GT_FCAT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_ALV_0100 .
+  CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+*     I_BUFFER_ACTIVE =
+*     I_BYPASSING_BUFFER   =
+*     I_CONSISTENCY_CHECK  =
+*     I_STRUCTURE_NAME     =
+*     IS_VARIANT      =
+*     I_SAVE          =
+*     I_DEFAULT       = 'X'
+      IS_LAYOUT       = GS_LAYO
+*     IS_PRINT        =
+*     IT_SPECIAL_GROUPS    =
+*     IT_TOOLBAR_EXCLUDING = GT_EXCLUDE
+*     IT_HYPERLINK    =
+*     IT_ALV_GRAPHICS =
+*     IT_EXCEPT_QINFO =
+*     IR_SALV_ADAPTER =
+    CHANGING
+      IT_OUTTAB       = GT_DATA
+      IT_FIELDCATALOG = GT_FCAT
+      IT_SORT         = GT_SORT
+*     IT_FILTER       =
+*  EXCEPTIONS
+*     INVALID_PARAMETER_COMBINATION = 1
+*     PROGRAM_ERROR   = 2
+*     TOO_MANY_LINES  = 3
+*     OTHERS          = 4
+    .
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_DATA .
+
+  PERFORM GET_VEND_DATA. " 벤더 정보 취득
+
+  PERFORM MODIFY_DATA.   " 추가 정보 취득
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_VEDNAME
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_ZSSSMD0301_VENID  text
+*      <--P_ZSSSMD0301_VNAME  text
+*----------------------------------------------------------------------*
+FORM GET_VEDNAME  USING    P_VENID
+                  CHANGING P_VNAME.
+  IF GT_VNAME IS INITIAL.
+
+    SELECT VENID VNAME
+       FROM ZTSSVEND
+        INTO CORRESPONDING FIELDS OF TABLE GT_VNAME.
+
+  ENDIF.
+
+  READ TABLE GT_VNAME WITH KEY VENID = P_VENID INTO GS_VNAME.
+  IF SY-SUBRC = 0.
+    P_VNAME = GS_VNAME-VNAME.
+  ELSE.
+    CLEAR P_VNAME.
+    MESSAGE S999(ZMCSS) WITH '유효하지 않은 벤더 ID입니다.' DISPLAY LIKE 'E'.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_DATA_0200
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_DATA_0200 .
+  " 기본값 설정
+  CLEAR ZSSSMD0303.
+
+  ZSSSMD0303-ENDDA = '99991231'.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CHECK_DATA_0200
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_GV_SUBRC  text
+*----------------------------------------------------------------------*
+FORM CHECK_DATA_0200  CHANGING PV_SUBRC.
+
+  " 날짜 기본값 설정
+  DATA: LV_ENDDA TYPE D.
+
+  CALL FUNCTION 'RP_CALC_DATE_IN_INTERVAL'
+    EXPORTING
+      DATE      = ZSSSMD0303-ENDDA
+      DAYS      = '00'
+      MONTHS    = '00'
+      SIGNUM    = '+'
+      YEARS     = '10'
+    IMPORTING
+      CALC_DATE = LV_ENDDA.
+
+
+
+  IF ZSSSMD0303-VNAME IS INITIAL.
+
+    MESSAGE S999(ZMCSS) WITH '벤더코드는 필수값입니다.' DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+
+  ELSEIF ZSSSMD0303-PENID IS INITIAL.
+
+    MESSAGE S999(ZMCSS) WITH '담당자코드는 필수값입니다.' DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+
+  ELSEIF ZSSSMD0303-BEGDA IS INITIAL.
+
+    MESSAGE S999(ZMCSS) WITH '계약시작일은 필수값입니다.' DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+
+  ELSEIF ZSSSMD0303-ENDDA IS INITIAL.
+
+    MESSAGE S999(ZMCSS) WITH '계약종료일은 필수값입니다.' DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+
+    "계약종요일이 99991231이 아니면서 현재일 + 10년 보다 더 클 경우
+  ELSEIF ZSSSMD0303-ENDDA > LV_ENDDA AND LV_ENDDA <> '99991231'.
+
+    MESSAGE S999(ZMCSS) WITH '계약 종료일은 10년 이내여야 합니다.' DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+
+  ELSEIF ZSSSMD0303-BEGDA > ZSSSMD0303-ENDDA.
+
+    MESSAGE S999(ZMCSS) WITH '계약시작일은 계약종료일보다 작아야합니다.' DISPLAY LIKE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  REGISTER_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM REGISTER_DATA .
+  " 벤더 등록
+**  DATA: LT_ZTSSVEND TYPE TABLE OF ZTSSVEND,
+**        LS_ZTSSVEND TYPE ZTSSVEND.
+
+  MOVE-CORRESPONDING ZSSSMD0303 TO GS_ZTSSVEND.
+
+  " 채번 기능 추가
+  " 벤더코드 채번
+  DATA: LV_NUM(7)  TYPE N,
+        LV_NUM2(8) TYPE N.
+
+  CALL FUNCTION 'NUMBER_GET_NEXT'
+    EXPORTING
+      NR_RANGE_NR             = '01'
+      OBJECT                  = 'ZNRSSMD02'
+    IMPORTING " 정보 가져오기
+      NUMBER                  = LV_NUM
+    EXCEPTIONS  " M TYPE -> A
+      INTERVAL_NOT_FOUND      = 1
+      NUMBER_RANGE_NOT_INTERN = 2
+      OBJECT_NOT_FOUND        = 3
+      QUANTITY_IS_0           = 4
+      QUANTITY_IS_NOT_1       = 5
+      INTERVAL_OVERFLOW       = 6
+      BUFFER_OVERFLOW         = 7
+      OTHERS                  = 8.
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+**  " 디버깅
+**  WRITE LV_NUM.
+**  WRITE SY-SUBRC.
+**  ROLLBACK WORK.
+  LV_NUM2 = '1' && LV_NUM.
+  GS_ZTSSVEND-VENID = LV_NUM2.
+
+
+  IF ZSSSMD0303-EDNME = '0000'.
+
+    IF ZSSSMD0303-NEWEDOM IS INITIAL.
+      MESSAGE S999(ZMCSS) WITH '도메인을 입력해 주세요.' DISPLAY LIKE 'E'.
+      RETURN.
+    ENDIF.
+
+    SELECT SINGLE EDOM
+       FROM ZTSSDOM
+         INTO GS_ZTSSVEND-EDOM
+     WHERE EDNME = ZSSSMD0303-NEWEDOM.
+
+    IF SY-SUBRC <> 0.
+      " 신규 도메인 등록 처리 시작
+      DATA: LV_NUM3 TYPE N LENGTH 4.
+      CALL FUNCTION 'NUMBER_GET_NEXT'
+        EXPORTING
+          NR_RANGE_NR = '01'
+          OBJECT      = 'ZNRSSMD07'
+        IMPORTING
+          NUMBER      = LV_NUM3
+        EXCEPTIONS
+          OTHERS      = 8.
+      IF SY-SUBRC <> 0.
+        MESSAGE A000(ZMCSS).
+        RETURN.
+      ENDIF.
+
+      DATA: LS_NEW_DOM TYPE ZTSSDOM.
+
+
+      PERFORM TRANSLATE_LOWER_CASE.
+
+
+      LS_NEW_DOM-EDOM = LV_NUM3.
+      LS_NEW_DOM-EDNME = ZSSSMD0303-NEWEDOM.
+
+
+      " .com 등 로직 추가
+      IF NOT ZSSSMD0303-NEWEDOM CA '.'.
+
+        MESSAGE S999(ZMCSS) WITH '.com 등 이메일 도메인 형식을 입력하세요.' DISPLAY LIKE 'E'.
+        RETURN.
+      ENDIF.
+
+
+      IF ZSSSMD0303-NEWEDOM IS INITIAL.
+        MESSAGE S999(ZMCSS) WITH '도메인을 입력해 주세요.' DISPLAY LIKE 'E'.
+        RETURN.
+      ENDIF.
+
+      INSERT ZTSSDOM FROM LS_NEW_DOM.
+      IF SY-SUBRC <> 0.
+        MESSAGE S999(ZMCSS) WITH '도메인 등록 실패' DISPLAY LIKE 'E'.
+        RETURN.
+      ENDIF.
+
+      GS_ZTSSVEND-EDOM = LV_NUM3.
+      " 신규 등록 완료
+      MESSAGE S999(ZMCSS) WITH '신규 도메인 등록 성공' DISPLAY LIKE 'S'.
+      " 신규 도메인 등록 처리 종료
+    ENDIF.
+
+  ELSE.
+
+    " 기존 도메인 번호 조회
+    SELECT SINGLE EDOM
+      FROM ZTSSDOM
+      INTO GS_ZTSSVEND-EDOM
+      WHERE EDOM = ZSSSMD0303-EDNME.
+
+  ENDIF.
+
+
+**      PERFORM TRANSLATE_LOWER_CASE.
+
+
+
+  " 벤더 정보 인서트
+  INSERT ZTSSVEND FROM GS_ZTSSVEND.
+  IF SY-SUBRC <> 0.
+    ROLLBACK WORK.
+    MESSAGE S999(ZMCSS) WITH '이미 존재하는 벤더입니다.' DISPLAY LIKE 'E'.
+  ELSE.
+    COMMIT WORK.
+    MESSAGE S999(ZMCSS) WITH '등록 성공'.
+
+    PERFORM GET_DATA.
+    LEAVE TO SCREEN 0.
+*    RETURN.
+  ENDIF.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_DATA_0300
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_DATA_0300 .
+
+  " 이메일 부분 조건 추가
+  " GS_DATA 데이터를 ZSSSMD0303에 복사 (EDNME 제외)
+**  MOVE-CORRESPONDING GS_DATA TO ZSSSMD0303  .
+  ZSSSMD0303 = CORRESPONDING #( GS_DATA EXCEPT EDNME ).
+
+  " 드롭다운 도메인 중 하나인지 확인할 변수 선언
+  DATA LV_IS_DROPDOWN_DOMAIN TYPE ABAP_BOOL VALUE ABAP_FALSE.
+  DATA LS_DROPDOWN LIKE LINE OF GT_DROPDOWN.
+
+  IF GT_DROPDOWN IS INITIAL.
+
+    PERFORM DROPDOWN_VALUE.
+
+  ENDIF.
+
+
+  " 드롭다운 목록 내 지정해 둔 5개 도메인 비교
+  LOOP AT GT_DROPDOWN INTO LS_DROPDOWN.
+    IF LS_DROPDOWN-TEXT = GS_DATA-EDNME.
+      LV_IS_DROPDOWN_DOMAIN = ABAP_TRUE.
+      EXIT.
+    ENDIF.
+  ENDLOOP.
+
+  " 드롭다운 도메인일 경우 EDNME에 넣고, 직접 입력일 경우 NEWEDOM에 넣기
+  IF LV_IS_DROPDOWN_DOMAIN = ABAP_TRUE.
+
+    ZSSSMD0303-EDNME = ZSSSMD0303-EDOM.                     " '0001'.
+    CLEAR ZSSSMD0303-NEWEDOM.
+  ELSE.
+    ZSSSMD0303-NEWEDOM = GS_DATA-EDNME.
+    TRANSLATE ZSSSMD0303-NEWEDOM TO LOWER CASE.
+*    CLEAR ZSSSMD0303-EDNME.
+    ZSSSMD0303-EDNME = '0000'.
+  ENDIF.
+
+  " 날짜 조건 추가
+  IF GS_DATA-ENDDA =< SY-DATUM.
+
+    ZSSSMD0303-ENDFLAG = 'X'.
+
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_DOUBLE_CLICK
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_ES_ROW_NO  text
+*      -->P_E_COLUMN  text
+*----------------------------------------------------------------------*
+FORM GET_DOUBLE_CLICK  USING    P_ROW_NO
+                                P_COLUMN.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_SELECTED_ROWS
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_GT_ROWS  text
+*----------------------------------------------------------------------*
+FORM GET_SELECTED_ROWS  CHANGING PT_ROWS TYPE LVC_T_ROW.
+
+  CLEAR: PT_ROWS.
+
+  CALL METHOD GO_ALV->GET_SELECTED_ROWS
+    IMPORTING
+      ET_INDEX_ROWS = PT_ROWS.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DELETE_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DELETE_DATA .
+  DATA: LS_ZTSSVEND TYPE ZTSSVEND.
+
+  IF ZSSSMD0303-ENDFLAG = 'X'.
+    MESSAGE S999(ZMCSS) WITH '이미 계약종료된 벤더입니다.' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
+
+  MOVE-CORRESPONDING ZSSSMD0303 TO LS_ZTSSVEND.
+
+  LS_ZTSSVEND-ENDDA = SY-DATUM.
+
+  UPDATE ZTSSVEND FROM LS_ZTSSVEND.
+  IF SY-SUBRC = 0.
+    COMMIT WORK.
+    MESSAGE S999(ZMCSS) WITH '계약 종료 성공'.
+
+    PERFORM GET_DATA.
+
+    LEAVE TO SCREEN 0.
+  ELSE.
+    ROLLBACK WORK.
+    MESSAGE S999(ZMCSS) WITH '계약 종료 실패' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DELETE_CANCEL
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DELETE_CANCEL .
+  DATA: LS_ZTSSVEND TYPE ZSSSMD0303.
+
+  MOVE-CORRESPONDING ZSSSMD0303 TO LS_ZTSSVEND.
+
+  LS_ZTSSVEND-ENDFLAG = ''.
+
+  UPDATE ZTSSVEND FROM LS_ZTSSVEND.
+  IF SY-SUBRC = 0.
+    COMMIT WORK.
+    MESSAGE S999(ZMCSS) WITH '삭제 취소 성공'.
+
+    PERFORM GET_DATA.
+
+    LEAVE TO SCREEN 0.
+  ELSE.
+    ROLLBACK WORK.
+    MESSAGE S999(ZMCSS) WITH '삭제 취소 실패' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_DATA_0110
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_DATA_0110 .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_VEND_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_VEND_DATA .
+
+  CLEAR: GS_DATA, GT_DATA.
+  IF ZSSSMD0301-VENID IS INITIAL.
+
+    SELECT VENID VNAME BEGDA ENDDA POSTC
+           ADDRE VPNME PENID EID EDOM
+       FROM ZTSSVEND
+         INTO CORRESPONDING FIELDS OF TABLE GT_DATA.
+
+
+  ELSE.
+
+    SELECT VENID VNAME BEGDA ENDDA POSTC
+           ADDRE VPNME PENID EID EDOM
+       FROM ZTSSVEND
+         INTO CORRESPONDING FIELDS OF TABLE GT_DATA
+     WHERE VENID = ZSSSMD0301-VENID.
+
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  MODIFY_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM MODIFY_DATA .
+
+  " 이메일 정보 취득
+  PERFORM GET_EDOM_DATA.
+
+  LOOP AT GT_DATA INTO GS_DATA.
+
+    IF GS_DATA-POSTC IS NOT INITIAL AND GS_DATA-ADDRE IS NOT INITIAL.
+      " 벤더 전체 주소
+      GS_DATA-VADDR = '(' && GS_DATA-POSTC && ')' && GS_DATA-ADDRE.
+    ENDIF.
+    " ZTSSDOM 정보 -> GT_DATA
+    READ TABLE GT_EDOM INTO GS_EDOM WITH KEY EDOM = GS_DATA-EDOM.
+    IF SY-SUBRC = 0.
+      GS_DATA-EDNME = GS_EDOM-EDNME.
+    ELSE.
+      MESSAGE S999(ZMCSS) WITH 'error' DISPLAY LIKE 'E'.
+    ENDIF.
+
+    IF GS_DATA-EID IS NOT INITIAL AND GS_DATA-EDNME IS NOT INITIAL.
+      " 벤더 전체 이메일
+      GS_DATA-VEMAIL = GS_DATA-EID && '@' && GS_DATA-EDNME.
+      TRANSLATE GS_DATA-VEMAIL TO LOWER CASE.
+
+    ENDIF.
+
+    IF GS_DATA-ENDDA =< SY-DATUM.
+      GS_DATA-ENDFLAG = 'X'.
+    ENDIF.
+
+    MODIFY GT_DATA FROM GS_DATA.
+
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_EDOM_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_EDOM_DATA .
+
+  SELECT EDOM EDNME
+    FROM ZTSSDOM
+    INTO CORRESPONDING FIELDS OF TABLE GT_EDOM.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_DROPDOWN
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_DROPDOWN .
+
+  PERFORM DROPDOWN_VALUE.
+
+**  ZSSSMD0303-EDNME = '0000'.
+
+  " 등록 화면일 경우 기본값 설정
+  IF SY-DYNNR = '0200'.
+    ZSSSMD0303-EDNME = '0000'.
+    GS_DROPDOWN-KEY = '0000'.
+
+
+**    IF GS_DROPDOWN-KEY <> '0000'.
+**
+**      ZSSSMD0303-EDNME = GS_DROPDOWN-TEXT.
+**      ZSSSMD0303-NEWEDOM = ''.
+**    ENDIF.
+
+
+  ENDIF.
+
+
+  CALL FUNCTION 'VRM_SET_VALUES'
+    EXPORTING
+      ID              = 'ZSSSMD0303-EDNME'
+      VALUES          = GT_DROPDOWN
+    EXCEPTIONS
+      ID_ILLEGAL_NAME = 1
+      OTHERS          = 2.
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  EDIT_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM EDIT_DATA .
+*  DATA: LS_ZTSSVEND TYPE ZTSSVEND.
+
+  MOVE-CORRESPONDING ZSSSMD0303 TO GS_ZTSSVEND.
+
+  IF ZSSSMD0303-EDNME = '0000'. " 직접 입력
+
+
+    IF ZSSSMD0303-NEWEDOM IS INITIAL.
+      MESSAGE S999(ZMCSS) WITH '도메인을 입력해 주세요.' DISPLAY LIKE 'E'.
+      RETURN.
+    ENDIF.
+
+
+    SELECT SINGLE EDOM
+           FROM ZTSSDOM
+             INTO GS_ZTSSVEND-EDOM
+         WHERE EDNME = ZSSSMD0303-NEWEDOM.
+
+    IF SY-SUBRC <> 0.
+      " 신규 도메인 등록 처리 시작
+      DATA: LV_NUM3 TYPE N LENGTH 4.
+      CALL FUNCTION 'NUMBER_GET_NEXT'
+        EXPORTING
+          NR_RANGE_NR = '01'
+          OBJECT      = 'ZNRSSMD07'
+        IMPORTING
+          NUMBER      = LV_NUM3
+        EXCEPTIONS
+          OTHERS      = 8.
+      IF SY-SUBRC <> 0.
+        MESSAGE A000(ZMCSS).
+        RETURN.
+      ENDIF.
+
+      DATA: LS_NEW_DOM TYPE ZTSSDOM.
+
+      PERFORM TRANSLATE_LOWER_CASE.
+
+      LS_NEW_DOM-EDOM = LV_NUM3.
+      LS_NEW_DOM-EDNME = ZSSSMD0303-NEWEDOM.
+
+      " .com 등 로직 추가
+      IF NOT ZSSSMD0303-NEWEDOM CA '.'.
+
+        MESSAGE S999(ZMCSS) WITH '.com 등 이메일 도메인 형식을 입력하세요.' DISPLAY LIKE 'E'.
+        RETURN.
+      ENDIF.
+
+      INSERT ZTSSDOM FROM LS_NEW_DOM.
+
+      IF SY-SUBRC <> 0.
+        MESSAGE S999(ZMCSS) WITH '도메인 등록 실패' DISPLAY LIKE 'E'.
+        RETURN.
+      ENDIF.
+      GS_ZTSSVEND-EDOM = LV_NUM3.
+      " 신규 등록 완료
+      MESSAGE S999(ZMCSS) WITH '신규 도메인 등록 성공'.
+      " 신규 도메인 등록 처리 종료
+    ENDIF.
+  ELSE.
+    " 기존 도메인 번호 조회
+
+    SELECT SINGLE EDOM
+      FROM ZTSSDOM
+      INTO GS_ZTSSVEND-EDOM
+      WHERE EDOM = ZSSSMD0303-EDNME.
+
+  ENDIF.
+
+  IF ZSSSMD0303-NEWEDOM IS NOT INITIAL AND ZSSSMD0303-EDNME IS NOT INITIAL.
+
+    MESSAGE S999(ZMCSS) WITH '이메일 도메인을 다시 확인해 주세요' DISPLAY LIKE 'E'.
+    RETURN.
+
+  ENDIF.
+
+  " 변경
+  UPDATE ZTSSVEND FROM GS_ZTSSVEND.
+  IF SY-SUBRC = 0.
+    COMMIT WORK.
+    MESSAGE '수정 완료' TYPE 'S'.
+    PERFORM GET_DATA.
+    LEAVE TO SCREEN 0.
+  ELSE.
+    ROLLBACK WORK.
+    MESSAGE '수정 실패' TYPE 'S' DISPLAY LIKE 'E'.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_VPNME
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_ZSSSMD0303_PENID  text
+*      <--P_ZSSSMD0303_VPNME  text
+*----------------------------------------------------------------------*
+FORM GET_VPNME  USING    P_PENID
+                CHANGING P_VPNME.
+  IF GT_EMP IS INITIAL.
+    SELECT *
+      FROM ZTSSEMP
+      INTO CORRESPONDING FIELDS OF TABLE GT_EMP.
+  ENDIF.
+
+  READ TABLE GT_EMP INTO GS_EMP WITH KEY PERNR = ZSSSMD0303-PENID.
+
+  IF SY-SUBRC = 0.
+    ZSSSMD0303-PENID_T = GS_EMP-LNAME && GS_EMP-FNAME.
+    P_VPNME = ZSSSMD0303-PENID_T.
+  ELSE.
+    MESSAGE S999(ZMCSS) WITH '유효하지 않은 담당사원 ID입니다.' DISPLAY LIKE 'E'.
+  ENDIF.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DROPDOWN_VALUE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DROPDOWN_VALUE .
+
+  IF GT_DROPDOWN IS INITIAL.
+    GS_DROPDOWN-KEY = '0001'.
+    GS_DROPDOWN-TEXT  = 'kakao.com'.
+    APPEND GS_DROPDOWN TO GT_DROPDOWN.
+    CLEAR GS_DROPDOWN.
+
+    GS_DROPDOWN-KEY = '0002'.
+    GS_DROPDOWN-TEXT  = 'hotmail.com'.
+    APPEND GS_DROPDOWN TO GT_DROPDOWN.
+    CLEAR GS_DROPDOWN.
+
+    GS_DROPDOWN-KEY = '0003'.
+    GS_DROPDOWN-TEXT  = 'gmail.com'.
+    APPEND GS_DROPDOWN TO GT_DROPDOWN.
+    CLEAR GS_DROPDOWN.
+
+    GS_DROPDOWN-KEY = '0004'.
+    GS_DROPDOWN-TEXT  = 'naver.com'.
+    APPEND GS_DROPDOWN TO GT_DROPDOWN.
+    CLEAR GS_DROPDOWN.
+
+    GS_DROPDOWN-KEY = '0005'.
+    GS_DROPDOWN-TEXT  = 'nate.com'.
+    APPEND GS_DROPDOWN TO GT_DROPDOWN.
+    CLEAR GS_DROPDOWN.
+
+    GS_DROPDOWN-KEY = '0000'.
+    GS_DROPDOWN-TEXT  = '직접 입력'.
+    APPEND GS_DROPDOWN TO GT_DROPDOWN.
+    CLEAR GS_DROPDOWN.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  TRANSLATE_LOWER_CASE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM TRANSLATE_LOWER_CASE .
+
+  " 소문자 처리
+  TRANSLATE ZSSSMD0303-EID TO LOWER CASE.
+  TRANSLATE ZSSSMD0303-NEWEDOM TO LOWER CASE.
+  TRANSLATE ZSSSMD0303-EDNME TO LOWER CASE.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SEL_ROWS
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SEL_ROWS .
+
+  DATA: LV_LINE TYPE I.
+
+  PERFORM GET_SELECTED_ROWS CHANGING GT_ROWS.
+
+  DESCRIBE TABLE GT_ROWS LINES LV_LINE.
+  CASE LV_LINE.
+    WHEN '0'.
+      MESSAGE S999(ZMCSS) WITH '수정할 데이터를 선택해주세요.' DISPLAY LIKE 'E'.
+      RETURN.
+    WHEN '1'.
+
+      READ TABLE GT_ROWS INDEX 1 INTO GS_ROWS.
+
+    WHEN OTHERS.
+      MESSAGE S999(ZMCSS) WITH '데이터를 한 행만 선택하세요.' DISPLAY LIKE 'E'.
+      RETURN.
+  ENDCASE.
+
+
+  READ TABLE GT_DATA INDEX GS_ROWS-INDEX INTO GS_DATA.
+
+ENDFORM.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

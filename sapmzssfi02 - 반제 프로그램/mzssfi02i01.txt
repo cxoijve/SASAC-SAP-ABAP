@@ -92,8 +92,6 @@ MODULE USER_COMMAND_0300 INPUT.
     WHEN 'BAP'.
 
       " 반제전표 INSERT 및 정보 취득
-
-
       IF GV_FLAG = 'X'.
 
         MESSAGE S999(ZMCSS) WITH '이미 전표가 생성되었습니다' DISPLAY LIKE 'E'.
@@ -104,6 +102,9 @@ MODULE USER_COMMAND_0300 INPUT.
         IF GV_SUBRC = 4.
           CLEAR GV_SUBRC.
           RETURN.
+        ELSE.
+
+          GV_FLAG2 = 'X'.
         ENDIF.
 
         " 등록자명 취득
@@ -116,8 +117,9 @@ MODULE USER_COMMAND_0300 INPUT.
         " 채번 후 생성
         PERFORM INSERT_AP_DATA.
 
-      ENDIF.
+        GV_FLAG = 'X'.
 
+      ENDIF.
 
 
     WHEN 'CLEARING'.
@@ -125,18 +127,12 @@ MODULE USER_COMMAND_0300 INPUT.
       IF GV_FLAG = 'X'.
 
         " 지급 전표 생성되면, 전표 번호를 IV의 ap 전표번호에 넣어줘야 함. (생성일도)
-
         READ TABLE GT_MHDATA INTO GS_MHDATA WITH KEY JENUM = GS_ZTSSJEH-JENUM.
         GS_MHDATA-APNUM = GS_ZTSSJEH-JENUM.
         GS_MHDATA-APFYR = GS_ZTSSJEH-FYEAR.
 
-
-*        MESSAGE S999(ZMCSS) WITH '반제 처리 되었습니다.'.
-
-
         GS_ZTSSMIVH-APNUM = GS_MHDATA-APNUM.
         GS_ZTSSMIVH-APFYR = GS_MHDATA-APFYR.
-
 
         UPDATE ZTSSMIVH SET APNUM = GS_ZTSSMIVH-APNUM
                             APFYR = GS_ZTSSMIVH-APFYR
@@ -148,7 +144,7 @@ MODULE USER_COMMAND_0300 INPUT.
         ENDIF.
 
         COMMIT WORK. " <-- LOOP 밖 (성공시 한 번만)
-        MESSAGE S999(ZMCSS) WITH '반제 처리 되었습니다.'.
+        MESSAGE S999(ZMCSS) WITH GS_MHDATA-IVNUM '문서가 반제 처리 되었습니다.'.
 
         SELECT *
           FROM ZTSSMIVH
@@ -165,8 +161,6 @@ MODULE USER_COMMAND_0300 INPUT.
     WHEN OTHERS.
 
   ENDCASE.
-
-**  CLEAR OK_CODE.
 
 ENDMODULE.
 *&---------------------------------------------------------------------*
@@ -280,8 +274,6 @@ MODULE USER_COMMAND_0600 INPUT.
     WHEN 'BAP'.
 
       " 반제전표 INSERT 및 정보 취득
-
-
       IF GV_FLAG = 'X'.
 
         MESSAGE S999(ZMCSS) WITH '이미 전표가 생성되었습니다' DISPLAY LIKE 'E'.
@@ -292,6 +284,9 @@ MODULE USER_COMMAND_0600 INPUT.
         IF GV_SUBRC = 4.
           CLEAR GV_SUBRC.
           RETURN.
+        ELSE.
+
+          GV_FLAG2 = 'X'.
         ENDIF.
 
         " 등록자명 취득
@@ -303,6 +298,8 @@ MODULE USER_COMMAND_0600 INPUT.
 
         " 채번 후 생성
         PERFORM INSERT_AR_DATA.
+
+        GV_FLAG = 'X'.
 
       ENDIF.
 
@@ -317,13 +314,8 @@ MODULE USER_COMMAND_0600 INPUT.
         GS_SHDATA-ARNUM = GS_ZTSSJEH-JENUM.
         GS_SHDATA-ARFYR = GS_ZTSSJEH-FYEAR.
 
-
-*        MESSAGE S999(ZMCSS) WITH '반제 처리 되었습니다.'.
-
-
         GS_ZTSSSIVH-ARNUM = GS_SHDATA-ARNUM.
         GS_ZTSSSIVH-ARFYR = GS_SHDATA-ARFYR.
-
 
         UPDATE ZTSSSIVH SET ARNUM = GS_ZTSSSIVH-ARNUM
                             ARFYR = GS_ZTSSSIVH-ARFYR
@@ -335,7 +327,7 @@ MODULE USER_COMMAND_0600 INPUT.
         ENDIF.
 
         COMMIT WORK. " <-- LOOP 밖 (성공시 한 번만)
-        MESSAGE S999(ZMCSS) WITH '반제 처리 되었습니다.'.
+        MESSAGE S999(ZMCSS) WITH GS_SHDATA-BINUM '반제 처리 되었습니다.'.
 
         SELECT *
           FROM ZTSSSIVH

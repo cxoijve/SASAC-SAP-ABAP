@@ -271,23 +271,35 @@ FORM SET_FCAT_0400 .
   CLEAR: GT_FCAT.
 
   PERFORM FCAT USING:
-        'JENUM' '1' '전표번호',
-        'FYEAR' '2' '회계연도',
-        'IVNUM' '3' '송장 문서 번호',
-        'IVDAT' '4' '송장 검증일',
+        'APNUM' '1' '지급 전표번호',
+        'APFYR' '2' '지급 회계연도',
+        'JENUM' '3' '전표번호',
+        'FYEAR' '4' '회계연도',
         'TOPRC' '5' '총 금액',
-        'STEXT' '6' '비고',
-        'CURKY' '7' '통화 키',
+        'CURKY' '6' '통화 키',
+        'IVNUM' '7' '송장 문서번호',
         'RGDAT' '8' '등록일',
-        'RGTOR' '9' '등록자',
-        'APNUM' '10' '지급 전표번호',
-        'APFYR' '11' '지급 회계연도'.
+        'IVDAT' '9' '송장 검증일',
+        'STEXT' '10' '비고',
+        'RGTOR' '11' '등록자'.
 
   CLEAR GS_FCAT.
 
   LOOP AT GT_FCAT INTO GS_FCAT.
     IF GS_FCAT-FIELDNAME = 'TOPRC'.
       GS_FCAT-CFIELDNAME = 'CURKY'.
+
+    ELSEIF GS_FCAT-FIELDNAME = 'JENUM'.
+      GS_FCAT-HOTSPOT = 'X'.
+
+    ELSEIF GS_FCAT-FIELDNAME = 'IVNUM'.
+      GS_FCAT-HOTSPOT = 'X'.
+
+    ELSEIF GS_FCAT-FIELDNAME = 'APNUM'.
+      GS_FCAT-HOTSPOT = 'X'.
+
+    ELSEIF GS_FCAT-FIELDNAME = 'RGTOR'.
+      GS_FCAT-NO_OUT = 'X'.
     ENDIF.
 
     MODIFY GT_FCAT FROM GS_FCAT.
@@ -312,12 +324,6 @@ FORM DISPLAY_ALV_0400 .
       IT_OUTTAB       = GT_MHDATA
       IT_FIELDCATALOG = GT_FCAT
       IT_SORT         = GT_SORT
-*     IT_FILTER       =
-*  EXCEPTIONS
-*     INVALID_PARAMETER_COMBINATION = 1
-*     PROGRAM_ERROR   = 2
-*     TOO_MANY_LINES  = 3
-*     OTHERS          = 4
     .
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
@@ -341,13 +347,7 @@ FORM CREATE_ALV_0500 .
 
   CREATE OBJECT GO_CON2
     EXPORTING
-*     PARENT                      =
       CONTAINER_NAME              = 'CON2'
-*     STYLE                       =
-*     LIFETIME                    = lifetime_default
-*     REPID                       =
-*     DYNNR                       =
-*     NO_AUTODEF_PROGID_DYNNR     =
     EXCEPTIONS
       CNTL_ERROR                  = 1
       CNTL_SYSTEM_ERROR           = 2
@@ -362,15 +362,7 @@ FORM CREATE_ALV_0500 .
 
   CREATE OBJECT GO_ALV2
     EXPORTING
-*     I_SHELLSTYLE      = 0
-*     I_LIFETIME        =
       I_PARENT          = GO_CON2
-*     I_APPL_EVENTS     = space
-*     I_PARENTDBG       =
-*     I_APPLOGPARENT    =
-*     I_GRAPHICSPARENT  =
-*     I_NAME            =
-*     I_FCAT_COMPLETE   = SPACE
     EXCEPTIONS
       ERROR_CNTL_CREATE = 1
       ERROR_CNTL_INIT   = 2
@@ -396,27 +388,42 @@ FORM SET_FCAT_0500 .
   CLEAR: GT_FCAT2.
 
   PERFORM FCAT2 USING:
-        'JENUM' '1' '전표번호',
-        'FYEAR' '2' '회계연도',
-        'BINUM' '3' '청구 문서 번호',
-        'BIDAT' '4' '청구일',
+        'ARNUM' '1' '수금 전표번호',
+        'ARFYR' '2' '수금 회계연도',
+        'JENUM' '3' '전표번호',
+        'FYEAR' '4' '회계연도',
         'TOPRC' '5' '총 금액',
-        'STEXT' '6' '비고',
-        'CURKY' '7' '통화 키',
+        'CURKY' '6' '통화 키',
+        'BINUM' '7' '청구 문서번호',
         'RGDAT' '8' '등록일',
-        'RGTOR' '9' '등록자',
-        'ARNUM' '10' '수금 전표번호',
-        'ARFYR' '11' '수금 회계연도'.
+        'BIDAT' '9' '청구일',
+        'STEXT' '10' '비고',
+        'RGTOR' '11' '등록자'.
 
   CLEAR GS_FCAT2.
 
   LOOP AT GT_FCAT2 INTO GS_FCAT2.
     IF GS_FCAT2-FIELDNAME = 'TOPRC'.
       GS_FCAT2-CFIELDNAME = 'CURKY'.
+
+    ELSEIF GS_FCAT2-FIELDNAME = 'JENUM'.
+      GS_FCAT2-HOTSPOT = 'X'.
+
+    ELSEIF GS_FCAT2-FIELDNAME = 'BINUM'.
+      GS_FCAT2-HOTSPOT = 'X'.
+
+    ELSEIF GS_FCAT2-FIELDNAME = 'ARNUM'.
+      GS_FCAT2-HOTSPOT = 'X'.
+
+    ELSEIF GS_FCAT2-FIELDNAME = 'RGTOR'.
+      GS_FCAT2-NO_OUT = 'X'.
+
     ENDIF.
+
 
     MODIFY GT_FCAT2 FROM GS_FCAT2.
   ENDLOOP.
+
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -432,32 +439,11 @@ FORM DISPLAY_ALV_0500 .
 
   CALL METHOD GO_ALV2->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-*     I_BUFFER_ACTIVE =
-*     I_BYPASSING_BUFFER   =
-*     I_CONSISTENCY_CHECK  =
-*     I_STRUCTURE_NAME     =
-*     IS_VARIANT      =
-*     I_SAVE          =
-*     I_DEFAULT       = 'X'
       IS_LAYOUT       = GS_LAYO2
-*     IS_PRINT        =
-*     IT_SPECIAL_GROUPS    =
-*     IT_TOOLBAR_EXCLUDING = GT_EXCLUDE
-*     IT_HYPERLINK    =
-*     IT_ALV_GRAPHICS =
-*     IT_EXCEPT_QINFO =
-*     IR_SALV_ADAPTER =
     CHANGING
       IT_OUTTAB       = GT_SHDATA
       IT_FIELDCATALOG = GT_FCAT2
-      IT_SORT         = GT_SORT
-*     IT_FILTER       =
-*  EXCEPTIONS
-*     INVALID_PARAMETER_COMBINATION = 1
-*     PROGRAM_ERROR   = 2
-*     TOO_MANY_LINES  = 3
-*     OTHERS          = 4
-    .
+      IT_SORT         = GT_SORT.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
@@ -890,10 +876,8 @@ FORM INSERT_AP_DATA .
         ENDLOOP.
 
         COMMIT WORK. " <-- LOOP 밖 (성공시 한 번만)
-        MESSAGE S999(ZMCSS) WITH '지급 전표가 생성되었습니다'.
+        MESSAGE S999(ZMCSS) WITH GS_ZTSSJEH-JENUM '지급 전표가 생성되었습니다'.
 
-****        PERFORM GET_DATA.
-****        LEAVE TO SCREEN 0.
       ENDIF.
     ELSE.
       MESSAGE S999(ZMCSS) WITH '차변과 대변 금액이 일치하지 않습니다.' DISPLAY LIKE 'E'.
@@ -912,12 +896,11 @@ MODULE MODIFY_SCREEN_0300 OUTPUT.
 
   LOOP AT SCREEN.
     IF OK_CODE = 'BAP'.
-      IF SCREEN-GROUP1 = 'GR1'.
-*        SCREEN-ACTIVE = 1.
-        SCREEN-INPUT = 0.
-        GV_FLAG = 'X'.
-      ELSE.
-*        SCREEN-ACTIVE = 0.
+      IF GV_FLAG2 = 'X'.
+        IF SCREEN-GROUP1 = 'GR1'.
+          SCREEN-INPUT = 0.
+          GV_FLAG = 'X'.
+        ENDIF.
       ENDIF.
       MODIFY SCREEN.
     ENDIF.
@@ -968,8 +951,8 @@ FORM SET_AP_INIT .
     ZSSSFI0205-RGTOR = 'E0000001'.
     ZSSSFI0205-RGTOR_T = '최지예'.
   ELSE.
-    ZSSSFI0205-RGTOR = ZSSSFI0203-RGTOR.
-    ZSSSFI0205-RGTOR_T = ZSSSFI0203-RGTOR_T.
+    ZSSSFI0205-RGTOR = 'E0000001'.
+    ZSSSFI0205-RGTOR_T = '최지예'.
   ENDIF.
 
   IF ZSSSFI0203-STEXT IS NOT INITIAL.
@@ -1041,7 +1024,7 @@ FORM CHECK_RGTOR_DEPID USING VALUE(P_RGTOR).
 
       ELSE.
 
-        MESSAGE S999(ZMCSS) WITH '회계부서 사원 확인 되었습니다. 라인 아이템을 추가하세요.'.
+*        MESSAGE S999(ZMCSS) WITH '회계부서 사원 확인 되었습니다. 라인 아이템을 추가하세요.'.
       ENDIF.
 
     ELSE.
@@ -1399,8 +1382,16 @@ FORM SET_AR_INIT .
   ZSSSFI0205-RGDAT = SY-DATUM.
   ZSSSFI0205-CURKY = 'KRW'.
   ZSSSFI0205-JTYPE = 'DZ'.
-  ZSSSFI0205-RGTOR = ZSSSFI0203-RGTOR.
-  ZSSSFI0205-RGTOR_T = ZSSSFI0203-RGTOR_T.
+
+  IF ZSSSFI0203-RGTOR IS INITIAL AND ZSSSFI0203-RGTOR_T = 'AutoFIBot'.
+    ZSSSFI0205-RGTOR = 'E0000001'.
+    ZSSSFI0205-RGTOR_T = '최지예'.
+  ELSE.
+    ZSSSFI0205-RGTOR = 'E0000001'.
+    ZSSSFI0205-RGTOR_T = '최지예'.
+  ENDIF.
+
+
   IF ZSSSFI0203-STEXT IS NOT INITIAL.
     ZSSSFI0205-STEXT = ZSSSFI0203-STEXT.
 
@@ -1515,7 +1506,7 @@ FORM INSERT_AR_DATA .
         ENDLOOP.
 
         COMMIT WORK.
-        MESSAGE S999(ZMCSS) WITH '수금 전표가 생성되었습니다'.
+        MESSAGE S999(ZMCSS) WITH GS_ZTSSJEH-JENUM '수금 전표가 생성되었습니다'.
 
       ENDIF.
     ELSE.
@@ -1539,6 +1530,40 @@ FORM GET_RGTOR_INFO .
                          CHANGING ZSSSFI0205-RGTOR_T.
 
   PERFORM CHECK_RGTOR_DEPID USING ZSSSFI0205-RGTOR.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_EVENT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_EVENT .
+
+  CREATE OBJECT GO_EVENT.
+
+  SET HANDLER:
+  GO_EVENT->HANDLE_HOTSPOT_CLICK FOR GO_ALV.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_EVENT2
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_EVENT2 .
+
+
+  CREATE OBJECT GO_EVENT.
+
+  SET HANDLER:
+  GO_EVENT->HANDLE_HOTSPOT_CLICK FOR GO_ALV2.
+
 ENDFORM.
 
 ----------------------------------------------------------------------------------

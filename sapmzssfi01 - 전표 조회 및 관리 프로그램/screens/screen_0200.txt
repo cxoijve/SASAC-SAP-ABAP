@@ -8,29 +8,29 @@ SAPMZSSFI01
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI01                             0200 0200     29115192 37  0  0 31132  0G E                              20250919164930																																
+SAPMZSSFI01                             0200 0200     29115192 37  0  0 31133  0G E                              20251001174944																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
-B_BOX		CHAR	114	00	00	00	30	00	  2	  2		  0	  0	  0		  7	R				  0	  0	101							헤더		
+B_BOX		CHAR	114	00	00	00	30	00	  2	  2		  0	  0	  0		  7	R				  0	  0	101							전표 헤더		
 ZSSSFI0102-RGDAT	0	CHAR	  6	30	00	00	30	00	  4	  6		  0	  0	  0		  0					  0	  0								전기일	                                                                                                                                                                                                                                                        X	
 ZSSSFI0102-RGDAT	D	DATE	 13	B0	00	80	00	08	  4	 20		  0	  0	  0		  0					 16	  0								_____________	X                                      00	
-ZSSSFI0102-JTYPE	0	CHAR	  9	30	00	01	30	00	  4	 56		  0	  0	  0		  0					  0	  0								전표 유형	                                                                                                                                                                                                                                                        X	
+ZSSSFI0102-JTYPE	0	CHAR	  8	30	00	01	30	00	  4	 56		  0	  0	  0		  0					  0	  0								전표유형	                                                                                                                                                                                                                                                        X	
 ZSSSFI0102-JTYPE	C	CHAR	 10	B0	00	81	00	18	  4	 72		  0	  0	  0		 23					  4	  0								__________	XDL                                    00	
 ZSSSFI0102-RGTOR	0	CHAR	  6	30	00	00	30	00	  6	  6		  0	  0	  0		  0					  0	  0								등록자	                                                                                                                                                                                                                                                        X	
 ZSSSFI0102-RGTOR	C	CHAR	 13	B0	00	84	00	08	  6	 20		  0	  0	  0		  0					 16	  0								_____________	X                                      00	
 ZSSSFI0102-RGTOR_T	C	CHAR	 14	B0	02	80	31	00	  6	 34		  0	  0	  0		  0					 80	  0								______________	                                       00	
 ZSSSFI0102-STEXT	0	CHAR	  4	30	02	00	30	00	  6	 56		  0	  0	  0		  0					  0	  0								비고	                                                                                                                                                                                                                                                        X	
 ZSSSFI0102-STEXT	C	CHAR	 38	B0	02	80	00	00	  6	 72		  0	  0	  0		  0					120	  0								______________________________________	                                       00	
-B_BOX2		CHAR	115	00	00	00	30	00	 10	  2		  0	  0	  0		 20	R				  0	  0	102				GR2			라인아이템		
+B_BOX2		CHAR	115	00	00	00	30	00	 10	  2		  0	  0	  0		 20	R				  0	  0	102				GR2			전표 아이템		
 B_ADD		CHAR	  4	00	00	00	30	00	 11	  3		  0	  0	  0		  0	P				  0	  0	103							추가	                                                                                                                                                                        BADD	
 B_EDIT		CHAR	  4	00	00	00	30	00	 11	  8		  0	  0	  0		  0	P				  0	  0	104							수정	                                                                                                                                                                        BEDIT	
 B_DEL		CHAR	  4	00	00	00	30	00	 11	 13		  0	  0	  0		  0	P				  0	  0	105							삭제	                                                                                                                                                                        BDEL	
 CON3			112	00	00	00	30	00	 12	  3		  0	  0	  0		 15	U				  1	  1	106									
 ZSSSFI0103-DEBIT	0	CHAR	  5	30	00	00	30	00	 28	 54		  0	  0	  0		  0					  0	  0								Debit	                                                                                                                                                                                                                                                        X	
-ZSSSFI0103-DEBIT	P	CURR	 18	B0	00	80	30	00	 28	 60		  0	  0	  0		  0					 15	  2		ZTSSJEI-CURKY						__________________	                                       00	
+ZSSSFI0103-DEBIT	P	CURR	 18	B0	00	80	30	00	 28	 60		  0	  0	  0		  0					 15	  2		ZSSSFI0103-CURKY						__________________	                                       00	
 ZSSSFI0103-CREDIT	0	CHAR	  6	30	00	00	30	00	 28	 81		  0	  0	  0		  0					  0	  0								Credit	                                                                                                                                                                                                                                                        X	
-ZSSSFI0103-CREDIT	P	CURR	 18	B0	00	80	30	00	 28	 88		  0	  0	  0		  0					 15	  2		ZTSSJEI-CURKY						__________________	                                       00	
+ZSSSFI0103-CREDIT	P	CURR	 18	B0	00	80	30	00	 28	 88		  0	  0	  0		  0					 15	  2		ZSSSFI0103-CURKY						__________________	                                       00	
 ZSSSFI0103-CURKY	C	CUKY	  5	A0	00	84	31	08	 28	108		  0	  0	  0		  0					 10	  0								_____	X                                      00	
 OK_CODE		CHAR	 20	80	10	00	00	00	255	  1	O	  0	  0	  0		  0					  0	  0								____________________		
 %_FLOWLOGIC																																

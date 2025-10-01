@@ -1,0 +1,171 @@
+*&---------------------------------------------------------------------*
+*&  Include           MZSSMD03I01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0100 INPUT.
+  CASE OK_CODE.
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'ENTER'.
+      " 벤더명 취득
+      PERFORM GET_VEDNAME USING ZSSSMD0301-VENID
+                          CHANGING ZSSSMD0301-VNAME.
+**      CALL FUNCTION 'ZFMSSJY'
+**        EXPORTING
+**          I_NAME  = ZSSSMD0301-VENID
+**        IMPORTING
+**          E_VNAME = ZSSSMD0301-VNAME.
+**
+
+    WHEN 'SEARCH'.
+
+      PERFORM GET_DATA.
+
+
+    WHEN 'REGIST'.
+
+      PERFORM SET_DATA_0200.
+
+      CALL SCREEN 0200.
+
+    WHEN 'EDIT'.
+
+      PERFORM SEL_ROWS.  " 행 선택 처리
+
+      PERFORM SET_DATA_0300.
+
+      CALL SCREEN 0300.
+
+    WHEN OTHERS.
+
+  ENDCASE.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  EXIT  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE EXIT INPUT.
+  CASE OK_CODE.
+    WHEN 'EXIT'.
+      LEAVE  PROGRAM.
+
+    WHEN 'CANC'.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0200  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0200 INPUT.
+  CASE OK_CODE.
+    WHEN 'BACK'.
+      CLEAR ZSSSMD0303.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'ENTER'.
+      " 담당사원명 취득
+      PERFORM GET_VPNME USING ZSSSMD0303-PENID
+                        CHANGING ZSSSMD0303-PENID_T.
+
+      " 담당사원 제약 조건: 구매부서 사원만 가능
+      IF ZSSSMD0303-PENID IS NOT INITIAL.
+        IF GS_EMP-DEPID <> 'D002'.
+          MESSAGE S999(ZMCSS) WITH '구매 부서 사원만 가능합니다. '
+         DISPLAY LIKE 'E'.
+        ENDIF.
+      ENDIF.
+
+
+      " 필수값 유효성 체크
+      IF ZSSSMD0303-PENID IS INITIAL OR
+         ZSSSMD0303-VNAME IS INITIAL OR
+         ZSSSMD0303-BEGDA IS INITIAL OR
+         ZSSSMD0303-ENDDA IS INITIAL.
+        MESSAGE S999(ZMCSS) WITH '담당사원, 벤더명, 계약일을 모두 입력해 주세요.'
+         DISPLAY LIKE 'E'.
+      ENDIF.
+
+
+      PERFORM TRANSLATE_LOWER_CASE.
+
+
+
+    WHEN 'REGIST'.
+
+      " 채번 -> 인서트
+      PERFORM CHECK_DATA_0200 CHANGING GV_SUBRC.
+      IF GV_SUBRC = 4.
+        CLEAR GV_SUBRC.
+        RETURN.
+      ENDIF.
+
+      PERFORM REGISTER_DATA.
+
+
+    WHEN OTHERS.
+
+  ENDCASE.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0300  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0300 INPUT.
+  CASE OK_CODE.
+    WHEN 'BACK'.
+      CLEAR ZSSSMD0303.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'ENTER'.
+      " 담당 사원명 취득
+      PERFORM GET_VPNME USING ZSSSMD0303-PENID
+                  CHANGING ZSSSMD0303-PENID_T.
+
+      " 담당사원 제약 조건: 구매부서 사원만 가능
+      IF ZSSSMD0303-PENID IS NOT INITIAL.
+        IF GS_EMP-DEPID <> 'D002'.
+          MESSAGE S999(ZMCSS) WITH '구매 부서 사원만 가능합니다. '
+         DISPLAY LIKE 'E'.
+        ENDIF.
+      ENDIF.
+
+      PERFORM TRANSLATE_LOWER_CASE.
+
+      " 이메일 도메인 직접입력 또는 도메인 5개 중 선택해야 값이 들어오도록
+
+
+      IF NOT ZSSSMD0303-EDNME = '0000'. " ZSSSMD0303-EDOM'. " 직접 입력
+
+        " 직접 입력
+        CLEAR ZSSSMD0303-NEWEDOM.
+
+      ENDIF.
+
+
+    WHEN 'EDIT'.
+      " 벤더 정보 수정
+      PERFORM EDIT_DATA.
+
+    WHEN 'DELETE'.
+      " 계약종료 여부
+      PERFORM DELETE_DATA.
+
+**    WHEN 'CANCEL'.
+**      " 기존 삭제 로직이었던 코드
+**      PERFORM DELETE_CANCEL.
+
+  ENDCASE.
+
+ENDMODULE.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

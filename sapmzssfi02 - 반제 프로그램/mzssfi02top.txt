@@ -111,7 +111,8 @@ DATA: GT_ZTSSSIVH TYPE TABLE OF ZTSSSIVH,
       GS_ZTSSSIVH TYPE ZTSSSIVH.
 
 " Flag
-DATA: GV_FLAG.
+DATA: GV_FLAG,
+      GV_FLAG2.
 
 ----------------------------------------------------------------------------------
 Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

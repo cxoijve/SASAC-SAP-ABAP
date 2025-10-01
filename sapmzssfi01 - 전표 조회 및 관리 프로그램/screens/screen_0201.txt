@@ -8,18 +8,18 @@ SAPMZSSFI01
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI01                             0201I0201      7105192 37  0  0 27123  0G E                              20250919162055																																
+SAPMZSSFI01                             0201I0201      7105192 37  0  0 27124  0G E                              20251001175040																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
 B_COND		CHAR	104	00	00	00	30	00	  2	  3		  0	  0	  0		  6	R				  0	  0	101									
-ZSSSFI0103-GLACC	2	CHAR	 20	30	00	00	30	00	  4	  8		  0	  0	  0		  0					  0	  0								G/L 계정	                                                                                                                                                                                                                                                        X	
+ZSSSFI0103-GLACC	0	CHAR	  8	30	00	00	30	00	  4	  8		  0	  0	  0		  0					  0	  0								G/L 계정	                                                                                                                                                                                                                                                        X	
 ZSSSFI0103-GLACC	N	NUMC	 11	B0	00	84	00	08	  4	 29		  0	  0	  0		  0					 12	  0								___________	X                                      00	
 ZSSSFI0103-ACTNM	C	CHAR	 16	B0	00	80	31	00	  4	 41		  0	  0	  0		  0					 80	  0								________________	                                       00	
 ZSSSFI0103-DEBIT	2	CHAR	 20	30	00	00	30	00	  5	  8		  0	  0	  0		  0					  0	  0								차변	                                                                                                                                                                                                                                                        X	
-ZSSSFI0103-DEBIT	P	CURR	 20	A0	00	80	00	00	  5	 29		  0	  0	  0		  0					 15	  2		ZTSSJEI-CURKY						____________________	                                       00	
+ZSSSFI0103-DEBIT	P	CURR	 20	A0	00	80	00	00	  5	 29		  0	  0	  0		  0					 15	  2		ZSSSFI0103-CURKY						____________________	                                       00	
 ZSSSFI0103-CREDIT	2	CHAR	 20	30	00	00	30	00	  5	 53		  0	  0	  0		  0					  0	  0								대변	                                                                                                                                                                                                                                                        X	
-ZSSSFI0103-CREDIT	P	CURR	 20	A0	00	80	00	00	  5	 74		  0	  0	  0		  0					 15	  2		ZTSSJEI-CURKY						____________________	                                       00	
+ZSSSFI0103-CREDIT	P	CURR	 20	A0	00	80	00	00	  5	 74		  0	  0	  0		  0					 15	  2		ZSSSFI0103-CURKY						____________________	                                       00	
 ZSSSFI0103-CURKY	C	CUKY	  5	A0	00	84	30	08	  5	 99		  0	  0	  0		  0					 10	  0								_____	X                                      00	
 		CHAR	 20	80	10	00	00	00	255	  1	O	  0	  0	  0		  0					  0	  0								____________________		
 %_FLOWLOGIC																																
