@@ -1,0 +1,453 @@
+*&---------------------------------------------------------------------*
+*&      Form  SET_LAYO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_LAYO .
+  CLEAR GS_LAYO.
+
+  GS_LAYO-CWIDTH_OPT = 'X'.
+  GS_LAYO-ZEBRA = 'X'.
+  GS_LAYO-SEL_MODE = 'A'.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_SORT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_SORT .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_FCAT .
+
+  CLEAR: GT_FCAT.
+
+  PERFORM FCAT USING:
+        'JENUM' '3' '전표번호',
+        'FYEAR' '4' '회계연도',
+        'IVNUM' '5' '송장 문서 번호',
+        'IVDAT' '6' '송장 검증일',
+        'TOPRC' '7' '총 금액',
+        'STEXT' '8' '비고',
+        'CURKY' '9' '통화 키',
+        'RGDAT' '10' '등록일',
+        'RGTOR' '11' '등록자',
+        'APNUM' '1' '지급 전표번호',
+        'APFYR' '2' '지급 회계연도'.
+
+  CLEAR GS_FCAT.
+
+  LOOP AT GT_FCAT INTO GS_FCAT.
+    IF GS_FCAT-FIELDNAME = 'TOPRC'.
+      GS_FCAT-CFIELDNAME = 'CURKY'.
+    ENDIF.
+
+    MODIFY GT_FCAT FROM GS_FCAT.
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  FCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0025   text
+*      -->P_0026   text
+*      -->P_0027   text
+*----------------------------------------------------------------------*
+FORM FCAT  USING    VALUE(P_FIELDNAME)
+                    VALUE(P_COLPOS)
+                    VALUE(P_COLTEXT).
+
+  DATA LS_FCAT LIKE LINE OF GT_FCAT.
+
+  LS_FCAT-FIELDNAME = P_FIELDNAME.
+  LS_FCAT-COL_POS = P_COLPOS.
+  LS_FCAT-COLTEXT = P_COLTEXT.
+  APPEND LS_FCAT TO GT_FCAT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_INIT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_INIT .
+
+  PERFORM GET_NON_REV_DATA.
+  PERFORM GET_ALL_JEH_DATA.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_ALV_0200
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CREATE_ALV_0200 .
+
+  " 객체가 있을 시 미생성
+  IF GO_CON IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON
+    EXPORTING
+      CONTAINER_NAME              = 'CON'
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV
+    EXPORTING
+      I_PARENT          = GO_CON
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+*  "Event Register
+*  PERFORM REQ_EVENT_FOR_ALV.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT_0200
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_FCAT_0200 .
+
+  CLEAR: GT_FCAT.
+
+  PERFORM FCAT USING:
+        'JENUM' '1' '전표번호',
+        'FYEAR' '2' '회계연도',
+        'JTYPE' '3' '전표 유형 코드',
+        'JTYPE_T' '4' '전표 유형',
+        'STEXT' '5' '비고',
+        'RGDAT' '6' '전기일',
+        'RGTOR_T' '7' '등록자명',
+        'RGTOR' '8' '등록자 코드',
+        'REV' '9' '역분개 여부',
+        'RRSON' '10' '역분개 사유',
+        'RJNUM' '11' '역분개 전표번호'.
+
+
+
+  CLEAR GS_FCAT.
+
+  LOOP AT GT_FCAT INTO GS_FCAT.
+
+    IF GS_FCAT-FIELDNAME = 'JENUM'.
+      GS_FCAT-HOTSPOT = 'X'. " 핫스팟
+
+    ELSEIF GS_FCAT-FIELDNAME = 'RRSON'.
+      GS_FCAT-NO_OUT = 'X'.
+
+    ELSEIF GS_FCAT-FIELDNAME = 'RJNUM'.
+      GS_FCAT-NO_OUT = 'X'.
+    ENDIF.
+
+    MODIFY GT_FCAT FROM GS_FCAT.
+
+  ENDLOOP.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_EVENT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_EVENT .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  EVENT_OPTION
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM EVENT_OPTION .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV_0200
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_ALV_0200 .
+
+  CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+*     I_BUFFER_ACTIVE =
+*     I_BYPASSING_BUFFER            =
+*     I_CONSISTENCY_CHECK           =
+*     I_STRUCTURE_NAME              =
+*     IS_VARIANT      =
+*     I_SAVE          =
+*     I_DEFAULT       = 'X'
+      IS_LAYOUT       = GS_LAYO
+*     IS_PRINT        =
+*     IT_SPECIAL_GROUPS             =
+*     IT_TOOLBAR_EXCLUDING          =
+*     IT_HYPERLINK    =
+*     IT_ALV_GRAPHICS =
+*     IT_EXCEPT_QINFO =
+*     IR_SALV_ADAPTER =
+    CHANGING
+      IT_OUTTAB       = GT_HDATA
+      IT_FIELDCATALOG = GT_FCAT
+      IT_SORT         = GT_SORT
+*     IT_FILTER       =
+*  EXCEPTIONS
+*     INVALID_PARAMETER_COMBINATION = 1
+*     PROGRAM_ERROR   = 2
+*     TOO_MANY_LINES  = 3
+*     OTHERS          = 4
+    .
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_SORT_0200
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_SORT_0200 .
+
+*  CLEAR GT_SORT.
+*  GS_SORT-SPOS = '1'.
+*  GS_SORT-FIELDNAME = 'JENUM'.
+*  GS_SORT-DOWN = 'X'.
+*  APPEND GS_SORT TO GT_SORT.
+
+*  CLEAR GT_SORT.
+*  GS_SORT-SPOS = '2'.
+*  GS_SORT-FIELDNAME = 'FYEAR'.
+*  GS_SORT-DOWN = 'X'.
+*  APPEND GS_SORT TO GT_SORT.
+
+*  CLEAR GT_SORT.
+*  GS_SORT-SPOS = '3'.
+*  GS_SORT-FIELDNAME = 'RGDAT'.
+*  GS_SORT-DOWN = 'X'.
+*  APPEND GS_SORT TO GT_SORT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_ALV_0300
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CREATE_ALV_0300 .
+
+  " 객체가 있을 시 미생성
+  IF GO_CON2 IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON2
+    EXPORTING
+      CONTAINER_NAME              = 'CON2'
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV2
+    EXPORTING
+      I_PARENT          = GO_CON2
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+*  "Event Register
+*  PERFORM REQ_EVENT_FOR_ALV.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_SORT_0300
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_SORT_0300 .
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT_0300
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_FCAT_0300 .
+
+  CLEAR: GT_FCAT.
+
+  PERFORM FCAT USING:
+        'JENUM' '1' '전표번호',
+        'FYEAR' '2' '회계연도',
+        'JTYPE' '4' '전표 유형 코드',
+        'JTYPE_T' '5' '전표 유형',
+        'TOPRC' '8' '총 금액',
+        'CURKY' '9' '통화 키',
+        'RGDAT' '3' '전기일',
+        'RGTOR' '7' '등록자 코드',
+        'RGTOR_T' '6' '등록자명',
+        'REFDOC' '10' '참조문서',
+        'REV' '11' '역분개 여부',
+        'RRSON' '12' '역분개 사유',
+        'RJNUM' '13' '역분개 전표번호'.
+
+  CLEAR GS_FCAT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV_0300
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_ALV_0300 .
+
+  CALL METHOD GO_ALV2->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+*     I_BUFFER_ACTIVE =
+*     I_BYPASSING_BUFFER            =
+*     I_CONSISTENCY_CHECK           =
+*     I_STRUCTURE_NAME              =
+*     IS_VARIANT      =
+*     I_SAVE          =
+*     I_DEFAULT       = 'X'
+      IS_LAYOUT       = GS_LAYO
+*     IS_PRINT        =
+*     IT_SPECIAL_GROUPS             =
+*     IT_TOOLBAR_EXCLUDING          =
+*     IT_HYPERLINK    =
+*     IT_ALV_GRAPHICS =
+*     IT_EXCEPT_QINFO =
+*     IR_SALV_ADAPTER =
+    CHANGING
+      IT_OUTTAB       = GT_ADATA
+      IT_FIELDCATALOG = GT_FCAT
+      IT_SORT         = GT_SORT2
+*     IT_FILTER       =
+*  EXCEPTIONS
+*     INVALID_PARAMETER_COMBINATION = 1
+*     PROGRAM_ERROR   = 2
+*     TOO_MANY_LINES  = 3
+*     OTHERS          = 4
+    .
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_JEH_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_NON_REV_DATA .
+
+  SELECT JENUM FYEAR JTYPE STEXT CURKY RGDAT RGTOR REV RRSON
+    FROM ZTSSJEH
+    INTO CORRESPONDING FIELDS OF TABLE GT_HDATA
+    WHERE REV = ''.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_ALL_JEH_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_ALL_JEH_DATA .
+
+  SELECT JENUM FYEAR JTYPE STEXT CURKY RGDAT RGTOR REV RRSON
+    FROM ZTSSJEH
+    INTO CORRESPONDING FIELDS OF TABLE GT_ADATA.
+
+ENDFORM.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

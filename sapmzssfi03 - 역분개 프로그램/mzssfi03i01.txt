@@ -1,0 +1,173 @@
+*&---------------------------------------------------------------------*
+*&  Include           MZSSFI03I01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Module  EXIT  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE EXIT INPUT.
+
+  CASE OK_CODE.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+
+    WHEN 'CANC'.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0100 INPUT.
+
+  CASE OK_CODE.
+
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'SAVE'.
+
+
+    WHEN 'SEARCH'.
+      CALL SCREEN 0200.
+
+    WHEN 'LIST'.
+      CALL SCREEN 0300.
+
+
+
+
+    WHEN OTHERS.
+
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0200  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0200 INPUT.
+
+  CASE OK_CODE.
+
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'EXE'.
+      PERFORM GET_NON_REV_DATA.
+
+    WHEN 'REV'.
+      CALL SCREEN 210 STARTING AT 5 5 ENDING AT 60 30.
+
+
+    WHEN OTHERS.
+
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0300  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0300 INPUT.
+
+
+  CASE OK_CODE.
+
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+
+
+
+
+    WHEN OTHERS.
+
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0400  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0400 INPUT.
+
+  CASE OK_CODE.
+
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+
+
+    WHEN OTHERS.
+
+  ENDCASE.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  EXIT_MODAL  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE EXIT_MODAL INPUT.
+
+  CASE OK_CODE.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+
+    WHEN 'CANC' OR 'CLOSE'.
+      LEAVE TO SCREEN 0.
+
+    WHEN OTHERS.
+
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0210  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0210 INPUT.
+
+  CASE OK_CODE.
+    WHEN 'SAVE'.
+
+      CALL SCREEN 0300.
+
+    WHEN 'CLOSE'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'CHECK'.
+
+    WHEN OTHERS.
+
+  ENDCASE.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0201  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0201 INPUT.
+
+  CASE SY-UCOMM.
+    WHEN 'ENTER'.
+
+    WHEN 'SAVE'.
+
+    WHEN 'EDIT'.
+
+    WHEN 'DELETE'.
+
+
+  ENDCASE.
+
+ENDMODULE.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

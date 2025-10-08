@@ -1492,6 +1492,102 @@ FORM GET_RGTOR_INFO_0100 .
   " 휴직이나 퇴사인 회계부서 사원 체크
 
 ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CALLD_PROCESS
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CALLD_PROCESS .
+
+
+  PERFORM GET_DATA.
+
+
+  DATA: LV_JENUM    TYPE ZTSSJEH-JENUM,
+        LV_APNUM    TYPE ZTSSJEH-JENUM,
+        LV_MM02_JEN TYPE ZTSSJEH-JENUM.
+
+  " 다른 프로그램에서 현재 프로그램으로 이동
+  " 반제 프로그램 -> IV 전표번호
+  GET PARAMETER ID 'JEN' FIELD LV_JENUM.
+  IF LV_JENUM IS NOT INITIAL.
+    PERFORM SEL_ROWS_0100_V2 CHANGING GV_SUBRC LV_JENUM.
+    IF GV_SUBRC = 0.
+      PERFORM SET_DATA_0300.
+      CALL SCREEN 300.
+      SET PARAMETER ID 'JEN' FIELD SPACE.
+    ELSE.
+      MESSAGE '해당 전표를 찾을 수 없습니다.' TYPE 'E'.
+    ENDIF.
+  ENDIF.
+
+  " 반제 프로그램 -> 지급 전표번호
+  GET PARAMETER ID 'APN' FIELD LV_APNUM.
+  IF LV_APNUM IS NOT INITIAL.
+    PERFORM SEL_ROWS_0100_V2 CHANGING GV_SUBRC LV_APNUM.
+    IF GV_SUBRC = 0.
+      PERFORM SET_DATA_0300.
+      CALL SCREEN 300.
+      SET PARAMETER ID 'APN' FIELD SPACE.
+    ELSE.
+      MESSAGE '해당 전표를 찾을 수 없습니다.' TYPE 'E'.
+    ENDIF.
+  ENDIF.
+
+  " 입고 프로그램 -> 전표 조회프로그램
+  GET PARAMETER ID 'ZMMJENUM' FIELD LV_MM02_JEN.
+  IF LV_MM02_JEN IS NOT INITIAL.
+    PERFORM SEL_ROWS_0100_V2 CHANGING GV_SUBRC LV_MM02_JEN.
+    IF GV_SUBRC = 0.
+      PERFORM SET_DATA_0300.
+      CALL SCREEN 300.
+      SET PARAMETER ID 'ZMMJENUM' FIELD SPACE.
+    ELSE.
+      MESSAGE '해당 전표를 찾을 수 없습니다.' TYPE 'E'.
+    ENDIF.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SEL_ROWS_0100_V2
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_GV_SUBRC  text
+*      <--P_LV_JENUM  text
+*----------------------------------------------------------------------*
+FORM SEL_ROWS_0100_V2 CHANGING PV_SUBRC P_JENUM TYPE ZTSSJEH-JENUM.
+
+  DATA LV_FOUND_INDEX TYPE I.
+  DATA LT_ROWS TYPE LVC_T_ROW.
+
+  CLEAR LV_FOUND_INDEX.
+
+  " 알브 테이블 내에서 p_jenum과 일치하는 행 검색
+  LOOP AT GT_HDATA INTO GS_HDATA.
+    IF GS_HDATA-JENUM = P_JENUM.
+      LV_FOUND_INDEX = SY-TABIX.
+      EXIT.
+    ENDIF.
+  ENDLOOP.
+
+  IF LV_FOUND_INDEX IS INITIAL.
+    MESSAGE '해당 전표를 찾을 수 없습니다.' TYPE 'E'.
+    PV_SUBRC = 4.
+    RETURN.
+  ENDIF.
+
+  CLEAR LT_ROWS.
+  APPEND VALUE #( INDEX = LV_FOUND_INDEX ) TO LT_ROWS.
+  GT_ROWS = LT_ROWS. " 선택 행 정보 세팅
+
+  GS_ROWS-INDEX = LV_FOUND_INDEX.
+  PV_SUBRC = 0.
+
+ENDFORM.
 
 ----------------------------------------------------------------------------------
 Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

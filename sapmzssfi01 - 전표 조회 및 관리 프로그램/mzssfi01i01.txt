@@ -46,6 +46,10 @@ MODULE USER_COMMAND_0100 INPUT.
 
 
     WHEN 'HINFO'.
+      IF GV_FLAG5 = 'X'.
+
+      ENDIF.
+
       IF GV_FLAG = ''.
         PERFORM CHANGE_ALV_MODE_0100.
         GV_FLAG = 'X'.
@@ -58,15 +62,33 @@ MODULE USER_COMMAND_0100 INPUT.
 
       LOOP AT GT_HDATA INTO GS_HDATA.
         " JENUM 기준 업데이트, STEXT만 반영
+
+        DATA: LV_OLD_STEXT TYPE ZTSSJEH-STEXT.
+
+        " 변경 전 STEXT 값 SELECT
+        SELECT SINGLE STEXT
+          INTO LV_OLD_STEXT
+          FROM ZTSSJEH
+          WHERE JENUM = GS_HDATA-JENUM.
+
+*        " 변경 전과 후 비교 후 다르면 UPDATE 실행
+*        IF LV_OLD_STEXT <> GS_HDATA-STEXT.
+
         UPDATE ZTSSJEH SET STEXT = GS_HDATA-STEXT
           WHERE JENUM = GS_HDATA-JENUM.
         IF SY-SUBRC <> 0.
           MESSAGE 'DB 갱신 중 오류 발생' TYPE 'E'.
         ENDIF.
+        COMMIT WORK.
+
+*        ELSE.
+*          GV_FLAG5 = 'X'.
+*
+*          MESSAGE '변경 사항이 없습니다.' TYPE 'E'.
+*        ENDIF.
+
       ENDLOOP.
 
-      COMMIT WORK.
-*
 
       PERFORM CHANGE_ALV_MODE_0100.
 
@@ -145,15 +167,15 @@ MODULE USER_COMMAND_0100 INPUT.
       PERFORM SET_INIT.
 
     WHEN 'ZXLUP'. " 엑셀 업로드 버튼 클릭 시 동작
-**      PERFORM OPEN_EXCEL_UPLOAD_POPUP.
-
-      " 팝업 띄우기
-**      CALL SCREEN 110 STARTING AT 5 5 ENDING AT 120 30.
-      " 팝업 말고 엑셀업로드 프로그램 화면 콜트랜잭션
       CALL TRANSACTION 'ZRBSSFI01'.
 
     WHEN 'CLEARING'.
       CALL TRANSACTION 'ZSSFI02'.
+
+
+    WHEN 'REVERSE'.
+      CALL TRANSACTION 'ZSSFI03'.
+
 
     WHEN OTHERS.
 
@@ -202,12 +224,12 @@ MODULE USER_COMMAND_0200 INPUT.
       CLEAR ZSSSFI0103.
       ZSSSFI0103-CURKY = 'KRW'.
 
-      " 등록자명 취득
-      PERFORM GET_RGTOR_INFO_0200.
-      IF GV_SUBRC = 4.
-        CLEAR GV_SUBRC.
-        RETURN.
-      ENDIF.
+**      " 등록자명 취득
+**      PERFORM GET_RGTOR_INFO_0200.
+**      IF GV_SUBRC = 4.
+**        CLEAR GV_SUBRC.
+**        RETURN.
+**      ENDIF.
 
 
       CALL SCREEN 210 STARTING AT 5 5 ENDING AT 120 30.
@@ -271,8 +293,11 @@ MODULE USER_COMMAND_0300 INPUT.
 
   CASE OK_CODE.
     WHEN 'BACK'.
-      LEAVE TO SCREEN 0.
-
+      IF SY-CALLD = 'X'.
+        LEAVE PROGRAM.
+      ELSE.
+        LEAVE TO SCREEN 0.
+      ENDIF.
     WHEN 'ENTER'.
 
       " 등록자명 취득

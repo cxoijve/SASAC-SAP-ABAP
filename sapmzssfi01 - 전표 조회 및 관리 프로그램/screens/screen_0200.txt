@@ -8,7 +8,7 @@ SAPMZSSFI01
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI01                             0200 0200     29115192 37  0  0 31133  0G E                              20251001174944																																
+SAPMZSSFI01                             0200 0200     29115192 37  0  0 31133  0G E                              20251008205719																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
@@ -38,13 +38,8 @@ PROCESS BEFORE OUTPUT.
   MODULE STATUS_0200.																																
   MODULE MODIFY_SCREEN_0200.																																
   MODULE SET_ALV_0200.																																
-*  MODULE SET_DYNNR.																																
 																																
-*  CALL SUBSCREEN REF1 INCLUDING SY-REPID GV_DYNNR.																																
 																																
-*																																
 PROCESS AFTER INPUT.																																
   MODULE EXIT AT EXIT-COMMAND.																																
   MODULE USER_COMMAND_0200.																																
-																																
-*  CALL SUBSCREEN REF1.																																

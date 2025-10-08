@@ -200,11 +200,18 @@ MODULE MODIFY_SCREEN_0100 OUTPUT.
 
   LOOP AT SCREEN.
     IF SCREEN-NAME = 'B_BUTTON2'.
-      IF GV_FLAG = 'X'.
+      IF GV_FLAG = 'X' .
         SCREEN-ACTIVE = 1.
       ELSE.
         SCREEN-ACTIVE = 0.
       ENDIF.
+****
+****      IF GV_FLAG = 'X' AND GV_FLAG5 = 'X'.
+****        IF SCREEN-NAME = 'B_BUTTON2'.
+****          SCREEN-ACTIVE = 0.
+****        ELSE.
+****          SCREEN-ACTIVE = 1.
+****        ENDIF.
     ENDIF.
 
     MODIFY SCREEN.

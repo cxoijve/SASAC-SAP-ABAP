@@ -1558,7 +1558,6 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM SET_EVENT2 .
 
-
   CREATE OBJECT GO_EVENT.
 
   SET HANDLER:

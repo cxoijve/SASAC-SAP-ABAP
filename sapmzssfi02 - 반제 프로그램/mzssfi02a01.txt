@@ -6,32 +6,43 @@
 *      -->P_E_ROW_ID  text
 *      -->P_E_COLUMN_ID  text
 *----------------------------------------------------------------------*
-FORM ALV_CL_HOTSPOT_CLICK  USING    P_E_ROW_ID
+FORM ALV_CL_HOTSPOT_CLICK  USING    PO_ALV TYPE REF TO CL_GUI_ALV_GRID
+                                    P_E_ROW_ID
                                     P_E_COLUMN_ID.
 
-  READ TABLE GT_HDATA INTO GS_HDATA INDEX P_E_ROW_ID.
+  IF PO_ALV = GO_ALV.
+    READ TABLE GT_MHDATA INTO GS_MHDATA INDEX P_E_ROW_ID.
 
-  " ÀüÇ¥¹øÈ£ ÇÖ½ºÆÌ
-  IF P_E_COLUMN_ID = 'JENUM'.
+    " ÀüÇ¥¹øÈ£ ÇÖ½ºÆÌ
+    IF P_E_COLUMN_ID = 'JENUM'.
 
-  ELSEIF P_E_COLUMN_ID = 'REFDOC'.
-    " ÀüÇ¥À¯Çü ÇÖ½ºÆÌ
-**    CASE GS_HDATA-JTYPE.
-**      WHEN 'DR'. " Ã»±¸
-**
-**      WHEN 'DZ'. " ¼ö±Ý
-**
-**      WHEN 'KR'. " ¼ÛÀå°ËÁõ
-**
-**      WHEN 'KZ'. " Áö±Þ
-**
-**      WHEN 'WA'. " Ãâ°í
-**
-**      WHEN 'WE'. " ÀÔ°í
-**
-**    ENDCASE.
+      SET PARAMETER ID 'JEN' FIELD GS_MHDATA-JENUM.
+      CALL TRANSACTION 'ZSSFI01'.
 
 
+    ELSEIF P_E_COLUMN_ID = 'APNUM'.
+
+      SET PARAMETER ID 'APN' FIELD GS_MHDATA-APNUM.
+      CALL TRANSACTION 'ZSSFI01'.
+
+
+    ELSEIF P_E_COLUMN_ID = 'IVNUM'.
+
+    ENDIF.
+
+  ELSEIF PO_ALV = GO_ALV2.
+    READ TABLE GT_SHDATA INTO GS_SHDATA INDEX P_E_ROW_ID.
+
+    " ÀüÇ¥¹øÈ£ ÇÖ½ºÆÌ
+    IF P_E_COLUMN_ID = 'JENUM'.
+
+      CALL TRANSACTION 'ZSSFI01'.
+
+    ELSEIF P_E_COLUMN_ID = 'ARNUM'.
+
+    ELSEIF P_E_COLUMN_ID = 'BINUM'.
+
+    ENDIF.
   ENDIF.
 
 ENDFORM.
