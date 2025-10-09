@@ -92,8 +92,6 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM SET_INIT .
 
-  PERFORM GET_NON_REV_DATA.
-  PERFORM GET_ALL_JEH_DATA.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -157,19 +155,17 @@ FORM SET_FCAT_0200 .
   CLEAR: GT_FCAT.
 
   PERFORM FCAT USING:
-        'JENUM' '1' '전표번호',
+        'REV' '1' '역분개 여부',
         'FYEAR' '2' '회계연도',
-        'JTYPE' '3' '전표 유형 코드',
-        'JTYPE_T' '4' '전표 유형',
-        'STEXT' '5' '비고',
-        'RGDAT' '6' '전기일',
-        'RGTOR_T' '7' '등록자명',
-        'RGTOR' '8' '등록자 코드',
-        'REV' '9' '역분개 여부',
+        'JENUM' '3' '전표번호',
+        'JTYPE' '4' '전표 유형 코드',
+        'JTYPE_T' '5' '전표 유형',
+        'STEXT' '6' '비고',
+        'RGDAT' '7' '전기일',
+        'RGTOR_T' '8' '등록자명',
+        'RGTOR' '9' '등록자 코드',
         'RRSON' '10' '역분개 사유',
         'RJNUM' '11' '역분개 전표번호'.
-
-
 
   CLEAR GS_FCAT.
 
@@ -183,6 +179,13 @@ FORM SET_FCAT_0200 .
 
     ELSEIF GS_FCAT-FIELDNAME = 'RJNUM'.
       GS_FCAT-NO_OUT = 'X'.
+
+    ELSEIF GS_FCAT-FIELDNAME = 'JTYPE'.
+      GS_FCAT-NO_OUT = 'X'.
+
+    ELSEIF GS_FCAT-FIELDNAME = 'RGTOR'.
+      GS_FCAT-NO_OUT = 'X'.
+
     ENDIF.
 
     MODIFY GT_FCAT FROM GS_FCAT.
@@ -266,23 +269,18 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM SET_SORT_0200 .
 
-*  CLEAR GT_SORT.
-*  GS_SORT-SPOS = '1'.
-*  GS_SORT-FIELDNAME = 'JENUM'.
-*  GS_SORT-DOWN = 'X'.
-*  APPEND GS_SORT TO GT_SORT.
+  CLEAR: GT_SORT, GS_SORT.
 
-*  CLEAR GT_SORT.
-*  GS_SORT-SPOS = '2'.
-*  GS_SORT-FIELDNAME = 'FYEAR'.
-*  GS_SORT-DOWN = 'X'.
-*  APPEND GS_SORT TO GT_SORT.
+  GS_SORT-SPOS = '1'.
+  GS_SORT-FIELDNAME = 'FYEAR'.
+  GS_SORT-DOWN = 'X'.
+  APPEND GS_SORT TO GT_SORT.
 
-*  CLEAR GT_SORT.
-*  GS_SORT-SPOS = '3'.
-*  GS_SORT-FIELDNAME = 'RGDAT'.
-*  GS_SORT-DOWN = 'X'.
-*  APPEND GS_SORT TO GT_SORT.
+  CLEAR GS_SORT.
+  GS_SORT-SPOS = '2'.
+  GS_SORT-FIELDNAME = 'JENUM'.
+  GS_SORT-DOWN = 'X'.
+  APPEND GS_SORT TO GT_SORT.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -343,6 +341,14 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM SET_SORT_0300 .
 
+  CLEAR: GT_SORT, GS_SORT.
+
+  GS_SORT-SPOS = '1'.
+  GS_SORT-FIELDNAME = 'REV'.
+  GS_SORT-DOWN = 'X'.
+  APPEND GS_SORT TO GT_SORT.
+
+
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  SET_FCAT_0300
@@ -357,21 +363,46 @@ FORM SET_FCAT_0300 .
   CLEAR: GT_FCAT.
 
   PERFORM FCAT USING:
-        'JENUM' '1' '전표번호',
-        'FYEAR' '2' '회계연도',
+        'REV' '1' '역분개 여부',
+        'RJNUM' '2' '역분개 전표번호',
+        'RRSON' '3' '역분개 사유',
         'JTYPE' '4' '전표 유형 코드',
         'JTYPE_T' '5' '전표 유형',
-        'TOPRC' '8' '총 금액',
-        'CURKY' '9' '통화 키',
-        'RGDAT' '3' '전기일',
-        'RGTOR' '7' '등록자 코드',
-        'RGTOR_T' '6' '등록자명',
+        'TOPRC' '6' '총 금액',
+        'CURKY' '7' '통화 키',
+        'RGTOR' '8' '등록자 코드',
+        'RGTOR_T' '9' '등록자명',
         'REFDOC' '10' '참조문서',
-        'REV' '11' '역분개 여부',
-        'RRSON' '12' '역분개 사유',
-        'RJNUM' '13' '역분개 전표번호'.
+        'FYEAR' '11' '기존 회계연도',
+        'RGDAT' '12' '기존 전기일',
+        'JENUM' '13' '기존 전표번호'.
 
   CLEAR GS_FCAT.
+
+  LOOP AT GT_FCAT INTO GS_FCAT.
+
+    IF GS_FCAT-FIELDNAME = 'JENUM'.
+      GS_FCAT-HOTSPOT = 'X'. " 핫스팟
+
+    ELSEIF GS_FCAT-FIELDNAME = 'TOPRC'.
+      GS_FCAT-CFIELDNAME = 'CURKY'.
+
+    ELSEIF GS_FCAT-FIELDNAME = 'RJNUM'.
+      GS_FCAT-HOTSPOT = 'X'. " 핫스팟
+
+    ELSEIF GS_FCAT-FIELDNAME = 'RGTOR'.
+      GS_FCAT-NO_OUT = 'X'.
+
+    ELSEIF GS_FCAT-FIELDNAME = 'JTYPE'.
+      GS_FCAT-NO_OUT = 'X'.
+
+    ELSEIF GS_FCAT-FIELDNAME = 'REFDOC'.
+      GS_FCAT-NO_OUT = 'X'.
+
+    ENDIF.
+
+    MODIFY GT_FCAT FROM GS_FCAT.
+  ENDLOOP.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -430,7 +461,10 @@ FORM GET_NON_REV_DATA .
   SELECT JENUM FYEAR JTYPE STEXT CURKY RGDAT RGTOR REV RRSON
     FROM ZTSSJEH
     INTO CORRESPONDING FIELDS OF TABLE GT_HDATA
-    WHERE REV = ''.
+    WHERE REV IN GT_RREV
+      AND FYEAR IN GT_RFYEAR
+      AND RGDAT IN GT_RRGDAT
+      AND JTYPE IN GT_RJTYPE.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -445,7 +479,319 @@ FORM GET_ALL_JEH_DATA .
 
   SELECT JENUM FYEAR JTYPE STEXT CURKY RGDAT RGTOR REV RRSON
     FROM ZTSSJEH
-    INTO CORRESPONDING FIELDS OF TABLE GT_ADATA.
+    INTO CORRESPONDING FIELDS OF TABLE GT_ADATA
+    WHERE REV IN GT_RREV
+      AND FYEAR IN GT_RFYEAR
+      AND RGDAT IN GT_RRGDAT
+      AND JTYPE IN GT_RJTYPE.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_TOPRC_INFO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_TOPRC_INFO .
+
+  SELECT JENUM JESEQ DEBIT CREDIT
+         FROM ZTSSJEI
+         INTO CORRESPONDING FIELDS OF TABLE GT_TOPRC.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  MODIFY_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM MODIFY_DATA_0200 .
+
+  " DOMAIN
+  PERFORM GET_DOMAIN_VALUE USING 'ZDSSJTYPE' CHANGING GT_DOMAIN.
+
+  CLEAR GS_DOMAIN.
+  READ TABLE GT_DOMAIN INTO GS_DOMAIN WITH KEY DOMVALUE_L = GS_HDATA-JTYPE.
+
+  IF SY-SUBRC = 0.
+    GS_HDATA-JTYPE_T = GS_DOMAIN-DDTEXT.
+  ENDIF.
+
+  " 등록자명 취득
+  PERFORM GET_RGTOR_NAME USING GS_HDATA-RGTOR
+                         CHANGING GS_HDATA-RGTOR_T.
+
+
+  " 자동전표일 경우, 등록자명 AutoFIBot
+  IF GS_HDATA-RGTOR IS INITIAL.
+    GS_HDATA-RGTOR_T = 'AutoFIBot'.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_DOMAIN_VALUE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0634   text
+*      <--P_GT_DOMAIN  text
+*----------------------------------------------------------------------*
+FORM GET_DOMAIN_VALUE  USING    VALUE(PV_DOMNAME)
+                       CHANGING PT_DOMAIN TYPE DD07V_T.
+  CALL FUNCTION 'GET_DOMAIN_VALUES'
+    EXPORTING
+      DOMNAME    = PV_DOMNAME
+    TABLES
+      VALUES_TAB = PT_DOMAIN.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_RGTOR_NAME
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_GS_HDATA_RGTOR  text
+*      <--P_GS_HDATA_RGTOR_T  text
+*----------------------------------------------------------------------*
+FORM GET_RGTOR_NAME USING VALUE(P_RGTOR)
+                    CHANGING CT_NAME.
+  " 등록자명 취득
+  DATA: LT_EMP TYPE TABLE OF ZTSSEMP,
+        LS_EMP LIKE LINE OF LT_EMP.
+
+
+  SELECT PERNR LNAME FNAME DEPID
+    FROM ZTSSEMP
+    INTO CORRESPONDING FIELDS OF TABLE LT_EMP.
+
+  READ TABLE LT_EMP INTO LS_EMP WITH KEY PERNR = P_RGTOR.
+  CT_NAME = LS_EMP-LNAME && LS_EMP-FNAME.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  MODIFY_RANGE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM MODIFY_RANGE_0200.
+
+  CLEAR: GS_RREV, GT_RREV.
+  IF ZSSSFI0302-REV IS INITIAL.
+    GS_RREV-SIGN   = 'I'.
+    GS_RREV-OPTION = 'EQ'.
+    GS_RREV-LOW    = ZSSSFI0302-REV. " SPACE.
+    APPEND GS_RREV TO GT_RREV.
+  ENDIF.
+
+  CLEAR: GS_RFYEAR, GT_RFYEAR.
+  IF ZSSSFI0302-FYEAR IS NOT INITIAL.
+    GS_RFYEAR-SIGN   = 'I'.
+    GS_RFYEAR-OPTION = 'EQ'.
+    GS_RFYEAR-LOW    = ZSSSFI0302-FYEAR.
+    APPEND GS_RFYEAR TO GT_RFYEAR.
+  ENDIF.
+
+  CLEAR: GS_RRGDAT, GT_RRGDAT.
+  IF ZSSSFI0302-RGDATB IS NOT INITIAL AND ZSSSFI0302-RGDATE IS NOT INITIAL.
+    GS_RRGDAT-SIGN   = 'I'.
+    GS_RRGDAT-OPTION = 'BT'.
+    GS_RRGDAT-LOW    = ZSSSFI0302-RGDATB.
+    GS_RRGDAT-HIGH   = ZSSSFI0302-RGDATE.
+    APPEND GS_RRGDAT TO GT_RRGDAT.
+  ENDIF.
+
+  CLEAR: GS_RJENUM, GT_RJENUM.
+  IF ZSSSFI0302-JENUM IS NOT INITIAL.
+    GS_RJENUM-SIGN   = 'I'.
+    GS_RJENUM-OPTION = 'EQ'.
+    GS_RJENUM-LOW    = ZSSSFI0302-JENUM.
+    APPEND GS_RJENUM TO GT_RJENUM.
+  ENDIF.
+
+  CLEAR: GS_RJTYPE, GT_RJTYPE.
+  IF ZSSSFI0302-JTYPE IS NOT INITIAL.
+    GS_RJTYPE-SIGN   = 'I'.
+    GS_RJTYPE-OPTION = 'EQ'.
+    GS_RJTYPE-LOW    = ZSSSFI0302-JTYPE.
+    APPEND GS_RJTYPE TO GT_RJTYPE.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  MODIFY_RANGE_0300
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM MODIFY_RANGE_0300 .
+
+  CLEAR: GS_RREV, GT_RREV.
+  IF ZSSSFI0303-REV IS NOT INITIAL.
+    GS_RREV-SIGN   = 'I'.
+    GS_RREV-OPTION = 'EQ'.
+    GS_RREV-LOW    =  ZSSSFI0303-REV.
+    APPEND GS_RREV TO GT_RREV.
+
+  ELSE.
+    GS_RREV-SIGN   = 'I'.
+    GS_RREV-OPTION = 'EQ'.
+    GS_RREV-LOW    =  SPACE.
+    APPEND GS_RREV TO GT_RREV.
+  ENDIF.
+
+  CLEAR: GS_RFYEAR, GT_RFYEAR.
+  IF ZSSSFI0303-FYEAR IS NOT INITIAL.
+    GS_RFYEAR-SIGN   = 'I'.
+    GS_RFYEAR-OPTION = 'EQ'.
+    GS_RFYEAR-LOW    = ZSSSFI0303-FYEAR.
+    APPEND GS_RFYEAR TO GT_RFYEAR.
+  ENDIF.
+
+  CLEAR: GS_RRGDAT, GT_RRGDAT.
+  IF ZSSSFI0303-RGDATB IS NOT INITIAL AND ZSSSFI0303-RGDATE IS NOT INITIAL.
+    GS_RRGDAT-SIGN   = 'I'.
+    GS_RRGDAT-OPTION = 'BT'.
+    GS_RRGDAT-LOW    = ZSSSFI0303-RGDATB.
+    GS_RRGDAT-HIGH   = ZSSSFI0303-RGDATE.
+    APPEND GS_RRGDAT TO GT_RRGDAT.
+  ENDIF.
+
+  CLEAR: GS_RJENUM, GT_RJENUM.
+  IF ZSSSFI0303-JENUM IS NOT INITIAL.
+    GS_RJENUM-SIGN   = 'I'.
+    GS_RJENUM-OPTION = 'EQ'.
+    GS_RJENUM-LOW    = ZSSSFI0303-JENUM.
+    APPEND GS_RJENUM TO GT_RJENUM.
+  ENDIF.
+
+  CLEAR: GS_RJTYPE, GT_RJTYPE.
+  IF ZSSSFI0303-JTYPE IS NOT INITIAL.
+    GS_RJTYPE-SIGN   = 'I'.
+    GS_RJTYPE-OPTION = 'EQ'.
+    GS_RJTYPE-LOW    = ZSSSFI0303-JTYPE.
+    APPEND GS_RJTYPE TO GT_RJTYPE.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_SCREEN_0200
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_SCREEN_0200 .
+  PERFORM MODIFY_RANGE_0200.
+
+  PERFORM GET_TOPRC_INFO.   " 전표 아이템 금액 가져오기
+
+  PERFORM GET_NON_REV_DATA.
+
+  LOOP AT GT_HDATA INTO GS_HDATA.
+
+    " 차변이 없을 경우 대변 정보 출력
+    READ TABLE GT_TOPRC INTO GS_TOPRC WITH KEY JENUM = GS_HDATA-JENUM.
+
+    GS_HDATA-TOPRC = GS_TOPRC-DEBIT.
+
+    IF GS_HDATA-TOPRC  = 0.
+      GS_HDATA-TOPRC = GS_TOPRC-CREDIT.
+    ENDIF.
+
+    PERFORM MODIFY_DATA_0200.      " 추가 정보 취득
+
+    MODIFY GT_HDATA FROM GS_HDATA.
+
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_SCREEN_0300
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_SCREEN_0300 .
+
+  PERFORM MODIFY_RANGE_0300.
+
+  PERFORM GET_TOPRC_INFO.   " 전표 아이템 금액 가져오기
+
+  PERFORM GET_ALL_JEH_DATA.
+
+
+  LOOP AT GT_ADATA INTO GS_ADATA.
+
+    " 차변이 없을 경우 대변 정보 출력
+    READ TABLE GT_TOPRC INTO GS_TOPRC WITH KEY JENUM = GS_ADATA-JENUM.
+
+    GS_ADATA-TOPRC = GS_TOPRC-DEBIT.
+
+    IF GS_ADATA-TOPRC  = 0.
+      GS_ADATA-TOPRC = GS_TOPRC-CREDIT.
+    ENDIF.
+
+    PERFORM MODIFY_DATA_0300.      " 추가 정보 취득
+
+    MODIFY GT_ADATA FROM GS_ADATA.
+
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  MODIFY_DATA_0300
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM MODIFY_DATA_0300 .
+
+  " DOMAIN
+  PERFORM GET_DOMAIN_VALUE USING 'ZDSSJTYPE' CHANGING GT_DOMAIN.
+
+  CLEAR GS_DOMAIN.
+  READ TABLE GT_DOMAIN INTO GS_DOMAIN WITH KEY DOMVALUE_L = GS_HDATA-JTYPE.
+
+  IF SY-SUBRC = 0.
+    GS_ADATA-JTYPE_T = GS_DOMAIN-DDTEXT.
+  ENDIF.
+
+  " 등록자명 취득
+  PERFORM GET_RGTOR_NAME USING GS_ADATA-RGTOR
+                         CHANGING GS_ADATA-RGTOR_T.
+
+
+  " 자동전표일 경우, 등록자명 AutoFIBot
+  IF GS_ADATA-RGTOR IS INITIAL.
+    GS_ADATA-RGTOR_T = 'AutoFIBot'.
+  ENDIF.
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_DATA_0300
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_DATA_0300 .
+
+  CLEAR ZSSSFI0303.
+  ZSSSFI0303-FYEAR = '2025'.
+  ZSSSFI0303-REV = 'X'.
 
 ENDFORM.
 

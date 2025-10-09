@@ -4,7 +4,7 @@
 *&---------------------------------------------------------------------*
 PROGRAM SAPMZSSFI01.
 
-" µµ∏ﬁ¿Œ
+" Domain
 DATA: GT_DOMAIN TYPE TABLE OF DD07V,
       GS_DOMAIN TYPE DD07V.
 

@@ -673,9 +673,8 @@ FORM SET_DATA_0300 .
 
   PERFORM GET_JEI_DATA.
 
-  PERFORM CAL_SUM_DC
-                                         CHANGING ZSSSFI0104-DEBIT
-                                                          ZSSSFI0104-CREDIT.
+  PERFORM CAL_SUM_DC CHANGING ZSSSFI0104-DEBIT
+                              ZSSSFI0104-CREDIT.
 
   ZSSSFI0104-CURKY = ZSSSFI0102-CURKY.
 
