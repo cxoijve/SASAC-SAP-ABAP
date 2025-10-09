@@ -20,27 +20,64 @@ FORM GET_DATA .
     CASE GS_HDATA-JTYPE.
       WHEN 'WE'. " 입고
         READ TABLE GT_ZTSSGRH INTO GS_ZTSSGRH WITH KEY JENUM = GS_HDATA-JENUM.
-        GS_HDATA-REFDOC = GS_ZTSSGRH-GRNUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSGRH-GRNUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
 
       WHEN 'KR'. " 송장검증
         READ TABLE GT_ZTSSMIVH INTO GS_ZTSSMIVH WITH KEY JENUM = GS_HDATA-JENUM.
-        GS_HDATA-REFDOC = GS_ZTSSMIVH-IVNUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSMIVH-IVNUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
+
 
       WHEN 'KZ'. " 지급
         READ TABLE GT_ZTSSMIVH INTO GS_ZTSSMIVH WITH KEY APNUM = GS_HDATA-JENUM.
-        GS_HDATA-REFDOC = GS_ZTSSMIVH-JENUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSMIVH-JENUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
 
       WHEN 'WA'. " 출고
         READ TABLE GT_ZTSSGIH INTO GS_ZTSSGIH WITH KEY JENUM = GS_HDATA-JENUM.
-        GS_HDATA-REFDOC = GS_ZTSSGIH-GINUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSGIH-GINUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
 
       WHEN 'DR'. " 청구
         READ TABLE GT_ZTSSSIVH INTO GS_ZTSSSIVH WITH KEY JENUM = GS_HDATA-JENUM.
-        GS_HDATA-REFDOC = GS_ZTSSSIVH-BINUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSSIVH-BINUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
 
       WHEN 'DZ'. " 수금
         READ TABLE GT_ZTSSSIVH INTO GS_ZTSSSIVH WITH KEY ARNUM = GS_HDATA-JENUM.
-        GS_HDATA-REFDOC = GS_ZTSSSIVH-JENUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSSIVH-JENUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
 
     ENDCASE.
 
@@ -636,8 +673,9 @@ FORM SET_DATA_0300 .
 
   PERFORM GET_JEI_DATA.
 
-  PERFORM CAL_SUM_DC CHANGING ZSSSFI0104-DEBIT
-                              ZSSSFI0104-CREDIT.
+  PERFORM CAL_SUM_DC
+                                         CHANGING ZSSSFI0104-DEBIT
+                                                          ZSSSFI0104-CREDIT.
 
   ZSSSFI0104-CURKY = ZSSSFI0102-CURKY.
 
@@ -749,9 +787,18 @@ FORM INSERT_DATA .
           ENDIF.
         ENDLOOP.
 
+*        CLEAR: GS_HDATA-REFDOC.
+
         COMMIT WORK. " <-- LOOP 밖 (성공시 한 번만)
-        MESSAGE S999(ZMCSS) WITH '등록 성공'.
+        MESSAGE S999(ZMCSS) WITH GS_ZTSSJEH-JENUM '전표가 생성되었습니다.'.
         PERFORM GET_DATA.
+
+
+        CLEAR: ZSSSFI0102-RGDAT, ZSSSFI0102-RGTOR, ZSSSFI0102-RGTOR_T,
+                     ZSSSFI0102-JTYPE, ZSSSFI0102-STEXT, GT_IDATA, ZSSSFI0103-DEBIT,
+                     ZSSSFI0103-CREDIT, GV_FLAG5.
+
+
         LEAVE TO SCREEN 0.
       ENDIF.
     ELSE.
@@ -927,8 +974,8 @@ ENDFORM.
 *  -->  p1        text
 *  <--  p2        text
 *----------------------------------------------------------------------*
-FORM CAL_SUM_DC CHANGING CV_DEBIT
-                                                   CV_CREDIT.
+FORM CAL_SUM_DC CHANGING CV_DEBIT CV_CREDIT.
+
   " 차/대변 총 금액
   DATA: LV_DEBIT  TYPE ZSSSFI0104-DEBIT,
         LV_CREDIT TYPE ZSSSFI0104-CREDIT.
@@ -1174,7 +1221,18 @@ FORM SET_JEI_DATA .
     GS_IDATA-CURKY = 'KRW'.
 
     " 아이템 번호
-    GS_IDATA-JESEQ = GS_IDATA-JESEQ + 1.
+    " GT_IDATA의 최대 JESEQ 값 찾기
+    DATA LV_MAX_JESEQ TYPE ZESSJESEQ.
+    LV_MAX_JESEQ = 0.
+    LOOP AT GT_IDATA INTO DATA(LS_IDATA).
+      IF LS_IDATA-JESEQ > LV_MAX_JESEQ.
+        LV_MAX_JESEQ = LS_IDATA-JESEQ.
+      ENDIF.
+    ENDLOOP.
+
+    " 최대 JESEQ 값보다 1 증가시키기
+    GS_IDATA-JESEQ = LV_MAX_JESEQ + 1.
+
     APPEND GS_IDATA TO GT_IDATA.
   ENDIF.
 
@@ -1586,6 +1644,193 @@ FORM SEL_ROWS_0100_V2 CHANGING PV_SUBRC P_JENUM TYPE ZTSSJEH-JENUM.
 
   GS_ROWS-INDEX = LV_FOUND_INDEX.
   PV_SUBRC = 0.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_DATA_AP
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_DATA_APAR .
+
+  CLEAR ZSSSFI0102.
+
+  PERFORM GET_JEH_APAR.
+
+  PERFORM GET_JEI_APAR.
+
+
+  PERFORM CAL_SUM_ARAR_DC CHANGING ZSSSFI0104-DEBIT
+                                                                    ZSSSFI0104-CREDIT.
+
+
+
+  ZSSSFI0104-CURKY = ZSSSFI0102-CURKY.
+
+  CLEAR GT_ADATA.
+
+  LOOP AT GT_IAPAR INTO DATA(LS_IAPAR).
+    APPEND LS_IAPAR TO GT_ADATA.
+
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_JEI_AP
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_JEI_APAR .
+
+  " 라인아이템 정보 취득 - JENUM을 REFDOC으로 대체
+  SELECT JENUM FYEAR JESEQ DEBIT CREDIT CURKY GLACC
+    FROM ZTSSJEI
+    INTO CORRESPONDING FIELDS OF TABLE GT_IAPAR
+    WHERE JENUM = GS_HAPAR-JENUM
+      AND FYEAR = GS_HAPAR-FYEAR.
+
+  " G/L 계정명 취득
+  LOOP AT GT_IAPAR INTO GS_IAPAR.
+    PERFORM GET_GL_NAME USING GS_IAPAR-GLACC
+                                             CHANGING GS_IAPAR-ACTNM.
+
+    MODIFY GT_IAPAR FROM GS_IAPAR.
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_JEH_APAR
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_JEH_APAR .
+
+  " GT_HAPAR 초기화
+  CLEAR GT_HAPAR.
+
+  " GS_HDATA-REFDOC 값을 기준으로 ZTSSJEH에서 데이터 조회
+  SELECT SINGLE JENUM FYEAR JTYPE STEXT CURKY RGDAT
+         RGTOR REV RRSON RJNUM
+    FROM ZTSSJEH
+    INTO CORRESPONDING FIELDS OF GS_HAPAR
+    WHERE JENUM = GS_HDATA-REFDOC.
+
+  MOVE-CORRESPONDING GS_HAPAR TO ZSSSFI0102.
+
+
+  PERFORM GET_RGTOR_NAME USING ZSSSFI0102-RGTOR
+                         CHANGING ZSSSFI0102-RGTOR_T.
+
+  " 자동전표일 경우, 등록자명 AutoFIBot
+  IF ZSSSFI0102-RGTOR IS INITIAL.
+    ZSSSFI0102-RGTOR_T = 'AutoFIBot'.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CAL_SUM_ARAR_DC
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_ZSSSFI0104_DEBIT  text
+*      <--P_ZSSSFI0104_CREDIT  text
+*----------------------------------------------------------------------*
+FORM CAL_SUM_ARAR_DC  CHANGING CV_DEBIT
+                                                              CV_CREDIT.
+
+  " 차/대변 총 금액
+  DATA: LV_DEBIT  TYPE ZSSSFI0104-DEBIT,
+        LV_CREDIT TYPE ZSSSFI0104-CREDIT.
+
+  LOOP AT GT_IAPAR INTO DATA(LS_IDATA).
+    LV_DEBIT = LV_DEBIT + LS_IDATA-DEBIT.
+    LV_CREDIT = LV_CREDIT + LS_IDATA-CREDIT.
+  ENDLOOP.
+
+  CV_DEBIT = LV_DEBIT.
+  CV_CREDIT = LV_CREDIT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CHECK_ACCOUNT_INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0448   text
+*      -->P_0449   text
+*      -->P_0450   text
+*----------------------------------------------------------------------*
+FORM CHECK_ACCOUNT_INPUT  USING    VALUE(PA_DR)
+                                                                   VALUE(PA_MSG)
+                                                                   VALUE(PA_CR).
+
+  " 차변에 먼저 입력되었는지 체크
+  IF LINES( GT_IDATA ) = 0.
+    IF ZSSSFI0103-GLACC <> PA_DR.
+      MESSAGE I999(ZMCSS) WITH PA_MSG DISPLAY LIKE 'E'.
+      GV_SUBRC = 4.
+      RETURN.
+    ENDIF.
+  ENDIF.
+
+  " DR
+  IF ZSSSFI0103-GLACC =  PA_DR.
+    IF ZSSSFI0103-DEBIT IS INITIAL.
+      MESSAGE I999(ZMCSS) WITH '차변에 금액을 입력해 주세요'.
+      CLEAR ZSSSFI0103-CREDIT.
+      GV_SUBRC = 4.
+      RETURN.
+    ELSEIF ZSSSFI0103-CREDIT IS NOT INITIAL.
+      GV_SUBRC = 4.
+      RETURN.
+    ENDIF.
+  ENDIF.
+
+  " CR
+  IF ZSSSFI0103-GLACC = PA_CR.
+    IF ZSSSFI0103-CREDIT IS INITIAL.
+      MESSAGE I999(ZMCSS) WITH '대변에 금액을 입력해 주세요'.
+      CLEAR ZSSSFI0103-DEBIT.
+      GV_SUBRC = 4.
+      RETURN.
+    ELSEIF ZSSSFI0103-DEBIT IS NOT INITIAL.
+      GV_SUBRC = 4.
+      RETURN.
+    ENDIF.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CAL_SUM_DC_200
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      <--P_ZSSSFI0104_DEBIT  text
+*      <--P_ZSSSFI0104_CREDIT  text
+*----------------------------------------------------------------------*
+FORM CAL_SUM_DC_200  CHANGING CV_DEBIT CV_CREDIT.
+
+  " 차/대변 총 금액 계산
+  DATA: LV_DEBIT2  TYPE ZSSSFI0103-DEBIT,
+        LV_CREDIT2 TYPE ZSSSFI0103-CREDIT.
+
+  CLEAR: LV_DEBIT2, LV_CREDIT2.
+  LOOP AT GT_IDATA INTO DATA(LS_IDATA).
+    LV_DEBIT2 = LV_DEBIT2 + LS_IDATA-DEBIT.
+    LV_CREDIT2 = LV_CREDIT2 + LS_IDATA-CREDIT.
+  ENDLOOP.
+
+  CV_DEBIT = LV_DEBIT2.
+  CV_CREDIT = LV_CREDIT2.
 
 ENDFORM.
 

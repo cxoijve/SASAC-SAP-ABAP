@@ -190,6 +190,16 @@ MODULE MODIFY_SCREEN_0200 OUTPUT.
 **    ENDLOOP.
   ENDIF.
 
+  LOOP AT SCREEN.
+    IF GV_FLAG5 = 'X'.
+      IF SCREEN-GROUP1 = 'GR1'.
+        SCREEN-INPUT = 0.
+      ENDIF.
+    ENDIF.
+
+    MODIFY SCREEN.
+  ENDLOOP.
+
 ENDMODULE.
 *&---------------------------------------------------------------------*
 *&      Module  MODIFY_SCREEN_0100  OUTPUT
@@ -205,51 +215,10 @@ MODULE MODIFY_SCREEN_0100 OUTPUT.
       ELSE.
         SCREEN-ACTIVE = 0.
       ENDIF.
-****
-****      IF GV_FLAG = 'X' AND GV_FLAG5 = 'X'.
-****        IF SCREEN-NAME = 'B_BUTTON2'.
-****          SCREEN-ACTIVE = 0.
-****        ELSE.
-****          SCREEN-ACTIVE = 1.
-****        ENDIF.
     ENDIF.
 
     MODIFY SCREEN.
   ENDLOOP.
-
-
-***  LOOP AT SCREEN.
-***    IF OK_CODE = 'NSEARCH'.
-***      IF SCREEN-GROUP1 = 'GR1'.
-***        IF ZSSSFI0101-JENUM IS NOT INITIAL.
-***          SCREEN-INPUT = 1.
-***        ELSE.
-***          MESSAGE S999(ZMCSS) WITH '전표번호를 입력해 주세요.' DISPLAY LIKE 'E'.
-***        ENDIF.
-***      ELSE.
-***        IF SCREEN-GROUP1 = 'GR2'.
-***          SCREEN-INPUT = 0.
-***        ENDIF.
-***      ENDIF.
-***      MODIFY SCREEN.
-***    ENDIF.
-***  ENDLOOP.
-
-
-***  LOOP AT SCREEN.
-***    IF GV_FLAG3 = 'X'.
-***      IF SCREEN-GROUP1 = 'GR2'.
-****        SCREEN-ACTIVE = 1.
-***        SCREEN-INPUT = 0.
-***      ENDIF.
-***    ELSEIF GV_FLAG4 = 'X'.
-***      IF SCREEN-GROUP1 = 'GR1'.
-***        SCREEN-INPUT = 0.
-***      ENDIF.
-***      SCREEN-ACTIVE = 0.
-***    ENDIF.
-***    MODIFY SCREEN.
-***  ENDLOOP.
 
 
 ENDMODULE.
