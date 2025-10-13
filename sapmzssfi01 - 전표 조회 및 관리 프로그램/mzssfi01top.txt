@@ -148,6 +148,7 @@ DATA: GV_FLAG,
       GV_FLAG3,
       GV_FLAG4,
       GV_FLAG5,
+
       GV_SUB TYPE STRING.
 
 " Tabstrip

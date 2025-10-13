@@ -1,0 +1,78 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZRBSSFI02I01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Module  USER_COMMAND_0100  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE USER_COMMAND_0100 INPUT.
+
+  CASE OK_CODE.
+      GT_REV_REASON = VALUE #(
+        ( CODE = '01' TEXT = '입력 오류' )
+        ( CODE = '02' TEXT = '중복 입력' )
+        ( CODE = '03' TEXT = '계정 오류' )
+        ( CODE = '04' TEXT = '수정으로 인한 역분개' )
+      ).
+
+
+    WHEN 'BACK'.
+      LEAVE TO SCREEN 0.
+
+    WHEN 'ENTER'.
+***      " CODE에 따른 TEXT 를 찾아 ZSSSFI0301-RRSON_TEXT에 셋팅
+***      DATA: LS_REASON TYPE TY_REV_REASON.
+***      READ TABLE GT_REV_REASON INTO LS_REASON WITH KEY CODE = ZSSSFI0301-RRSON_T.
+***      IF SY-SUBRC = 0.
+***        ZSSSFI0301-RRSON_TEXT = LS_REASON-TEXT.
+***      ELSE.
+***        ZSSSFI0301-RRSON_TEXT = ''.
+***      ENDIF.
+
+
+
+    WHEN 'SEARCH'.
+      CALL TRANSACTION 'ZSSFI03'.
+
+    WHEN 'LIST'.
+
+
+
+
+
+
+
+    WHEN OTHERS.
+
+  ENDCASE.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  EXIT  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE EXIT INPUT.
+
+  CASE OK_CODE.
+    WHEN 'EXIT'.
+      LEAVE PROGRAM.
+
+    WHEN 'CANC'.
+      LEAVE TO SCREEN 0.
+  ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  F4_RRSON  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE F4_RRSON INPUT.
+
+  PERFORM F4_RRSON.
+
+ENDMODULE.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

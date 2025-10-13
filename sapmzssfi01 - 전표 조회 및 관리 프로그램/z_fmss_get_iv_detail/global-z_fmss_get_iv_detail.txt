@@ -1,0 +1,43 @@
+FUNCTION-POOL zfgss29.                      "MESSAGE-ID ..
+
+* INCLUDE LZFGSS29D...                       " Local class definition
+
+DATA : gv_subrc TYPE sy-subrc,
+       ok_code  TYPE sy-ucomm.
+
+DATA : go_con_0100f TYPE  REF TO cl_gui_custom_container,
+       go_alv_0100f TYPE REF TO cl_gui_alv_grid.
+
+DATA : gt_mivif LIKE TABLE OF zsssmm03012,
+       gs_mivif LIKE LINE OF gt_mivif.
+
+DATA : gs_layo_0100f TYPE lvc_s_layo.
+
+DATA : gt_fcat_0100f TYPE lvc_t_fcat,
+       gs_fcat_0100f LIKE LINE OF gt_fcat_0100f.
+
+TABLES        zsssmm03014.
+
+
+CLASS lcl_handler DEFINITION.
+  PUBLIC SECTION.
+
+    CLASS-METHODS on_hotspot_click FOR EVENT hotspot_click OF cl_gui_alv_grid
+      IMPORTING es_row_no e_column_id.
+
+ENDCLASS.
+
+CLASS lcl_handler IMPLEMENTATION.
+  METHOD on_hotspot_click.
+    MESSAGE i999(zmcss) WITH '°ð Ãß°¡µÊ'.
+*    DATA :row_id TYPE i.
+*
+*    row_id = es_row_no-row_id.
+*
+*    PERFORM alv_cl_double_click USING e_column_id
+*                                      row_id.
+  ENDMETHOD.
+ENDCLASS.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

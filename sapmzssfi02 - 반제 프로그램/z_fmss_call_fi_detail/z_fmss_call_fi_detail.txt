@@ -1,0 +1,14 @@
+FUNCTION Z_FMSS_CALL_FI_DETAIL.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(I_JENUM) TYPE  ZESSJENUM OPTIONAL
+*"----------------------------------------------------------------------
+
+  SET PARAMETER ID 'JEN' FIELD I_JENUM.
+  CALL TRANSACTION 'ZSSFI01'.
+
+ENDFUNCTION.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

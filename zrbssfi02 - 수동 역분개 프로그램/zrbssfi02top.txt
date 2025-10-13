@@ -1,0 +1,23 @@
+*&---------------------------------------------------------------------*
+*& Include ZRBSSFI02TOP                                      Report ZRBSSFI02
+*&
+*&---------------------------------------------------------------------*
+REPORT ZRBSSFI02.
+
+
+DATA: OK_CODE  TYPE SY-UCOMM,
+      GV_SUBRC TYPE SY-SUBRC,
+      GV_DYNNR TYPE SY-DYNNR.
+
+TABLES: ZSSSFI0301.
+
+TYPES: BEGIN OF TY_REV_REASON,
+        CODE       TYPE CHAR40,
+        TEXT       TYPE CHAR40,
+        END OF TY_REV_REASON.
+
+DATA: GT_REV_REASON TYPE STANDARD TABLE OF TY_REV_REASON WITH DEFAULT KEY.
+*DATA: GT_REV_REASON2 TYPE STANDARD TABLE OF TY_REV_REASON WITH DEFAULT KEY.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

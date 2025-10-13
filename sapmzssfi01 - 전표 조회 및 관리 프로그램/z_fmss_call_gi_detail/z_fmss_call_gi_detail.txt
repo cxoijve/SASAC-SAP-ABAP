@@ -1,0 +1,26 @@
+FUNCTION Z_FMSS_CALL_GI_DETAIL.
+*"--------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(IV_GINUM) TYPE  ZESSGINUM
+*"  EXCEPTIONS
+*"      QUERY_FAILED
+*"--------------------------------------------------------------------
+  DATA : lv_ginum TYPE zessginum.
+
+  SELECT SINGLE ginum
+    FROM ztssgih
+    INTO lv_ginum
+    WHERE ginum EQ iv_ginum.
+  IF sy-subrc <> 0.
+    MESSAGE i999(zmcss) WITH '출고 문서를 찾을 수 없습니다.'.
+    RAISE query_failed.
+  ENDIF.
+
+  SET PARAMETER ID 'ZSSGI' FIELD iv_ginum.
+  CALL TRANSACTION 'ZSSSD02' .
+
+ENDFUNCTION.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

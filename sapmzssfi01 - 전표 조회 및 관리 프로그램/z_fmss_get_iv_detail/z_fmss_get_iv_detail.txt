@@ -1,0 +1,17 @@
+FUNCTION z_fmss_get_iv_detail.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     VALUE(IV_IVNUM) TYPE  ZESSIVNUM
+*"----------------------------------------------------------------------
+
+  PERFORM set_detail_iv_data USING iv_ivnum.
+
+  CALL SCREEN 100.
+  CLEAR : zsssmm03014,
+             gt_mivif.
+
+ENDFUNCTION.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

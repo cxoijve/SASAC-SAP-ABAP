@@ -20,6 +20,33 @@ FORM ALV_CL_HOTSPOT_CLICK  USING    P_E_ROW_ID
   ELSEIF P_E_COLUMN_ID = 'REFDOC'.
     " 전표유형 핫스팟
     CASE GS_HDATA-JTYPE.
+      WHEN 'WE'. " 입고
+        SET PARAMETER ID 'ZSSFI01GRN' FIELD GS_HDATA-REFDOC.
+        CALL TRANSACTION 'ZSSMM02'.
+
+      WHEN 'KR'. " 송장검증 Z_FMSS_GET_IV_DETAIL
+
+        CALL FUNCTION 'Z_FMSS_GET_IV_DETAIL'
+          EXPORTING
+            IV_IVNUM = GS_HDATA-REFDOC.
+
+      WHEN 'KZ'. " 지급
+        PERFORM SET_DATA_APAR.
+
+        CALL SCREEN 0300.
+
+      WHEN 'WA'. " 출고
+        CALL FUNCTION 'Z_FMSS_CALL_GI_DETAIL'
+          EXPORTING
+            IV_GINUM     = GS_HDATA-REFDOC
+          EXCEPTIONS
+            QUERY_FAILED = 1
+            OTHERS       = 2.
+        IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+        ENDIF.
+
+
       WHEN 'DR'. " 청구
         SET PARAMETER ID 'ZSSFI01BIN' FIELD GS_HDATA-REFDOC.
         CALL TRANSACTION 'ZSSSD03'.
@@ -30,22 +57,9 @@ FORM ALV_CL_HOTSPOT_CLICK  USING    P_E_ROW_ID
         CALL SCREEN 0300.
 
 
-      WHEN 'KR'. " 송장검증
-        SET PARAMETER ID 'ZSSFI01IVN' FIELD GS_HDATA-REFDOC.
-        CALL TRANSACTION 'ZSSMM03'.
 
-      WHEN 'KZ'. " 지급
-        PERFORM SET_DATA_APAR.
 
-        CALL SCREEN 0300.
 
-      WHEN 'WA'. " 출고
-        SET PARAMETER ID 'ZSSFI01GIN' FIELD GS_HDATA-REFDOC.
-        CALL TRANSACTION 'ZSSSD02'.
-
-      WHEN 'WE'. " 입고
-        SET PARAMETER ID 'ZSSFI01GRN' FIELD GS_HDATA-REFDOC.
-        CALL TRANSACTION 'ZSSMM02'.
 
 
 

@@ -8,16 +8,21 @@ SAPMZSSFI03
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI03                             0201I0201      2 27192 37  0  0 27121  0G E                              20251008210339																																
+SAPMZSSFI03                             0201I0201      2 49192 37  0  0 27122  0G E                              20251013151208																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
 ZSSSFI0304-RRSON_T	0	CHAR	 11	30	00	00	30	00	  2	  4		  0	  0	  0		  0					  0	  0								역분개 사유	                                                                                                                                                                                                                                                        X	
-ZSSSFI0304-RRSON_T	N	NUMC	  4	A0	00	80	00	00	  2	 25		  0	  0	  0		  0					  8	  0								____	                                       00	
+ZSSSFI0304-RRSON_T	C	CHAR	  2	A0	00	80	00	08	  2	 25		  0	  0	  0		  0					  4	  0								__	                                       00	
+ZSSSFI0304-RRSON_TT	C	CHAR	 20	B0	02	80	31	00	  2	 31		  0	  0	  0		  0					120	  0								____________________	                                       00	
 		CHAR	 20	80	10	00	00	00	255	  1	O	  0	  0	  0		  0					  0	  0								____________________		
 %_FLOWLOGIC																																
 PROCESS BEFORE OUTPUT.																																
 * MODULE STATUS_0201.																																
 *																																
 PROCESS AFTER INPUT.																																
- MODULE USER_COMMAND_0201.																																
+  MODULE USER_COMMAND_0201.																																
+																																
+																																
+PROCESS ON VALUE-REQUEST.																																
+  FIELD ZSSSFI0304-RRSON_T MODULE F4_RRSON_0201.																																

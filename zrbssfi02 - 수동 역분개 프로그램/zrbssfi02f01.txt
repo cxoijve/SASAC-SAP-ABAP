@@ -1,0 +1,71 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZRBSSFI02F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  F4_RRSON
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM F4_RRSON .
+
+  DATA: LT_RETURN TYPE TABLE OF DDSHRETVAL,
+        LS_RETURN TYPE DDSHRETVAL,
+        LT_TAB    TYPE TABLE OF DFIES,
+        LS_TAB    TYPE DFIES,
+        LT_TEXT   TYPE TABLE OF DSELC,
+        LS_TEXT   TYPE DSELC.
+
+  GT_REV_REASON = VALUE #(
+    ( CODE = '01' )
+    ( CODE = '입력 오류' )
+    ( CODE = '02' )
+    ( CODE = '중복 입력' )
+    ( CODE = '03' )
+    ( CODE = '계정 오류' )
+    ( CODE = '04' )
+    ( CODE = '수정으로 인한 역분개' )
+  ).
+
+  LT_TAB = VALUE #(
+    ( FIELDNAME = 'RRSON_T' OUTPUTLEN = 4 LENG = 4
+      INTLEN = 4 REPTEXT = '코드' )
+    ( FIELDNAME = 'RRSON_TEXT' OUTPUTLEN = 40 LENG = 40
+      INTLEN = 40 REPTEXT = '설명' )
+  ).
+
+  LT_TEXT = VALUE #(
+      ( FLDNAME = 'RRSON_T' DYFLDNAME = 'ZSSSFI0301-RRSON_T')
+      ( FLDNAME = 'RRSON_TEXT' DYFLDNAME = 'ZSSSFI0301-RRSON_TEXT')
+  ).
+
+  CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
+    EXPORTING
+      RETFIELD        = 'CODE'
+      DYNPPROG        = SY-REPID
+      DYNPNR          = SY-DYNNR
+      DYNPROFIELD     = 'ZSSSFI0301-RRSON_T'
+      VALUE_ORG       = 'C'  " S
+    TABLES
+      VALUE_TAB       = GT_REV_REASON
+      FIELD_TAB       = LT_TAB
+      DYNPFLD_MAPPING = LT_TEXT
+      RETURN_TAB      = LT_RETURN
+    EXCEPTIONS
+      OTHERS          = 1.
+
+  IF SY-SUBRC = 0 AND LT_RETURN IS NOT INITIAL.
+    READ TABLE LT_RETURN INTO LS_RETURN INDEX 1.
+    IF SY-SUBRC = 0.
+      " 선택된 CODE 값을 화면필드에 넣음
+      ZSSSFI0301-RRSON_T = LS_RETURN-FIELDVAL.
+    ENDIF.
+  ENDIF.
+
+
+ENDFORM.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

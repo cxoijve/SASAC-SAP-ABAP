@@ -1,34 +1,25 @@
-
 *&---------------------------------------------------------------------*
-*& Module Pool       SAPMZSSFI03
+*& Report  ZRBSSFI02
 *&
 *&---------------------------------------------------------------------*
 *&
 *&
 *&---------------------------------------------------------------------*
 
+INCLUDE ZRBSSFI02TOP                            .    " global Data
 
-INCLUDE MZSSFI03TOP.
-INCLUDE MZSSFI03C01.
-INCLUDE MZSSFI03O01.
-INCLUDE MZSSFI03I01.
-INCLUDE MZSSFI03F01.
-INCLUDE MZSSFI03A01.
+INCLUDE ZRBSSFI02O01                            .  " PBO-Modules
+INCLUDE ZRBSSFI02I01                            .  " PAI-Modules
+INCLUDE ZRBSSFI02F01                            .  " FORM-Routines
 
-LOAD-OF-PROGRAM.
 
-    PERFORM SET_INIT.
+START-OF-SELECTION.
+
+  CALL SCREEN 0100.
 
 *GUI Texts
 *----------------------------------------------------------
-* T100 --> 전표 역분개 프로그램
-* T102 --> Detail
-* T110 --> Upload Info
-* T200 --> 역분개 대상 전표 조회
-* T210 --> 역분개 옵션
-* T300 --> 문서 전체 리스트
-* T400 --> 일괄 역분개
-* T500 --> 수금(AR) 처리
+* T100 --> 수동 역분개 프로그램
 
 ----------------------------------------------------------------------------------
 Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

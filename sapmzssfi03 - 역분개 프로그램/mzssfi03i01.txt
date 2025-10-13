@@ -25,9 +25,26 @@ ENDMODULE.
 MODULE USER_COMMAND_0100 INPUT.
 
   CASE OK_CODE.
+      GT_REV_REASON = VALUE #(
+        ( CODE = '01' TEXT = '입력 오류' )
+        ( CODE = '02' TEXT = '중복 입력' )
+        ( CODE = '03' TEXT = '계정 오류' )
+        ( CODE = '04' TEXT = '수정으로 인한 역분개' )
+      ).
+
 
     WHEN 'BACK'.
       LEAVE TO SCREEN 0.
+
+    WHEN 'ENTER'.
+      " CODE에 따른 TEXT 를 찾아 ZSSSFI0301-RRSON_TEXT에 셋팅
+      DATA: LS_REASON TYPE TY_REV_REASON.
+      READ TABLE GT_REV_REASON INTO LS_REASON WITH KEY CODE = ZSSSFI0301-RRSON_T.
+      IF SY-SUBRC = 0.
+        ZSSSFI0301-RRSON_TEXT = LS_REASON-TEXT.
+      ELSE.
+        ZSSSFI0301-RRSON_TEXT = ''.
+      ENDIF.
 
     WHEN 'SAVE'.
 
@@ -66,11 +83,33 @@ MODULE USER_COMMAND_0200 INPUT.
       LEAVE TO SCREEN 0.
 
     WHEN 'EXE'.
-      PERFORM GET_NON_REV_DATA.
+      PERFORM SET_SCREEN_0200.
+
 
     WHEN 'REV'.
+      PERFORM SEL_ROWS_0200  CHANGING GV_SUBRC.
+      IF GV_SUBRC = 4.
+        CLEAR GV_SUBRC.
+        RETURN.
+      ENDIF.
+
+      PERFORM SET_DATA_0200.
+
       CALL SCREEN 210 STARTING AT 5 5 ENDING AT 60 30.
 
+
+    WHEN 'LIST'.
+
+      PERFORM SET_DATA_0300.
+
+      PERFORM SET_SCREEN_0300.
+
+
+      CALL SCREEN 0300.
+
+    WHEN 'CREATE'.
+
+      CALL TRANSACTION 'ZRBSSFI02'.
 
     WHEN OTHERS.
 
@@ -95,10 +134,6 @@ MODULE USER_COMMAND_0300 INPUT.
     WHEN 'EXE'.
 
       PERFORM SET_SCREEN_0300.
-
-
-
-
 
     WHEN OTHERS.
 
@@ -151,6 +186,13 @@ MODULE USER_COMMAND_0210 INPUT.
   CASE OK_CODE.
     WHEN 'SAVE'.
 
+      PERFORM INSERT_DATA.
+
+      " INSERT, UPDATE 후 스크린 300번 호출
+      PERFORM SET_DATA_0300.
+
+      PERFORM SET_SCREEN_0300.
+
       CALL SCREEN 0300.
 
     WHEN 'CLOSE'.
@@ -180,6 +222,16 @@ MODULE USER_COMMAND_0201 INPUT.
 
 
   ENDCASE.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  F4_RRSON  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE F4_RRSON INPUT.
+
+  PERFORM F4_RRSON.
 
 ENDMODULE.
 

@@ -125,7 +125,7 @@ MODULE USER_COMMAND_0100 INPUT.
 
     WHEN 'INIT'.
       " 새로고침
-      CLEAR: ZSSSFI0101, GT_HDATA,GV_FLAG3.
+      CLEAR: ZSSSFI0101, GT_HDATA.
 
       IF ZSSSFI0101-RGDATB IS NOT INITIAL AND ZSSSFI0101-RGDATE IS NOT INITIAL
          AND ZSSSFI0101-JTYPE IS NOT INITIAL AND ZSSSFI0101-RGTOR IS NOT INITIAL.
@@ -176,8 +176,12 @@ MODULE USER_COMMAND_0200 INPUT.
       " 등록자명 취득
       PERFORM GET_RGTOR_INFO_0200.
       IF GV_SUBRC = 4.
+        GV_FLAG3 = 'X'.
+
         CLEAR GV_SUBRC.
         RETURN.
+      ELSE.
+        CLEAR GV_FLAG3.
       ENDIF.
 
 
@@ -196,8 +200,15 @@ MODULE USER_COMMAND_0200 INPUT.
 
       GV_FLAG5 = 'X'.
 
-      CALL SCREEN 210 STARTING AT 5 5 ENDING AT 120 30.
+      IF GV_FLAG3 = 'X'.
 
+        MESSAGE S999(ZMCSS) WITH '등록자를 확인해 주세요.' DISPLAY LIKE 'E'.
+
+      ELSE.
+
+        CALL SCREEN 210 STARTING AT 5 5 ENDING AT 120 30.
+
+      ENDIF.
 
     WHEN 'BEDIT'.
       PERFORM CHANGE_ALV_MODE_0200.
@@ -326,40 +337,68 @@ MODULE USER_COMMAND_0210 INPUT.
         WHEN 'WE'. " 입고
           PERFORM CHECK_ACCOUNT_INPUT
                   USING '310000'
-                             '첫 번째로 차변 계정(재고 자산: 310000)을 입력하세요.'
-                             '910000'.
+                        '첫 번째로 차변 계정(재고 자산: 310000)을 입력하세요.'
+                        '910000'
+                  CHANGING GV_SUBRC.
+          IF GV_SUBRC = 4.
+            CLEAR GV_SUBRC.
+            RETURN.
+          ENDIF.
 
         WHEN 'KR'. " 송장검증
           PERFORM CHECK_ACCOUNT_INPUT
                   USING '910000'
-                             '첫 번째로 차변 계정(GR/IR 조정계정: 910000)을 입력하세요.'
-                             '240000'.
-
+                        '첫 번째로 차변 계정(GR/IR 조정계정: 910000)을 입력하세요.'
+                        '240000'
+                  CHANGING GV_SUBRC.
+          IF GV_SUBRC = 4.
+            CLEAR GV_SUBRC.
+            RETURN.
+          ENDIF.
 
         WHEN 'KZ'. " 지급
           PERFORM CHECK_ACCOUNT_INPUT
                   USING '240000'
-                             '첫 번째로 차변 계정(외상매입금: 240000)을 입력하세요.'
-                             '110000'.
+                        '첫 번째로 차변 계정(외상매입금: 240000)을 입력하세요.'
+                        '110000'
+                  CHANGING GV_SUBRC.
+          IF GV_SUBRC = 4.
+            CLEAR GV_SUBRC.
+            RETURN.
+          ENDIF.
 
         WHEN 'WA'. " 출고
           PERFORM CHECK_ACCOUNT_INPUT
                   USING '510000'
-                             '첫 번째로 차변 계정(매출원가: 510000)을 입력하세요.'
-                             '310000'.
+                        '첫 번째로 차변 계정(매출원가: 510000)을 입력하세요.'
+                        '310000'
+                  CHANGING GV_SUBRC.
+          IF GV_SUBRC = 4.
+            CLEAR GV_SUBRC.
+            RETURN.
+          ENDIF.
 
         WHEN 'DR'. " 청구
           PERFORM CHECK_ACCOUNT_INPUT
                   USING '140000'
-                             '첫 번째로 차변 계정(외상매출금: 140000)을 입력하세요.'
-                             '410000'.
-
+                        '첫 번째로 차변 계정(외상매출금: 140000)을 입력하세요.'
+                        '410000'
+                  CHANGING GV_SUBRC.
+          IF GV_SUBRC = 4.
+            CLEAR GV_SUBRC.
+            RETURN.
+          ENDIF.
 
         WHEN 'DZ'. " 수금
           PERFORM CHECK_ACCOUNT_INPUT
                   USING '110000'
-                             '첫 번째로 차변 계정(은행: 110000)을 입력하세요.'
-                             '140000'.
+                        '첫 번째로 차변 계정(은행: 110000)을 입력하세요.'
+                        '140000'
+                  CHANGING GV_SUBRC.
+          IF GV_SUBRC = 4.
+            CLEAR GV_SUBRC.
+            RETURN.
+          ENDIF.
 
       ENDCASE.
 
@@ -402,7 +441,7 @@ MODULE USER_COMMAND_0210 INPUT.
     WHEN 'CHECK'.
       " G/L 계정명 취득
       PERFORM GET_GL_NAME USING ZSSSFI0103-GLACC
-                                               CHANGING ZSSSFI0103-ACTNM.
+                          CHANGING ZSSSFI0103-ACTNM.
 
 
     WHEN OTHERS.

@@ -140,6 +140,8 @@ FORM CREATE_ALV_0100 .
 *              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
   ENDIF.
 
+
+  PERFORM SET_EVENT.
 *  "Event Register
 *  PERFORM REQ_EVENT_FOR_ALV.
 
@@ -357,6 +359,22 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM SET_FCAT_0200 .
 
+  " 다음과 같이 function 사용할 것
+***  DATA ls_fcat TYPE lvc_s_fcat.
+***
+***  CALL FUNCTION 'LVC_FIELDCATALOG_MERGE'
+***    EXPORTING
+***      I_STRUCTURE_NAME = 'ZSSSFI0103'
+***    CHANGING
+***      CT_FIELDCAT      = pt_fcat.
+***
+***    LOOP AT pt_fcat INTO ls_fcat.
+***
+***    MODIFY pt_fcat FROM ls_fcat.
+***    CLEAR ls_fcat.
+***  ENDLOOP.
+
+
   CLEAR: GT_FCAT.
 
   PERFORM FCAT USING:
@@ -381,7 +399,9 @@ FORM SET_FCAT_0200 .
     ENDIF.
 
 
+
     MODIFY GT_FCAT FROM GS_FCAT.
+
   ENDLOOP.
 
 
@@ -389,7 +409,7 @@ FORM SET_FCAT_0200 .
   " 계정, 계정명, 차변, 대변 수정 가능
   LOOP AT GT_FCAT INTO GS_FCAT.
     CASE GS_FCAT-FIELDNAME.
-      WHEN 'GLACC' OR 'ACTNM' OR 'DEBIT' OR 'CREDIT'.
+      WHEN 'DEBIT' OR 'CREDIT'.
         CASE GV_CHECK.
           WHEN 0.
             IF GV_FLAG = 'X'.
@@ -404,8 +424,6 @@ FORM SET_FCAT_0200 .
 
     MODIFY GT_FCAT FROM GS_FCAT.
   ENDLOOP.
-
-
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -1245,7 +1263,6 @@ ENDFORM.
 *  <--  p2        text
 *----------------------------------------------------------------------*
 FORM SET_EVENT .
-
   CREATE OBJECT GO_EVENT.
 
   SET HANDLER:
@@ -1458,7 +1475,6 @@ FORM GET_RGTOR_INFO_0200 .
 
   PERFORM CHECK_RGTOR_DEPID USING ZSSSFI0102-RGTOR.
 
-
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  SET_SORT
@@ -1565,6 +1581,8 @@ FORM CALLD_PROCESS .
 
   DATA: LV_JENUM    TYPE ZTSSJEH-JENUM,
         LV_APNUM    TYPE ZTSSJEH-JENUM,
+        LV_FI03_JEN TYPE ZTSSJEH-JENUM,
+        LV_FI03_RJN TYPE ZTSSJEH-JENUM,
         LV_MM02_JEN TYPE ZTSSJEH-JENUM.
 
   " 다른 프로그램에서 현재 프로그램으로 이동
@@ -1593,6 +1611,35 @@ FORM CALLD_PROCESS .
       MESSAGE '해당 전표를 찾을 수 없습니다.' TYPE 'E'.
     ENDIF.
   ENDIF.
+
+  " 역분개 프로그램 -> 기존 전표 번호
+  GET PARAMETER ID 'ZFIJENUM' FIELD LV_FI03_JEN.
+  IF LV_FI03_JEN IS NOT INITIAL.
+    PERFORM SEL_ROWS_0100_V2 CHANGING GV_SUBRC LV_FI03_JEN.
+    IF GV_SUBRC = 0.
+      PERFORM SET_DATA_0300.
+      CALL SCREEN 300.
+      SET PARAMETER ID 'ZFIJENUM' FIELD SPACE.
+    ELSE.
+      MESSAGE '해당 전표를 찾을 수 없습니다.' TYPE 'E'.
+    ENDIF.
+  ENDIF.
+
+
+
+  " 역분개 프로그램 -> 역분개 전표 번호
+  GET PARAMETER ID 'ZFIRJNUM' FIELD LV_FI03_RJN.
+  IF LV_FI03_RJN IS NOT INITIAL.
+    PERFORM SEL_ROWS_0100_V2 CHANGING GV_SUBRC LV_FI03_RJN.
+    IF GV_SUBRC = 0.
+      PERFORM SET_DATA_0300.
+      CALL SCREEN 300.
+      SET PARAMETER ID 'ZFIRJNUM' FIELD SPACE.
+    ELSE.
+      MESSAGE '해당 전표를 찾을 수 없습니다.' TYPE 'E'.
+    ENDIF.
+  ENDIF.
+
 
   " 입고 프로그램 -> 전표 조회프로그램
   GET PARAMETER ID 'ZMMJENUM' FIELD LV_MM02_JEN.
@@ -1768,15 +1815,16 @@ ENDFORM.
 *      -->P_0449   text
 *      -->P_0450   text
 *----------------------------------------------------------------------*
-FORM CHECK_ACCOUNT_INPUT  USING    VALUE(PA_DR)
-                                                                   VALUE(PA_MSG)
-                                                                   VALUE(PA_CR).
+FORM CHECK_ACCOUNT_INPUT  USING   VALUE(PA_DR)
+                                  VALUE(PA_MSG)
+                                  VALUE(PA_CR)
+                         CHANGING PV_SUBRC.
 
   " 차변에 먼저 입력되었는지 체크
   IF LINES( GT_IDATA ) = 0.
     IF ZSSSFI0103-GLACC <> PA_DR.
       MESSAGE I999(ZMCSS) WITH PA_MSG DISPLAY LIKE 'E'.
-      GV_SUBRC = 4.
+      PV_SUBRC = 4.
       RETURN.
     ENDIF.
   ENDIF.
@@ -1786,10 +1834,10 @@ FORM CHECK_ACCOUNT_INPUT  USING    VALUE(PA_DR)
     IF ZSSSFI0103-DEBIT IS INITIAL.
       MESSAGE I999(ZMCSS) WITH '차변에 금액을 입력해 주세요'.
       CLEAR ZSSSFI0103-CREDIT.
-      GV_SUBRC = 4.
+      PV_SUBRC = 4.
       RETURN.
     ELSEIF ZSSSFI0103-CREDIT IS NOT INITIAL.
-      GV_SUBRC = 4.
+      PV_SUBRC = 4.
       RETURN.
     ENDIF.
   ENDIF.
@@ -1799,10 +1847,10 @@ FORM CHECK_ACCOUNT_INPUT  USING    VALUE(PA_DR)
     IF ZSSSFI0103-CREDIT IS INITIAL.
       MESSAGE I999(ZMCSS) WITH '대변에 금액을 입력해 주세요'.
       CLEAR ZSSSFI0103-DEBIT.
-      GV_SUBRC = 4.
+      PV_SUBRC = 4.
       RETURN.
     ELSEIF ZSSSFI0103-DEBIT IS NOT INITIAL.
-      GV_SUBRC = 4.
+      PV_SUBRC = 4.
       RETURN.
     ENDIF.
   ENDIF.
