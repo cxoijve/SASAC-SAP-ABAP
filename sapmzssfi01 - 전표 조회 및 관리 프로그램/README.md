@@ -1,5 +1,9 @@
 # 전표 조회 및 관리 프로그램
 ### 조회 화면(Screen 0100)
+- ALV Tree 기능 추가
+  - 전표유형별 검색 가능
+    - <img width="829" height="831" alt="img_add_tree" src="https://github.com/user-attachments/assets/5a35f9c2-0f38-454a-b4f3-e670c50a78d6" />
+
 - 입력 조건에 따른 조회 결과
   - <img width="1027" height="830" alt="img1" src="https://github.com/user-attachments/assets/29e750ed-abe1-433f-9906-7b1425102baa" />
 
@@ -23,8 +27,6 @@
 
 - 역분개 처리를 위한 기능 추가
   - CALL TRANSACTION 'ZSSFI03'. 구문을 통해 역분개 프로그램으로 이동   ([zrbssfi03 - 역분개 프로그램](https://github.com/cxoijve/SeSAC_PROJ/tree/main/sapmzssfi03%20-%20%EC%97%AD%EB%B6%84%EA%B0%9C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8))
-
-
 
 
 ### 상세조회 화면(Screen 0300)

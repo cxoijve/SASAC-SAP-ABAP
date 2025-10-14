@@ -317,7 +317,6 @@ FORM GET_JEH_DATA.
           AND JTYPE IN GT_RJTYPE
           AND RGTOR IN GT_RRGTOR.
 
-
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  MODIFY_DATA
@@ -1895,7 +1894,9 @@ ENDFORM.
 FORM SET_TREE_OBJECT .
 
   " Tree Object
-  IF GO_CONT IS NOT INITIAL. RETURN. ENDIF.
+  IF GO_CONT IS NOT INITIAL.
+    RETURN.
+  ENDIF.
 
   CREATE OBJECT GO_CONT
     EXPORTING
@@ -1913,7 +1914,10 @@ FORM SET_TREE_OBJECT .
 *              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
   ENDIF.
 
-  IF GO_TREE IS NOT INITIAL. RETURN. ENDIF.
+  IF GO_TREE IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
   CREATE OBJECT GO_TREE
     EXPORTING
 *     lifetime            =
@@ -1940,7 +1944,7 @@ FORM SET_TREE_OBJECT .
     EXPORTING
       EVENTS = LT_EVENT.
 
-  SET HANDLER LCL_HANDLER_TREE=>ON_NODE_DOUBLE_CLICK FOR GO_TREE.
+  SET HANDLER LCL_EVENT_HANDLER=>ON_NODE_DOUBLE_CLICK FOR GO_TREE.
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -1954,24 +1958,30 @@ ENDFORM.
 FORM DISPLAY_TREE .
 
 * Tree Data
-  PERFORM GET_TREE_DATA.
+  IF GV_FLAG6 <> 'X'.
+    PERFORM GET_TREE_DATA.
+
+    IF GO_TREE IS BOUND.
 
 * Tree Display
-  CALL METHOD GO_TREE->ADD_NODES
-    EXPORTING
-      TABLE_STRUCTURE_NAME = 'MTREESNODE'
-      NODE_TABLE           = GT_TREE
+      CALL METHOD GO_TREE->ADD_NODES
+        EXPORTING
+          TABLE_STRUCTURE_NAME = 'MTREESNODE'
+          NODE_TABLE           = GT_TREE
 *  EXCEPTIONS
-*     error_in_node_table  = 1
-*     failed               = 2
-*     dp_error             = 3
-*     table_structure_name_not_found = 4
-*     others               = 5
-    .
-  IF SY-SUBRC <> 0.
+*         error_in_node_table  = 1
+*         failed               = 2
+*         dp_error             = 3
+*         table_structure_name_not_found = 4
+*         others               = 5
+        .
+      IF SY-SUBRC <> 0.
 * Implement suitable error handling here
-  ENDIF.
+      ENDIF.
+    ENDIF.
 
+    GV_FLAG6 = 'X'.
+  ENDIF.
 * Expand Level
 *  CALL METHOD go_tree->expand_root_nodes
 *    EXPORTING
@@ -1989,7 +1999,9 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM GET_TREE_DATA .
 
-  IF GT_TREE IS NOT INITIAL. RETURN. ENDIF.
+  IF GT_TREE IS NOT INITIAL.
+    RETURN.
+  ENDIF.
 
 * Tree Node
   CLEAR GS_TREE.
@@ -1997,47 +2009,176 @@ FORM GET_TREE_DATA .
   GS_TREE-NODE_KEY = '1000'.
   GS_TREE-ISFOLDER = 'X'. " Folder Image
   GS_TREE-EXPANDER = ''. " Open
-  GS_TREE-TEXT = 'Root'.
+  GS_TREE-TEXT = '전표유형'.
   APPEND GS_TREE TO GT_TREE.
 
   CLEAR GS_TREE.
-  " 2lv 1
-  GS_TREE-NODE_KEY = '1100'.
+  GS_TREE-NODE_KEY = 'WE'.
   GS_TREE-RELATKEY = '1000'. "Parent
   GS_TREE-ISFOLDER = ''. " Folder Image
   GS_TREE-EXPANDER = ''. " Close
-  GS_TREE-N_IMAGE = ICON_DISPLAY. " Icon Name ( Table ICONS )
-  GS_TREE-TEXT = '2lv-01'.
+  GS_TREE-TEXT = '입고'.
   APPEND GS_TREE TO GT_TREE.
 
-  CLEAR GS_TREE.
-  " 2lv 1
-  GS_TREE-NODE_KEY = '1200'.
-  GS_TREE-RELATKEY = '1000'. "Parent
-  GS_TREE-ISFOLDER = 'X'. " Folder Image
-  GS_TREE-EXPANDER = ''. " Close
-  GS_TREE-TEXT = '2lv-02'.
-  APPEND GS_TREE TO GT_TREE.
 
   CLEAR GS_TREE.
-  " 3lv 1
-  GS_TREE-NODE_KEY = '1220'.
-  GS_TREE-RELATKEY = '1200'. "Parent
-  GS_TREE-ISFOLDER = ''. " Folder Image
-  GS_TREE-EXPANDER = ''. " Close
-  GS_TREE-N_IMAGE = ICON_SPACE." ICON_DISPLAY. " Icon Name ( Table ICONS ), Type Group icon
-  GS_TREE-TEXT = '3lv-01'.
-  APPEND GS_TREE TO GT_TREE.
-
-  CLEAR GS_TREE.
-  " 3lv 1
-  GS_TREE-NODE_KEY = '1300'.
+  GS_TREE-NODE_KEY = 'KR'.
   GS_TREE-RELATKEY = '1000'. "Parent
   GS_TREE-ISFOLDER = ''. " Folder Image
   GS_TREE-EXPANDER = ''. " Close
-  GS_TREE-N_IMAGE = ICON_SPACE." ICON_DISPLAY. " Icon Name ( Table ICONS ), Type Group icon
-  GS_TREE-TEXT = 'New'.
+  GS_TREE-TEXT = '송장검증'.
   APPEND GS_TREE TO GT_TREE.
+*
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'KZ'.
+  GS_TREE-RELATKEY = '1000'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '지급'.
+  APPEND GS_TREE TO GT_TREE.
+
+
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'WA'.
+  GS_TREE-RELATKEY = '1000'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+*  GS_TREE-N_IMAGE = ICON_SPACE." ICON_DISPLAY. " Icon Name ( Table ICONS ), Type Group icon
+  GS_TREE-TEXT = '출고'.
+  APPEND GS_TREE TO GT_TREE.
+
+
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'DR'.
+  GS_TREE-RELATKEY = '1000'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '청구'.
+  APPEND GS_TREE TO GT_TREE.
+
+
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'DZ'.
+  GS_TREE-RELATKEY = '1000'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+*  GS_TREE-N_IMAGE = ICON_SPACE." ICON_DISPLAY. " Icon Name ( Table ICONS ), Type Group icon
+  GS_TREE-TEXT = '수금'.
+  APPEND GS_TREE TO GT_TREE.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_NODE_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_NODE_DATA USING VALUE(PA_KEY).
+
+
+  SELECT JENUM FYEAR JTYPE STEXT CURKY RGDAT
+             RGTOR REV RRSON RJNUM
+         FROM ZTSSJEH
+         INTO CORRESPONDING FIELDS OF TABLE GT_HDATA
+         WHERE JENUM IN GT_RJENUM
+          AND FYEAR IN GT_RFYEAR
+          AND RGDAT IN GT_RRGDAT
+          AND JTYPE = PA_KEY
+          AND RGTOR IN GT_RRGTOR.
+
+
+
+
+*
+*  PERFORM GET_JEH_DATA.     " 전표 헤더 정보 취득
+
+  PERFORM GET_TOPRC_INFO.   " 전표 아이템 금액 가져오기
+
+  PERFORM GET_REFDOC_DATA.  " 참조문서 정보 취득
+
+  LOOP AT GT_HDATA INTO GS_HDATA.
+    CASE GS_HDATA-JTYPE.
+      WHEN 'WE'. " 입고
+        READ TABLE GT_ZTSSGRH INTO GS_ZTSSGRH WITH KEY JENUM = GS_HDATA-JENUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSGRH-GRNUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
+
+      WHEN 'KR'. " 송장검증
+        READ TABLE GT_ZTSSMIVH INTO GS_ZTSSMIVH WITH KEY JENUM = GS_HDATA-JENUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSMIVH-IVNUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
+
+
+      WHEN 'KZ'. " 지급
+        READ TABLE GT_ZTSSMIVH INTO GS_ZTSSMIVH WITH KEY APNUM = GS_HDATA-JENUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSMIVH-JENUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
+
+      WHEN 'WA'. " 출고
+        READ TABLE GT_ZTSSGIH INTO GS_ZTSSGIH WITH KEY JENUM = GS_HDATA-JENUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSGIH-GINUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
+
+      WHEN 'DR'. " 청구
+        READ TABLE GT_ZTSSSIVH INTO GS_ZTSSSIVH WITH KEY JENUM = GS_HDATA-JENUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSSIVH-BINUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
+
+      WHEN 'DZ'. " 수금
+        READ TABLE GT_ZTSSSIVH INTO GS_ZTSSSIVH WITH KEY ARNUM = GS_HDATA-JENUM.
+
+        IF SY-SUBRC = 0.
+          GS_HDATA-REFDOC = GS_ZTSSSIVH-JENUM.
+        ELSE.
+          " 해당 값이 없으면 빈값 유지
+          GS_HDATA-REFDOC = ''.
+        ENDIF.
+
+    ENDCASE.
+
+    " 차변이 없을 경우 대변 정보 취득
+    READ TABLE GT_TOPRC INTO GS_TOPRC WITH KEY JENUM = GS_HDATA-JENUM.
+
+    GS_HDATA-TOPRC = GS_TOPRC-DEBIT.
+
+    IF GS_HDATA-TOPRC  = 0.
+      GS_HDATA-TOPRC = GS_TOPRC-CREDIT.
+    ENDIF.
+
+    PERFORM MODIFY_DATA.      " 추가 정보 취득
+
+    MODIFY GT_HDATA FROM GS_HDATA.
+
+  ENDLOOP.
+
+  PERFORM DISPLAY_ALV_0100.
 
 ENDFORM.
 

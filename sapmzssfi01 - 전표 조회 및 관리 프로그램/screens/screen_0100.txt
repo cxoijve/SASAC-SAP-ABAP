@@ -8,37 +8,33 @@ SAPMZSSFI01
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI01                             0100 0100     34147192 37  0  0 37158  0G E                              20251014180338																																
+SAPMZSSFI01                             0100 0100     34100192 37  0  0 37158  0G E                              20251014223149																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
-CON_TREE			 38	00	30	00	30	00	  1	  2		  0	  0	  0		 34	U				 17	 16	101									
-B_COND		CHAR	108	00	00	00	30	00	  1	 41		  0	  0	  0		  9	R				  0	  0	102							전표 조회 조건		
-ZSSSFI0101-FYEAR	2	CHAR	 20	30	00	04	30	00	  3	 45		  0	  0	  0		  0					  0	  0								회계연도	                                                                                                                                                                                                                                                        X	
-ZSSSFI0101-FYEAR	N	NUMC	  4	A0	00	8C	00	08	  3	 66		  0	  0	  0		  0					  8	  0								____	X                                      00	
-ZSSSFI0101-RGDATB	0	CHAR	  6	30	00	00	30	00	  5	 45		  0	  0	  0		  0					  0	  0								전기일	                                                                                                                                                                                                                                                        X	
-ZSSSFI0101-RGDATB	D	DATE	 10	A0	00	80	00	08	  5	 66		  0	  0	  0		  0					 16	  0								__________	X                                      00	
-ZSSSFI0101-RGDATE	0	CHAR	  3	30	00	00	30	00	  5	 79		  0	  0	  0		  0					  0	  0								~	                                                                                                                                                                                                                                                        X	
-ZSSSFI0101-RGDATE	D	DATE	 10	A0	00	80	00	08	  5	 84		  0	  0	  0		  0					 16	  0								__________	X                                      00	
-ZSSSFI0101-JTYPE	2	CHAR	 20	30	00	01	30	00	  5	100		  0	  0	  0		  0					  0	  0								전표 유형	                                                                                                                                                                                                                                                        X	
-ZSSSFI0101-JTYPE	C	CHAR	  2	A0	00	81	00	08	  5	121		  0	  0	  0		  8					  4	  0								__	XDL                                    00	
-ZSSSFI0101-JENUM	0	CHAR	 13	30	00	00	30	00	  7	 45		  0	  0	  0		  0					  0	  0								회계전표 번호	                                                                                                                                                                                                                                                        X	
-ZSSSFI0101-JENUM	C	CHAR	 11	A0	00	8C	00	08	  7	 66		  0	  0	  0		  0					 22	  0								___________	X                                      00	
-ZSSSFI0101-RGTOR	2	CHAR	 20	30	00	04	30	00	  7	100		  0	  0	  0		  0					  0	  0								등록자	                                                                                                                                                                                                                                                        X	
-ZSSSFI0101-RGTOR	C	CHAR	  8	A0	00	8C	00	08	  7	121		  0	  0	  0		  0					 16	  0								________	X                                      00	
-ZSSSFI0101-RGTOR_T	C	CHAR	 15	B0	02	80	31	00	  7	130		  0	  0	  0		  0					 80	  0								_______________	                                       00	
-B_INFO		CHAR	108	00	00	00	30	00	 10	 41		  0	  0	  0		 25	R				  0	  0	103							전표 조회 결과		
-B_BUTTON		CHAR	  9	00	00	00	30	00	 11	 42		  0	  0	  0		  0	P				  0	  0	104							전표 변경	                                                                                                                                                                        HINFO	
-B_BUTTON2		CHAR	  9	00	00	00	30	00	 11	 53		  0	  0	  0		  0	P				  0	  0	105			GR1				변경 완료	                                                                                                                                                                        UPDATE	
-CON			105	00	00	00	30	00	 12	 42		  0	  0	  0		 22	U				  1	  1	106									
+B_COND		CHAR	100	00	00	00	30	00	  1	  2		  0	  0	  0		  9	R				  0	  0	101							전표 조회 조건		
+CON_TREE			 20	00	30	00	30	00	  2	 81		  0	  0	  0		  7	U				  5	 16	102									
+ZSSSFI0101-FYEAR	0	CHAR	 10	30	00	04	30	00	  3	  7		  0	  0	  0		  0					  0	  0								회계연도	                                                                                                                                                                                                                                                        X	
+ZSSSFI0101-FYEAR	N	NUMC	  4	A0	00	8C	00	08	  3	 21		  0	  0	  0		  0					  8	  0								____	X                                      00	
+ZSSSFI0101-RGDATB	0	CHAR	  6	30	00	00	30	00	  3	 41		  0	  0	  0		  0					  0	  0								전기일	                                                                                                                                                                                                                                                        X	
+ZSSSFI0101-RGDATB	D	DATE	 10	A0	00	80	00	08	  3	 55		  0	  0	  0		  0					 16	  0								__________	X                                      00	
+ZSSSFI0101-RGDATE	0	CHAR	  1	30	00	00	30	00	  3	 66		  0	  0	  0		  0					  0	  0								~	                                                                                                                                                                                                                                                        X	
+ZSSSFI0101-RGDATE	D	DATE	 10	A0	00	80	00	08	  3	 68		  0	  0	  0		  0					 16	  0								__________	X                                      00	
+ZSSSFI0101-JENUM	0	CHAR	 13	30	00	00	30	00	  5	  7		  0	  0	  0		  0					  0	  0								회계전표 번호	                                                                                                                                                                                                                                                        X	
+ZSSSFI0101-JENUM	C	CHAR	 11	A0	00	8C	00	08	  5	 21		  0	  0	  0		  0					 22	  0								___________	X                                      00	
+ZSSSFI0101-RGTOR	0	CHAR	  9	30	00	04	30	00	  7	  7		  0	  0	  0		  0					  0	  0								등록자	                                                                                                                                                                                                                                                        X	
+ZSSSFI0101-RGTOR	C	CHAR	  8	A0	00	8C	00	08	  7	 21		  0	  0	  0		  0					 16	  0								________	X                                      00	
+ZSSSFI0101-RGTOR_T	C	CHAR	 10	B0	02	80	31	00	  7	 30		  0	  0	  0		  0					 80	  0								__________	                                       00	
+B_INFO		CHAR	100	00	00	00	30	00	 10	  2		  0	  0	  0		 25	R				  0	  0	103							전표 조회 결과		
+B_BUTTON		CHAR	  9	00	00	00	30	00	 11	  3		  0	  0	  0		  0	P				  0	  0	104							전표 변경	                                                                                                                                                                        HINFO	
+B_BUTTON2		CHAR	  9	00	00	00	30	00	 11	 14		  0	  0	  0		  0	P				  0	  0	105			GR1				변경 완료	                                                                                                                                                                        UPDATE	
+CON			 97	00	00	00	30	00	 12	  3		  0	  0	  0		 22	U				  1	  1	106									
 OK_CODE		CHAR	 20	80	10	00	00	00	255	  1	O	  0	  0	  0		  0					  0	  0								____________________		
 %_FLOWLOGIC																																
 PROCESS BEFORE OUTPUT.																																
   MODULE STATUS_0100.																																
-  MODULE SET_ALV_0100.																																
-																																
   MODULE SET_TREE_OBJECT_0100.																																
-																																
+  MODULE SET_ALV_0100.																																
 																																
   MODULE MODIFY_SCREEN_0100.																																
 																																
