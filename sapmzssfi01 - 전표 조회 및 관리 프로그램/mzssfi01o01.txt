@@ -44,35 +44,16 @@ FORM DISPLAY_ALV_0100 .
 
   CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-*     I_BUFFER_ACTIVE =
-*     I_BYPASSING_BUFFER            =
-*     I_CONSISTENCY_CHECK           =
-*     I_STRUCTURE_NAME              =
-*     IS_VARIANT      =
-*     I_SAVE          =
-*     I_DEFAULT       = 'X'
       IS_LAYOUT       = GS_LAYO
-*     IS_PRINT        =
-*     IT_SPECIAL_GROUPS             =
-*     IT_TOOLBAR_EXCLUDING          =
-*     IT_HYPERLINK    =
-*     IT_ALV_GRAPHICS =
-*     IT_EXCEPT_QINFO =
-*     IR_SALV_ADAPTER =
     CHANGING
       IT_OUTTAB       = GT_HDATA
       IT_FIELDCATALOG = GT_FCAT
-      IT_SORT         = GT_SORT2
-*     IT_FILTER       =
-*  EXCEPTIONS
-*     INVALID_PARAMETER_COMBINATION = 1
-*     PROGRAM_ERROR   = 2
-*     TOO_MANY_LINES  = 3
-*     OTHERS          = 4
-    .
+      IT_SORT         = GT_SORT2.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
+
+
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -238,6 +219,20 @@ ENDMODULE.
 MODULE STATUS_0110 OUTPUT.
   SET PF-STATUS 'S110'.
   SET TITLEBAR 'T110'.
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  SET_TREE_OBJECT_0100  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE SET_TREE_OBJECT_0100 OUTPUT.
+
+* TREE OBJECT
+  PERFORM SET_TREE_OBJECT.
+
+* Display Tree
+  PERFORM DISPLAY_TREE.
+
 ENDMODULE.
 
 ----------------------------------------------------------------------------------

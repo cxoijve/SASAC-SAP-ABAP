@@ -15,11 +15,14 @@ INCLUDE ZRBSSFI02F01                            .  " FORM-Routines
 
 START-OF-SELECTION.
 
+  PERFORM SET_INIT.
+
   CALL SCREEN 0100.
 
 *GUI Texts
 *----------------------------------------------------------
 * T100 --> 수동 역분개 프로그램
+* T200 --> 수동 역분개 프로그램
 
 ----------------------------------------------------------------------------------
 Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

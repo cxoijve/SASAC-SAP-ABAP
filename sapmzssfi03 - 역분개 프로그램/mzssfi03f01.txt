@@ -462,8 +462,8 @@ FORM SET_FCAT_0300 .
     ELSEIF GS_FCAT-FIELDNAME = 'REV'.
       GS_FCAT-NO_OUT = 'X'.
 
-*    ELSEIF GS_FCAT-FIELDNAME = 'RGTOR_T'.
-*      GS_FCAT-NO_OUT = 'X'.
+    ELSEIF GS_FCAT-FIELDNAME = 'RGTOR_T'.
+      GS_FCAT-NO_OUT = 'X'.
 
     ENDIF.
 
@@ -1245,7 +1245,6 @@ FORM INSERT_DATA .
 
     GS_ZTSSJEH-JENUM = LV_NUM2.
     GS_ZTSSJEH-RGDAT = LV_NEXT01.
-    GS_ZTSSJEH-RGDAT = LV_NEXT01.
     GS_ZTSSJEH-RGTOR = 'E0000001'.
     GS_ZTSSJEH-REV   = ''.
     GS_ZTSSJEH-RRSON = ''.
@@ -1345,18 +1344,6 @@ ENDFORM.
 FORM SET_DATA_0200 .
 
   PERFORM GET_JEI_DATA.
-
-ENDFORM.
-*&---------------------------------------------------------------------*
-*&      Form  CALLD_PROCESS
-*&---------------------------------------------------------------------*
-*       text
-*----------------------------------------------------------------------*
-*  -->  p1        text
-*  <--  p2        text
-*----------------------------------------------------------------------*
-FORM CALLD_PROCESS .
-
 
 ENDFORM.
 

@@ -104,12 +104,54 @@ DATA : BEGIN OF gs_infod_0300.
 DATA : END OF gs_infod_0300.
 DATA : gt_infod_0300 LIKE TABLE OF gs_infod_0300.
 
+" Info 400
+DATA : BEGIN OF gs_infod_0400h.
+    INCLUDE TYPE ztssemp.
+DATA : persg_t TYPE ddtext,
+       dname   TYPE zessdname,
+       gesch_t TYPE ddtext,
+       ednme   TYPE zessednme,
+       estat_t TYPE ddtext,
+       email   TYPE ddtext,
+       ename   TYPE ddtext,
+       dptel   TYPE zessdptel.
+DATA : END OF gs_infod_0400h.
+
+DATA : gv_dtlinfo.
+
+" 500 =====================================================
+" ALV Objects 0500
+DATA   go_cond_0500 TYPE REF TO cl_gui_custom_container.
+DATA   go_alvd_0500 TYPE REF TO cl_gui_alv_grid.
+DATA : gs_layod_0500 TYPE lvc_s_layo.
+DATA : gt_fcatd_0500 TYPE lvc_t_fcat,
+       gs_fcatd_0500 TYPE lvc_s_fcat.
+DATA : gt_sortd_0500 TYPE lvc_t_sort,
+       gs_sortd_0500 TYPE lvc_s_sort.
+
+" Handler 0500
+DATA : go_handlerd_0500 TYPE REF TO lcl_handler.
+
+"   - ALV INFO 0500
+DATA : BEGIN OF gs_infod_0500.
+DATA : cellscol TYPE lvc_t_scol.
+    INCLUDE TYPE zsssmd0803.
+DATA : END OF gs_infod_0500.
+DATA : gt_infod_0500 LIKE TABLE OF gs_infod_0500.
+
+
+" ============================================================
+
 LOAD-OF-PROGRAM.
   " Domain Fixed Value 가져오기
   PERFORM get_domain_fixed_values TABLES  gt_dd07v_d
                                   USING  'ZDSSMTYPE'.
   PERFORM get_domain_fixed_values TABLES  gt_dd07v_d
                                   USING  'ZDSSPERSG'.
+  PERFORM get_domain_fixed_values TABLES  gt_dd07v_d
+                                  USING  'ZDSSGESCH'.
+  PERFORM get_domain_fixed_values TABLES  gt_dd07v_d
+                                  USING  'ZDSSESTAT'.
   " 공통 세팅 : exclude (ALV위에 툴바)
   PERFORM set_alv_exclude CHANGING gt_exclude.
   " alv의 기본 세팅
@@ -131,7 +173,12 @@ LOAD-OF-PROGRAM.
                             TABLES    gt_fcatd_0310
                                       gt_sortd_0310
                             USING     '0310'
-                            CHANGING  gs_layod_0310.
+                            CHANGING  gs_layod_0310,
+
+                            TABLES    gt_fcatd_0500
+                                      gt_sortd_0500
+                            USING     '0500'
+                            CHANGING  gs_layod_0500.
 
 ----------------------------------------------------------------------------------
 Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

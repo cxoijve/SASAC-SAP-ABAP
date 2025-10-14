@@ -66,6 +66,617 @@ FORM F4_RRSON .
 
 
 ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_INIT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_INIT .
+
+  ZSSSFI0301-RRSON_T = '04'.
+
+  ZSSSFI0301-RGDAT_T = SY-DATUM+0(6).  " 전기기간
+
+  DATA: LV_DATE_START TYPE SY-DATUM,
+        LV_LAST_DATE  TYPE SY-DATUM.
+
+  " 전기기간(YYYYMM)에서 '01'일자를 붙여서 날짜 생성
+  CONCATENATE ZSSSFI0301-RGDAT_T '01' INTO LV_DATE_START.
+
+  " 해당 월의 마지막 일자를 구하는 함수 호출
+  CALL FUNCTION 'RP_LAST_DAY_OF_MONTHS'
+    EXPORTING
+      DAY_IN            = LV_DATE_START
+    IMPORTING
+      LAST_DAY_OF_MONTH = LV_LAST_DATE.
+
+  " 결과를 전기일 필드에 대입
+  ZSSSFI0301-RGDAT = LV_LAST_DATE.
+
+
+  PERFORM GET_NON_REV_DATA.
+
+  PERFORM GET_JEI_DATA.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Module  F4_FYEAR  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE F4_FYEAR INPUT.
+
+  PERFORM F4_FYEAR.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Form  F4_FYEAR
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM F4_FYEAR .
+
+  DATA: LT_RETURN2 TYPE TABLE OF DDSHRETVAL,
+        LS_RETURN2 TYPE DDSHRETVAL,
+        LT_TAB2    TYPE TABLE OF DFIES,
+        LS_TAB2    TYPE DFIES.
+
+  GT_FYEAR = VALUE #(
+    ( CODE2 = '2020' )
+    ( CODE2 = '2021' )
+    ( CODE2 = '2022' )
+    ( CODE2 = '2023' )
+    ( CODE2 = '2024' )
+    ( CODE2 = '2025' )
+    ( CODE2 = '2026' )
+    ( CODE2 = '2027' )
+    ( CODE2 = '2028' )
+    ( CODE2 = '2029' )
+  ).
+
+  LT_TAB2 = VALUE #(
+    ( FIELDNAME = 'CODE2' OUTPUTLEN = 40 LENG = 40
+      INTLEN = 40 REPTEXT = '회계연도' )
+  ).
+
+
+  CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
+    EXPORTING
+      RETFIELD    = 'CODE2'
+      DYNPPROG    = SY-REPID
+      DYNPNR      = SY-DYNNR
+      DYNPROFIELD = 'ZSSSFI0301-FYEAR'
+      VALUE_ORG   = 'C'
+    TABLES
+      VALUE_TAB   = GT_FYEAR
+      FIELD_TAB   = LT_TAB2
+      RETURN_TAB  = LT_RETURN2
+    EXCEPTIONS
+      OTHERS      = 1.
+
+  IF SY-SUBRC = 0 AND LT_RETURN2 IS NOT INITIAL.
+    READ TABLE LT_RETURN2 INTO LS_RETURN2 INDEX 1.
+    IF SY-SUBRC = 0.
+      " 선택된 CODE2 값을 화면필드에 넣음
+      ZSSSFI0301-FYEAR = LS_RETURN2-FIELDVAL.
+
+    ENDIF.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_JEI_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_JEI_DATA .
+
+  " 라인아이템 정보 취득
+  SELECT JENUM FYEAR JESEQ DEBIT CREDIT CURKY GLACC
+    FROM ZTSSJEI
+    INTO CORRESPONDING FIELDS OF TABLE GT_IDATA.
+
+
+  " 라인아이템 정보 취득
+  SELECT JENUM FYEAR JESEQ DEBIT CREDIT CURKY GLACC
+    FROM ZTSSJEI
+    INTO CORRESPONDING FIELDS OF TABLE GT_IDATA2.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  INSERT_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM INSERT_DATA .
+
+  READ TABLE GT_HDATA INTO GS_HDATA WITH KEY JENUM = GS_HDATA-JENUM.
+
+  " 헤더
+  " 전표 번호 채번
+  DATA: LV_NUM(6)   TYPE N,
+        LV_NUM2(13) TYPE C.
+  CALL FUNCTION 'NUMBER_GET_NEXT'
+    EXPORTING
+      NR_RANGE_NR             = '01'
+      OBJECT                  = 'ZNRSSFI01'
+      TOYEAR                  = SY-DATUM+0(4)
+    IMPORTING
+      NUMBER                  = LV_NUM
+    EXCEPTIONS  " M TYPE -> A
+      INTERVAL_NOT_FOUND      = 1
+      NUMBER_RANGE_NOT_INTERN = 2
+      OBJECT_NOT_FOUND        = 3
+      QUANTITY_IS_0           = 4
+      QUANTITY_IS_NOT_1       = 5
+      INTERVAL_OVERFLOW       = 6
+      BUFFER_OVERFLOW         = 7
+      OTHERS                  = 8.
+  IF SY-SUBRC = 0.
+    LV_NUM2 = 'J' && SY-DATUM+0(4) && LV_NUM.
+    WRITE LV_NUM2.
+  ENDIF.
+
+  DATA: LV_MONTH  TYPE CHAR6,
+        LV_START  TYPE SY-DATUM,
+        LV_NEXTMM TYPE CHAR6,
+        LV_NEXT01 TYPE SY-DATUM.
+
+* 1. 기존 전표 월 추출
+  LV_MONTH = GS_HDATA-RGDAT+0(6).
+
+* 2. 다음달 구하기
+
+  DATA: LV_YEAR TYPE CHAR4,
+        LV_MON  TYPE CHAR2.
+  LV_YEAR = LV_MONTH+0(4).
+  LV_MON  = LV_MONTH+4(2).
+
+  LV_MON = LV_MON + 1.
+  IF LV_MON > 12.
+    LV_MON = '01'.
+    LV_YEAR = LV_YEAR + 1.
+  ENDIF.
+  CONCATENATE LV_YEAR LV_MON INTO LV_NEXTMM.
+
+* 3. 다음 달 1일 날짜 만들기
+  CONCATENATE LV_NEXTMM '01' INTO LV_NEXT01.
+
+
+  " 역분개 전표 데이터(REV/RRSON/RJNUM 없음)
+  MOVE-CORRESPONDING GS_HDATA TO GS_ZTSSJEH.
+
+  GS_ZTSSJEH-JENUM = LV_NUM2.
+  GS_ZTSSJEH-RGDAT = LV_NEXT01.
+  GS_ZTSSJEH-RGDAT = LV_NEXT01.
+  GS_ZTSSJEH-RGTOR = 'E0000001'.
+  GS_ZTSSJEH-REV   = ''.
+  GS_ZTSSJEH-RRSON = ''.
+  GS_ZTSSJEH-RJNUM = ''.
+  APPEND GS_ZTSSJEH TO GT_HDATA.
+
+
+  " 1. 헤더 DB INSERT
+  INSERT ZTSSJEH FROM GS_ZTSSJEH.
+  IF SY-SUBRC <> 0.
+    ROLLBACK WORK.
+    MESSAGE S999(ZMCSS) WITH '헤더 생성 오류' DISPLAY LIKE 'E'.
+    EXIT.
+  ELSE.
+    COMMIT WORK.
+  ENDIF.
+
+  " 신규 전표번호/JENUM, FYEAR 저장
+  DATA: LV_NEW_JENUM TYPE ZTSSJEH-JENUM,
+        LV_NEW_FYEAR TYPE ZTSSJEH-FYEAR.
+
+  LV_NEW_JENUM = GS_ZTSSJEH-JENUM.
+  LV_NEW_FYEAR = GS_ZTSSJEH-FYEAR.
+
+
+
+  " 2. 아이템 INSERT (신규 전표번호/연도로 연결)
+  LOOP AT GT_IDATA INTO GS_IDATA WHERE JENUM = GS_HDATA-JENUM.
+
+    CLEAR GS_ZTSSJEI.
+    MOVE-CORRESPONDING GS_IDATA TO GS_ZTSSJEI.
+
+    " 새 전표번호 변경 후 저장
+    GS_ZTSSJEI-JENUM = LV_NEW_JENUM.
+    GS_ZTSSJEI-FYEAR = LV_NEW_FYEAR.
+
+    " 금액 필드는 음수로 전환 (0이면 0 유지)
+    GS_ZTSSJEI-DEBIT  = - ABS( GS_ZTSSJEI-DEBIT ).
+    GS_ZTSSJEI-CREDIT = - ABS( GS_ZTSSJEI-CREDIT ).
+
+    INSERT ZTSSJEI FROM GS_ZTSSJEI.
+
+    IF SY-SUBRC <> 0.
+      ROLLBACK WORK.
+      MESSAGE S999(ZMCSS) WITH '아이템 생성 오류' DISPLAY LIKE 'E'.
+      EXIT.
+    ELSE.
+      COMMIT WORK.
+    ENDIF.
+  ENDLOOP.
+
+
+  " 문자열 템플릿, 호스트 변수 @{} escape 포함
+  DATA(LV_RRSON) = |{ GS_HDATA-JENUM } 수정으로 인한 역분개|.
+
+  UPDATE ZTSSJEH SET REV   = 'X',
+                     RRSON = @LV_RRSON,
+                     RJNUM = @GS_ZTSSJEH-JENUM
+               WHERE JENUM = @GS_HDATA-JENUM
+                 AND FYEAR = @GS_HDATA-FYEAR.
+
+  IF SY-SUBRC <> 0.
+    MESSAGE S999(ZMCSS) WITH '전표 역분개 필드 업데이트 오류' DISPLAY LIKE 'E'.
+    EXIT.
+  ELSE.
+    COMMIT WORK.
+    MESSAGE S999(ZMCSS) WITH '역분개 전표번호: ' GS_ZTSSJEH-JENUM DISPLAY LIKE 'E'.
+
+  ENDIF.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_NON_REV_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_NON_REV_DATA .
+
+  " REV가 빈 값인 JENUM에서, REV가 X인 경우의 RJNUM과 값이 같은 JENUM은 제외
+  DATA: LT_REVRJ TYPE TABLE OF ZTSSJEH-RJNUM.
+
+  SELECT RJNUM
+    FROM ZTSSJEH
+    WHERE REV = 'X'
+    INTO TABLE @LT_REVRJ.
+
+  SELECT JENUM FYEAR REV RJNUM
+    FROM ZTSSJEH
+    INTO CORRESPONDING FIELDS OF TABLE GT_NREV
+    WHERE REV = ''.
+
+  LOOP AT LT_REVRJ INTO DATA(LV_RJNUM).
+    DELETE GT_NREV WHERE JENUM = LV_RJNUM.
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Module  F4_JENUM  INPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE F4_JENUM INPUT.
+
+  PERFORM F4_JENUM.
+
+
+
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Form  F4_JENUM
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM F4_JENUM .
+
+  DATA: LT_VALUE_TAB TYPE STANDARD TABLE OF TY_VALUE_TAB,
+        LT_RETURN3   TYPE TABLE OF DDSHRETVAL,
+        LS_RETURN3   TYPE DDSHRETVAL,
+        LT_TAB3      TYPE TABLE OF DFIES,
+        LS_TAB3      TYPE DFIES.
+
+
+  " 화면에 있는 fyear일 경우 그에 해당하는 연도와 전표번호만 나오도록
+  IF ZSSSFI0301-FYEAR IS NOT INITIAL.
+
+    " GT_NREV 내에 해당 FYEAR 존재 여부 확인
+    READ TABLE GT_NREV WITH KEY FYEAR = ZSSSFI0301-FYEAR TRANSPORTING NO FIELDS.
+    IF SY-SUBRC <> 0.
+      CLEAR ZSSSFI0301-FYEAR.
+      MESSAGE I001(ZSS) WITH '입력한 회계연도에 해당하는 데이터가 없습니다.'.
+
+      DATA LT_FIELDS TYPE TABLE OF DYNPREAD.
+      LT_FIELDS = VALUE #( ( FIELDNAME = 'ZSSSFI0301-FYEAR' FIELDVALUE = SPACE ) ).
+
+      CALL FUNCTION 'DYNP_VALUES_UPDATE'
+        EXPORTING
+          DYNAME     = SY-REPID    " Program Name
+          DYNUMB     = SY-DYNNR    " Screen number
+        TABLES
+          DYNPFIELDS = LT_FIELDS.    " Screen field value reset table
+      IF SY-SUBRC <> 0.
+*       MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*                  WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+      ENDIF.
+
+      RETURN.
+
+    ENDIF.
+  ENDIF.
+
+
+
+  " GT_NREV
+  LOOP AT GT_NREV INTO DATA(LS_NREV).
+    IF ZSSSFI0301-FYEAR IS INITIAL OR LS_NREV-FYEAR = ZSSSFI0301-FYEAR.
+      APPEND VALUE TY_VALUE_TAB( JENUM = LS_NREV-JENUM FYEAR = LS_NREV-FYEAR ) TO LT_VALUE_TAB.
+    ENDIF.
+
+*    APPEND VALUE TY_VALUE_TAB( JENUM = LS_NREV-JENUM FYEAR = LS_NREV-FYEAR ) TO LT_VALUE_TAB.
+  ENDLOOP.
+
+  CLEAR: LT_TAB3.
+  APPEND VALUE #( FIELDNAME = 'JENUM' OUTPUTLEN = 40 LENG = 40 INTLEN = 40 REPTEXT = '전표번호' ) TO LT_TAB3.
+  APPEND VALUE #( FIELDNAME = 'FYEAR' OUTPUTLEN = 10 LENG = 10 INTLEN = 10 REPTEXT = '회계연도' ) TO LT_TAB3.
+
+  SORT LT_VALUE_TAB BY JENUM DESCENDING.
+
+
+  CALL FUNCTION 'F4IF_INT_TABLE_VALUE_REQUEST'
+    EXPORTING
+      RETFIELD    = 'JENUM'
+      DYNPPROG    = SY-REPID
+      DYNPNR      = SY-DYNNR
+      DYNPROFIELD = 'ZSSSFI0301-JENUM'
+      VALUE_ORG   = 'S'
+    TABLES
+      VALUE_TAB   = LT_VALUE_TAB
+      RETURN_TAB  = LT_RETURN3
+    EXCEPTIONS
+      OTHERS      = 1.
+
+  IF SY-SUBRC = 0 AND LT_RETURN3 IS NOT INITIAL.
+    READ TABLE LT_RETURN3 INTO LS_RETURN3 INDEX 1.
+    IF SY-SUBRC = 0.
+      " 선택된 값을 화면필드에 넣음
+      ZSSSFI0301-JENUM = LS_RETURN3-FIELDVAL.
+    ENDIF.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CHECK_DATA_0110
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CHECK_DATA_0110 .
+
+*  PERFORM POPUP_CHECK.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  POPUP_CHECK
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM POPUP_CHECK .
+
+*  CLEAR GV_SUBRC.
+
+  DATA GV_ANSWER.
+
+***  CALL FUNCTION 'POPUP_WITH_2_BUTTONS_TO_CHOOSE'
+***    EXPORTING
+****     DEFAULTOPTION = '1'
+***      DIAGNOSETEXT1 = 'Info'
+****     DIAGNOSETEXT2 = ' '
+****     DIAGNOSETEXT3 = ' '
+***      TEXTLINE1     = '진행하시겠습니까? '
+****     TEXTLINE2     = ' '
+****     TEXTLINE3     = ' '
+***      TEXT_OPTION1  = '네'
+***      TEXT_OPTION2  = '아니오'
+***      TITEL         = 'Info'
+***    IMPORTING
+***      ANSWER        = GV_ANSWER.
+
+
+  CALL FUNCTION 'POPUP_TO_CONFIRM'
+    EXPORTING
+      TITLEBAR       = 'Info'
+      TEXT_QUESTION  = '진행하시겠습니까? '
+      TEXT_BUTTON_1  = '네'
+      TEXT_BUTTON_2  = '아니오'
+*     DISPLAY_CANCEL_BUTTON = ''
+    IMPORTING
+      ANSWER         = GV_ANSWER
+    EXCEPTIONS
+      TEXT_NOT_FOUND = 1
+      OTHERS         = 2.
+  IF SY-SUBRC <> 0.
+    GV_SUBRC = 4.
+    RETURN.
+  ENDIF.
+
+  CASE GV_ANSWER.
+    WHEN '1' .
+*      GV_SUBRC = 0.
+
+
+    WHEN '2' .
+*      GV_SUBRC = 4.
+
+*    WHEN OTHERS.
+*      GV_SUBRC = 4.
+  ENDCASE.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  INSERT_DATA_0110
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM INSERT_DATA_0110 .
+
+
+  SELECT JENUM FYEAR JTYPE STEXT CURKY RGDAT RGTOR REV
+         RRSON RJNUM
+    FROM ZTSSJEH
+    INTO CORRESPONDING FIELDS OF TABLE GT_HDATA.
+
+  READ TABLE GT_HDATA INTO GS_HDATA WITH KEY JENUM = ZSSSFI0301-JENUM.
+
+  " 헤더
+  " 전표 번호 채번
+  DATA: LV_NUM(6)   TYPE N,
+        LV_NUM2(13) TYPE C.
+  CALL FUNCTION 'NUMBER_GET_NEXT'
+    EXPORTING
+      NR_RANGE_NR             = '01'
+      OBJECT                  = 'ZNRSSFI01'
+      TOYEAR                  = SY-DATUM+0(4)
+    IMPORTING
+      NUMBER                  = LV_NUM
+    EXCEPTIONS  " M TYPE -> A
+      INTERVAL_NOT_FOUND      = 1
+      NUMBER_RANGE_NOT_INTERN = 2
+      OBJECT_NOT_FOUND        = 3
+      QUANTITY_IS_0           = 4
+      QUANTITY_IS_NOT_1       = 5
+      INTERVAL_OVERFLOW       = 6
+      BUFFER_OVERFLOW         = 7
+      OTHERS                  = 8.
+  IF SY-SUBRC = 0.
+    LV_NUM2 = 'J' && SY-DATUM+0(4) && LV_NUM.
+    WRITE LV_NUM2.
+  ENDIF.
+
+  DATA: LV_MONTH  TYPE CHAR6,
+        LV_START  TYPE SY-DATUM,
+        LV_NEXTMM TYPE CHAR6,
+        LV_NEXT01 TYPE SY-DATUM.
+
+* 1. 기존 전표 월 추출
+  LV_MONTH = GS_HDATA-RGDAT+0(6).
+
+* 2. 다음달 구하기
+
+  DATA: LV_YEAR TYPE CHAR4,
+        LV_MON  TYPE CHAR2.
+  LV_YEAR = LV_MONTH+0(4).
+  LV_MON  = LV_MONTH+4(2).
+
+  LV_MON = LV_MON + 1.
+  IF LV_MON > 12.
+    LV_MON = '01'.
+    LV_YEAR = LV_YEAR + 1.
+  ENDIF.
+  CONCATENATE LV_YEAR LV_MON INTO LV_NEXTMM.
+
+* 3. 다음 달 1일 날짜 만들기
+  CONCATENATE LV_NEXTMM '01' INTO LV_NEXT01.
+
+
+  " 역분개 전표 데이터(REV/RRSON/RJNUM 없음)
+  MOVE-CORRESPONDING GS_HDATA TO GS_ZTSSJEH.
+
+  GS_ZTSSJEH-JENUM = LV_NUM2.
+  GS_ZTSSJEH-RGDAT = LV_NEXT01.
+  GS_ZTSSJEH-RGTOR = 'E0000001'.
+  GS_ZTSSJEH-REV   = ''.
+  GS_ZTSSJEH-RRSON = ''.
+  GS_ZTSSJEH-RJNUM = ''.
+*  APPEND GS_ZTSSJEH TO GT_HDATA.
+
+
+  " 1. 헤더 DB INSERT
+  INSERT ZTSSJEH FROM GS_ZTSSJEH.
+  IF SY-SUBRC <> 0.
+    ROLLBACK WORK.
+    MESSAGE S999(ZMCSS) WITH '헤더 생성 오류' DISPLAY LIKE 'E'.
+    EXIT.
+  ELSE.
+    COMMIT WORK.
+  ENDIF.
+
+  " 신규 전표번호/JENUM, FYEAR 저장
+  DATA: LV_NEW_JENUM TYPE ZTSSJEH-JENUM,
+        LV_NEW_FYEAR TYPE ZTSSJEH-FYEAR.
+
+  LV_NEW_JENUM = GS_ZTSSJEH-JENUM.
+  LV_NEW_FYEAR = GS_ZTSSJEH-FYEAR.
+
+
+
+  " 2. 아이템 INSERT (신규 전표번호/연도로 연결)
+  LOOP AT GT_IDATA INTO GS_IDATA WHERE JENUM = GS_HDATA-JENUM.
+    CLEAR GS_ZTSSJEI.
+    MOVE-CORRESPONDING GS_IDATA TO GS_ZTSSJEI.
+
+    " 새 전표번호 변경 후 저장
+    GS_ZTSSJEI-JENUM = LV_NEW_JENUM.
+    GS_ZTSSJEI-FYEAR = LV_NEW_FYEAR.
+
+    " 금액 필드는 음수로 전환 (0이면 0 유지)
+    GS_ZTSSJEI-DEBIT  = - ABS( GS_ZTSSJEI-DEBIT ).
+    GS_ZTSSJEI-CREDIT = - ABS( GS_ZTSSJEI-CREDIT ).
+
+    INSERT ZTSSJEI FROM GS_ZTSSJEI.
+
+    IF SY-SUBRC <> 0.
+      ROLLBACK WORK.
+      MESSAGE S999(ZMCSS) WITH '아이템 생성 오류' DISPLAY LIKE 'E'.
+      EXIT.
+    ELSE.
+      COMMIT WORK.
+    ENDIF.
+  ENDLOOP.
+
+
+  " 문자열 템플릿, 호스트 변수 @{} escape 포함
+  DATA(LV_RRSON) = |{ GS_HDATA-JENUM } 수정으로 인한 역분개|.
+
+  UPDATE ZTSSJEH SET REV   = 'X',
+                     RRSON = @LV_RRSON,
+                     RJNUM = @GS_ZTSSJEH-JENUM
+               WHERE JENUM = @GS_HDATA-JENUM
+                 AND FYEAR = @GS_HDATA-FYEAR.
+
+  IF SY-SUBRC <> 0.
+    MESSAGE S999(ZMCSS) WITH '전표 역분개 필드 업데이트 오류' DISPLAY LIKE 'E'.
+    EXIT.
+  ELSE.
+    COMMIT WORK.
+    MESSAGE S999(ZMCSS) WITH '역분개 전표번호: ' GS_ZTSSJEH-JENUM.
+
+  ENDIF.
+
+ENDFORM.
 
 ----------------------------------------------------------------------------------
 Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

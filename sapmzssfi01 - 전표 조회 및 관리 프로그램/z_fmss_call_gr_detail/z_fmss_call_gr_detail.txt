@@ -1,0 +1,31 @@
+FUNCTION z_fmss_call_gr_detail.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(IV_GRNUM) TYPE  ZTSSGRH-GRNUM
+*"----------------------------------------------------------------------
+
+*  PERFORM get_grdata_bygrnum USING iv_grnum
+*                             CHANGING gv_subrc.
+
+  DATA : ls_grhead LIKE LINE OF gt_grdata,
+         lt_gritem LIKE gt_gritem,
+         ls_gritem LIKE LINE OF lt_gritem.
+
+  SELECT SINGLE grnum rstat grdat jenum fyear stext rgdat rgtor
+   INTO CORRESPONDING FIELDS OF ls_grhead
+   FROM ztssgrh
+   WHERE grnum = iv_grnum.
+
+  IF gv_subrc <> 0.
+    MESSAGE i130(zmcss).
+    return.
+  ENDIF.
+  SET PARAMETER ID 'ZSSGR' FIELD iv_grnum.
+  CALL TRANSACTION 'ZSSMM02' .
+
+
+ENDFUNCTION.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

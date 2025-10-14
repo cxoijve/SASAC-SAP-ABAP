@@ -1,0 +1,24 @@
+FUNCTION-POOL ZFGSS26.                   "MESSAGE-ID ..
+
+
+DATA : gv_subrc type sy-subrc.
+
+DATA : BEGIN OF gs_grdata,
+         color(4).
+    INCLUDE TYPE zsssmm0211.
+DATA : END OF gs_grdata,
+gt_grdata LIKE TABLE OF gs_grdata.
+
+DATA : BEGIN OF gs_gritem,
+         color(4),
+         it_col   TYPE lvc_t_scol.
+    INCLUDE TYPE zsssmm0216.
+DATA : END OF gs_gritem,
+gt_gritem LIKE TABLE OF gs_gritem.
+
+TABLES : zsssmm0211.
+
+* INCLUDE LZFGSS_26MDD...                    " Local class definition
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

@@ -4,6 +4,15 @@
 *&---------------------------------------------------------------------*
 PROGRAM SAPMZSSFI01.
 
+" Tree
+* Tree Node
+DATA: GS_TREE TYPE MTREESNODE,
+      GT_TREE LIKE TABLE OF GS_TREE.
+
+* Tree Object
+DATA: GO_CONT TYPE REF TO CL_GUI_CUSTOM_CONTAINER,
+      GO_TREE TYPE REF TO CL_GUI_SIMPLE_TREE.
+
 " Domain
 DATA: GT_DOMAIN TYPE TABLE OF DD07V,
       GS_DOMAIN TYPE DD07V.

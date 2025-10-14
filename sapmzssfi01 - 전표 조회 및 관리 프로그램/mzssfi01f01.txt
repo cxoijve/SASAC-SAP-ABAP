@@ -145,6 +145,7 @@ FORM CREATE_ALV_0100 .
 *  "Event Register
 *  PERFORM REQ_EVENT_FOR_ALV.
 
+
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  SET_LAYO
@@ -1593,7 +1594,10 @@ FORM CALLD_PROCESS .
     IF GV_SUBRC = 0.
       PERFORM SET_DATA_0300.
       CALL SCREEN 300.
+
       SET PARAMETER ID 'JEN' FIELD SPACE.
+
+
     ELSE.
       MESSAGE '해당 전표를 찾을 수 없습니다.' TYPE 'E'.
     ENDIF.
@@ -1878,6 +1882,162 @@ FORM CAL_SUM_DC_200  CHANGING CV_DEBIT CV_CREDIT.
 
   CV_DEBIT = LV_DEBIT2.
   CV_CREDIT = LV_CREDIT2.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_TREE_OBJECT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_TREE_OBJECT .
+
+  " Tree Object
+  IF GO_CONT IS NOT INITIAL. RETURN. ENDIF.
+
+  CREATE OBJECT GO_CONT
+    EXPORTING
+*     parent         =
+      CONTAINER_NAME = 'CON_TREE'
+*     style          =
+*     lifetime       = lifetime_default
+*     repid          =
+*     dynnr          =
+*     no_autodef_progid_dynnr     =
+    EXCEPTIONS
+      OTHERS         = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  IF GO_TREE IS NOT INITIAL. RETURN. ENDIF.
+  CREATE OBJECT GO_TREE
+    EXPORTING
+*     lifetime            =
+      PARENT              = GO_CONT
+*     shellstyle          =
+      NODE_SELECTION_MODE = CL_GUI_SIMPLE_TREE=>NODE_SEL_MODE_SINGLE
+*     hide_selection      =
+*     name                =
+    EXCEPTIONS
+      OTHERS              = 6.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+* Event
+  DATA: LS_EVENT TYPE CNTL_SIMPLE_EVENT,
+        LT_EVENT LIKE TABLE OF LS_EVENT.
+
+  LS_EVENT-EVENTID = CL_GUI_SIMPLE_TREE=>EVENTID_NODE_DOUBLE_CLICK.
+*  ls_event-appl_event = 'X'. " PAI Event
+  APPEND LS_EVENT TO LT_EVENT.
+  CALL METHOD GO_TREE->SET_REGISTERED_EVENTS
+    EXPORTING
+      EVENTS = LT_EVENT.
+
+  SET HANDLER LCL_HANDLER_TREE=>ON_NODE_DOUBLE_CLICK FOR GO_TREE.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_TREE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_TREE .
+
+* Tree Data
+  PERFORM GET_TREE_DATA.
+
+* Tree Display
+  CALL METHOD GO_TREE->ADD_NODES
+    EXPORTING
+      TABLE_STRUCTURE_NAME = 'MTREESNODE'
+      NODE_TABLE           = GT_TREE
+*  EXCEPTIONS
+*     error_in_node_table  = 1
+*     failed               = 2
+*     dp_error             = 3
+*     table_structure_name_not_found = 4
+*     others               = 5
+    .
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+* Expand Level
+*  CALL METHOD go_tree->expand_root_nodes
+*    EXPORTING
+*      level_count    = 1
+*      expand_subtree = ''.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_TREE_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_TREE_DATA .
+
+  IF GT_TREE IS NOT INITIAL. RETURN. ENDIF.
+
+* Tree Node
+  CLEAR GS_TREE.
+  "1lv Root
+  GS_TREE-NODE_KEY = '1000'.
+  GS_TREE-ISFOLDER = 'X'. " Folder Image
+  GS_TREE-EXPANDER = ''. " Open
+  GS_TREE-TEXT = 'Root'.
+  APPEND GS_TREE TO GT_TREE.
+
+  CLEAR GS_TREE.
+  " 2lv 1
+  GS_TREE-NODE_KEY = '1100'.
+  GS_TREE-RELATKEY = '1000'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-N_IMAGE = ICON_DISPLAY. " Icon Name ( Table ICONS )
+  GS_TREE-TEXT = '2lv-01'.
+  APPEND GS_TREE TO GT_TREE.
+
+  CLEAR GS_TREE.
+  " 2lv 1
+  GS_TREE-NODE_KEY = '1200'.
+  GS_TREE-RELATKEY = '1000'. "Parent
+  GS_TREE-ISFOLDER = 'X'. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2lv-02'.
+  APPEND GS_TREE TO GT_TREE.
+
+  CLEAR GS_TREE.
+  " 3lv 1
+  GS_TREE-NODE_KEY = '1220'.
+  GS_TREE-RELATKEY = '1200'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-N_IMAGE = ICON_SPACE." ICON_DISPLAY. " Icon Name ( Table ICONS ), Type Group icon
+  GS_TREE-TEXT = '3lv-01'.
+  APPEND GS_TREE TO GT_TREE.
+
+  CLEAR GS_TREE.
+  " 3lv 1
+  GS_TREE-NODE_KEY = '1300'.
+  GS_TREE-RELATKEY = '1000'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-N_IMAGE = ICON_SPACE." ICON_DISPLAY. " Icon Name ( Table ICONS ), Type Group icon
+  GS_TREE-TEXT = 'New'.
+  APPEND GS_TREE TO GT_TREE.
 
 ENDFORM.
 
