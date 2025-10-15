@@ -3,20 +3,35 @@ FUNCTION-POOL zfgss29.                      "MESSAGE-ID ..
 * INCLUDE LZFGSS29D...                       " Local class definition
 
 DATA : gv_subrc TYPE sy-subrc,
-       ok_code  TYPE sy-ucomm.
+       ok_code  TYPE sy-ucomm,
+       gv_dynnr TYPE sy-dynnr.
+
+DATA : gv_subrc_0200 TYPE sy-subrc,
+       ok_code_0200  TYPE sy-ucomm,
+       gv_dynnr_0200 TYPE sy-dynnr.
 
 DATA : go_con_0100f TYPE  REF TO cl_gui_custom_container,
-       go_alv_0100f TYPE REF TO cl_gui_alv_grid.
+       go_alv_0100f TYPE REF TO cl_gui_alv_grid,
+       go_con_0200f TYPE  REF TO cl_gui_custom_container,
+       go_alv_0200f TYPE REF TO cl_gui_alv_grid.
 
 DATA : gt_mivif LIKE TABLE OF zsssmm03012,
        gs_mivif LIKE LINE OF gt_mivif.
 
-DATA : gs_layo_0100f TYPE lvc_s_layo.
+DATA : gt_cstidf LIKE TABLE OF zsssmd06001,
+       gs_cstidf LIKE LINE OF gt_cstidf.
+
+DATA : gs_layo_0100f TYPE lvc_s_layo,
+       gs_layo_0200f TYPE lvc_s_layo.
 
 DATA : gt_fcat_0100f TYPE lvc_t_fcat,
-       gs_fcat_0100f LIKE LINE OF gt_fcat_0100f.
+       gs_fcat_0100f LIKE LINE OF gt_fcat_0100f,
+       gt_fcat_0200f TYPE lvc_t_fcat,
+       gs_fcat_0200f LIKE LINE OF gt_fcat_0200f.
 
-TABLES        zsssmm03014.
+TABLES : zsssmm03014,
+         zsssmd06001.
+
 
 
 CLASS lcl_handler DEFINITION.
@@ -25,17 +40,44 @@ CLASS lcl_handler DEFINITION.
     CLASS-METHODS on_hotspot_click FOR EVENT hotspot_click OF cl_gui_alv_grid
       IMPORTING es_row_no e_column_id.
 
+    CLASS-METHODS on_toolbar FOR EVENT toolbar OF cl_gui_alv_grid
+      IMPORTING e_object.
+
 ENDCLASS.
 
 CLASS lcl_handler IMPLEMENTATION.
   METHOD on_hotspot_click.
-    MESSAGE i999(zmcss) WITH '°ð Ãß°¡µÊ'.
-*    DATA :row_id TYPE i.
-*
-*    row_id = es_row_no-row_id.
-*
-*    PERFORM alv_cl_double_click USING e_column_id
-*                                      row_id.
+
+
+    DATA :row_id  TYPE i,
+          gs_list LIKE LINE OF gt_mivif.
+
+    row_id = es_row_no-row_id.
+
+    IF sy-dynnr = '0100'.
+
+      CASE e_column_id.
+        WHEN 'GRNUM'.
+
+          READ TABLE gt_mivif INTO gs_list INDEX row_id.
+          CALL FUNCTION 'Z_FMSS_CALL_GR_DETAIL'
+            EXPORTING
+              iv_grnum = gs_list-grnum.
+      ENDCASE.
+
+    ELSEIF sy-dynnr = '0200'.
+
+
+    ENDIF.
+
+  ENDMETHOD.
+  METHOD on_toolbar.
+    DATA ls_button TYPE stb_button.
+
+    CLEAR e_object->mt_toolbar.
+
+    ls_button-butn_type = '3'. "Separator
+    APPEND ls_button TO e_object->mt_toolbar.
   ENDMETHOD.
 ENDCLASS.
 

@@ -277,32 +277,12 @@ FORM DISPLAY_ALV_0200 .
 
   CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-*     I_BUFFER_ACTIVE =
-*     I_BYPASSING_BUFFER            =
-*     I_CONSISTENCY_CHECK           =
-*     I_STRUCTURE_NAME              =
-*     IS_VARIANT      =
-*     I_SAVE          =
-*     I_DEFAULT       = 'X'
-      IS_LAYOUT       = GS_LAYO
-*     IS_PRINT        =
-*     IT_SPECIAL_GROUPS             =
-*     IT_TOOLBAR_EXCLUDING          =
-*     IT_HYPERLINK    =
-*     IT_ALV_GRAPHICS =
-*     IT_EXCEPT_QINFO =
-*     IR_SALV_ADAPTER =
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
-      IT_OUTTAB       = GT_HDATA
-      IT_FIELDCATALOG = GT_FCAT
-      IT_SORT         = GT_SORT
-*     IT_FILTER       =
-*  EXCEPTIONS
-*     INVALID_PARAMETER_COMBINATION = 1
-*     PROGRAM_ERROR   = 2
-*     TOO_MANY_LINES  = 3
-*     OTHERS          = 4
-    .
+      IT_OUTTAB            = GT_HDATA
+      IT_FIELDCATALOG      = GT_FCAT
+      IT_SORT              = GT_SORT.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
@@ -427,7 +407,7 @@ FORM SET_FCAT_0300 .
         'FYEAR' '5' '회계연도',
         'RRGDAT' '6' '역분개 전기일',
         'RJNUM' '7' '역분개 전표번호',
-        'RRSON' '8' '역분개 사유',
+        'RSTEXT' '8' '역분개 사유',
         'RTOPRC' '9' '총 금액',
         'CURKY' '10' '통화 키',
         'RGTOR' '11' '등록자 코드',
@@ -483,16 +463,17 @@ FORM DISPLAY_ALV_0300 .
 
   CALL METHOD GO_ALV2->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT       = GS_LAYO
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
-      IT_OUTTAB       = GT_ADATA
-      IT_FIELDCATALOG = GT_FCAT
-      IT_SORT         = GT_SORT2
+      IT_OUTTAB            = GT_ADATA
+      IT_FIELDCATALOG      = GT_FCAT
+      IT_SORT              = GT_SORT2
 *  EXCEPTIONS
 *     INVALID_PARAMETER_COMBINATION = 1
-*     PROGRAM_ERROR   = 2
-*     TOO_MANY_LINES  = 3
-*     OTHERS          = 4
+*     PROGRAM_ERROR        = 2
+*     TOO_MANY_LINES       = 3
+*     OTHERS               = 4
     .
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
@@ -755,9 +736,9 @@ FORM SET_SCREEN_0200 .
 
   LOOP AT GT_HDATA INTO GS_HDATA.
     IF GS_HDATA-REV = 'X'.
-      GS_HDATA-LIGHT = '1'.
-    ELSE.
       GS_HDATA-LIGHT = '3'.
+    ELSE.
+      GS_HDATA-LIGHT = '1'.
     ENDIF.
 
     " 차변이 없을 경우 대변 정보 출력
@@ -798,14 +779,27 @@ FORM SET_SCREEN_0300 .
 
   PERFORM GET_ALL_JEH_DATA.
 
+  PERFORM GET_REV_JEH_DATA.
 
 
   LOOP AT GT_ADATA INTO GS_ADATA.
     IF GS_ADATA-REV = 'X'.
-      GS_ADATA-LIGHT = '1'.
-    ELSE.
       GS_ADATA-LIGHT = '3'.
+    ELSE.
+      GS_ADATA-LIGHT = '1'.
     ENDIF.
+
+
+    " GT_RVDATA에서 JENUM = GS_ADATA-RJNUM 인 행 찾기
+    IF GS_ADATA-REV = 'X'.
+      " GT_RVDATA에서 JENUM = GS_ADATA-RJNUM 인 행 찾기
+      READ TABLE GT_RVDATA INTO GS_RVDATA WITH KEY JENUM = GS_ADATA-RJNUM.
+      IF SY-SUBRC = 0.
+        GS_ADATA-RRGDAT = GS_RVDATA-RGDAT.
+        GS_ADATA-RSTEXT = GS_RVDATA-STEXT.
+      ENDIF.
+    ENDIF.
+
 
     " 차변이 없을 경우 대변 정보 출력
     READ TABLE GT_TOPRC INTO GS_TOPRC WITH KEY JENUM = GS_ADATA-JENUM.
@@ -818,9 +812,6 @@ FORM SET_SCREEN_0300 .
 
     " 추가 정보 취득
     PERFORM MODIFY_DATA_0300.
-
-    " 역분개 전표번호에 해당하는 전기일
-    PERFORM GET_RRGDAT.
 
     " 역분개 전표번호에 해당하는 총 금액
     READ TABLE GT_TOPRC INTO GS_TOPRC WITH KEY JENUM = GS_ADATA-RJNUM.
@@ -1039,22 +1030,6 @@ FORM F4_RRSON .
 
 ENDFORM.
 *&---------------------------------------------------------------------*
-*&      Form  GET_RRGDAT
-*&---------------------------------------------------------------------*
-*       text
-*----------------------------------------------------------------------*
-*  -->  p1        text
-*  <--  p2        text
-*----------------------------------------------------------------------*
-FORM GET_RRGDAT .
-
-  SELECT SINGLE RGDAT
-    INTO GS_ADATA-RRGDAT
-    FROM ZTSSJEH
-    WHERE RJNUM = GS_ADATA-RJNUM.
-
-ENDFORM.
-*&---------------------------------------------------------------------*
 *&      Form  SEL_ROWS_0200
 *&---------------------------------------------------------------------*
 *       text
@@ -1214,42 +1189,50 @@ FORM INSERT_DATA .
       WRITE LV_NUM2.
     ENDIF.
 
-    DATA: LV_MONTH  TYPE CHAR6,
-          LV_START  TYPE SY-DATUM,
-          LV_NEXTMM TYPE CHAR6,
-          LV_NEXT01 TYPE SY-DATUM.
 
-* 1. 기존 전표 월 추출
-    LV_MONTH = GS_HDATA-RGDAT+0(6).
+    " 역분개 전기일 계산
+    DATA: LV_YEAR     TYPE CHAR4,
+          LV_MON      TYPE CHAR2,
+          LV_NEXT01   TYPE D,
+          LV_LAST_DAY TYPE D,
+          LV_MONTH    TYPE CHAR6.
 
-* 2. 다음달 구하기
+    LV_MONTH = SY-DATUM(6). " 예: '202510' (연월)
 
-    DATA: LV_YEAR TYPE CHAR4,
-          LV_MON  TYPE CHAR2.
     LV_YEAR = LV_MONTH+0(4).
     LV_MON  = LV_MONTH+4(2).
 
-    LV_MON = LV_MON + 1.
-    IF LV_MON > 12.
-      LV_MON = '01'.
-      LV_YEAR = LV_YEAR + 1.
-    ENDIF.
-    CONCATENATE LV_YEAR LV_MON INTO LV_NEXTMM.
+    " 이번달 1일 날짜 생성
+    CONCATENATE LV_YEAR LV_MON '01' INTO LV_NEXT01.
 
-* 3. 다음 달 1일 날짜 만들기
-    CONCATENATE LV_NEXTMM '01' INTO LV_NEXT01.
+    " 이번달 말일 구하기 (FUNCTION MODULE 호출)
+    CALL FUNCTION 'LAST_DAY_OF_MONTHS'
+      EXPORTING
+        DAY_IN            = LV_NEXT01
+      IMPORTING
+        LAST_DAY_OF_MONTH = LV_LAST_DAY
+      EXCEPTIONS
+        OTHERS            = 1.
+
+    IF SY-SUBRC <> 0.
+      " 에러 처리
+    ENDIF.
+
+
 
 
     " 역분개 전표 데이터(REV/RRSON/RJNUM 없음)
     MOVE-CORRESPONDING GS_HDATA TO GS_ZTSSJEH.
 
     GS_ZTSSJEH-JENUM = LV_NUM2.
-    GS_ZTSSJEH-RGDAT = LV_NEXT01.
+    GS_ZTSSJEH-RGDAT = LV_LAST_DAY.
     GS_ZTSSJEH-RGTOR = 'E0000001'.
     GS_ZTSSJEH-REV   = ''.
     GS_ZTSSJEH-RRSON = ''.
     GS_ZTSSJEH-RJNUM = ''.
-    APPEND GS_ZTSSJEH TO GT_HDATA.
+    GS_ZTSSJEH-STEXT = |{ GS_HDATA-JENUM } 수정에 따른 역분개 전표|.
+
+*    APPEND GS_ZTSSJEH TO GT_HDATA.
 
 
     " 1. 헤더 DB INSERT
@@ -1313,6 +1296,57 @@ FORM INSERT_DATA .
       COMMIT WORK.
 
     ENDIF.
+
+    " 지급, 수금 역분개 후 역분개된 전표번호로 IV UPDATE
+
+    READ TABLE GT_MHDATA WITH  KEY APNUM = GS_HDATA-JENUM
+                                   APFYR = GS_HDATA-FYEAR
+          INTO GS_MHDATA.
+
+    IF SY-SUBRC EQ 0.
+
+      UPDATE ZTSSMIVH
+        SET APNUM = @GS_ZTSSJEH-JENUM,
+            FYEAR = @GS_ZTSSJEH-FYEAR
+        WHERE JENUM = @GS_MHDATA-JENUM
+          AND FYEAR = @GS_MHDATA-FYEAR.
+
+      IF SY-SUBRC <> 0.
+
+        MESSAGE S999(ZMCSS) WITH 'AP 전표번호 업데이트 오류' DISPLAY LIKE 'E'.
+
+      ELSE.
+
+        COMMIT WORK.
+
+      ENDIF.
+    ENDIF.
+
+
+
+    READ TABLE GT_SHDATA WITH  KEY ARNUM = GS_HDATA-JENUM
+                                   ARFYR = GS_HDATA-FYEAR
+          INTO GS_SHDATA.
+
+    IF SY-SUBRC EQ 0.
+
+      UPDATE ZTSSSIVH
+        SET ARNUM = @GS_ZTSSJEH-JENUM,
+            FYEAR = @GS_ZTSSJEH-FYEAR
+        WHERE JENUM = @GS_SHDATA-JENUM
+          AND FYEAR = @GS_SHDATA-FYEAR.
+
+      IF SY-SUBRC <> 0.
+
+        MESSAGE S999(ZMCSS) WITH 'AR 전표번호 업데이트 오류' DISPLAY LIKE 'E'.
+
+      ELSE.
+
+        COMMIT WORK.
+
+      ENDIF.
+    ENDIF.
+
   ENDLOOP.
 
 
@@ -1344,6 +1378,67 @@ ENDFORM.
 FORM SET_DATA_0200 .
 
   PERFORM GET_JEI_DATA.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DELETE_TOOLBAR
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DELETE_TOOLBAR .
+
+  APPEND CL_GUI_ALV_GRID=>MC_FC_EXCL_ALL TO GT_TOOLBAR.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_MIVH_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_MIVH_DATA .
+
+  SELECT *
+    FROM ZTSSMIVH
+    INTO CORRESPONDING FIELDS OF TABLE GT_MHDATA.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_SIVH_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_SIVH_DATA .
+
+  SELECT *
+      FROM ZTSSSIVH
+      INTO CORRESPONDING FIELDS OF TABLE GT_SHDATA.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_REV_JEH_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_REV_JEH_DATA .
+
+  " GT_RVDATA에 ZTSSJEH 전체 정보 담기
+  SELECT JENUM FYEAR JTYPE STEXT CURKY RGDAT RGTOR
+         RJNUM REV RRSON
+    FROM ZTSSJEH
+    INTO CORRESPONDING FIELDS OF TABLE GT_RVDATA.
+
 
 ENDFORM.
 

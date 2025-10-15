@@ -483,11 +483,12 @@ FORM DISPLAY_ALV_0200 .
 
   CALL METHOD GO_ALV3->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT       = GS_LAYO
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
-      IT_OUTTAB       = GT_IDATA
-      IT_FIELDCATALOG = GT_FCAT
-      IT_SORT         = GT_SORT.
+      IT_OUTTAB            = GT_IDATA
+      IT_FIELDCATALOG      = GT_FCAT
+      IT_SORT              = GT_SORT.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
@@ -608,11 +609,10 @@ FORM SET_INIT .
     IMPORTING
       CALC_DATE = LV_CALC_DATE.
 
+
+
   ZSSSFI0101-RGDATB = LV_CALC_DATE.        " 1달 전
-
   ZSSSFI0101-RGDATE = SY-DATUM.            " 현재일
-
-  ZSSSFI0101-FYEAR = SY-DATUM+0(4).
 
 ENDFORM.
 *&---------------------------------------------------------------------*
@@ -1125,31 +1125,18 @@ FORM DISPLAY_ALV_0300 .
 
   CALL METHOD GO_ALV2->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-*     I_BUFFER_ACTIVE =
-*     I_BYPASSING_BUFFER   =
-*     I_CONSISTENCY_CHECK  =
-*     I_STRUCTURE_NAME     =
-*     IS_VARIANT      =
-*     I_SAVE          =
-*     I_DEFAULT       = 'X'
-      IS_LAYOUT       = GS_LAYO
-*     IS_PRINT        =
-*     IT_SPECIAL_GROUPS    =
-*     IT_TOOLBAR_EXCLUDING = GT_EXCLUDE
-*     IT_HYPERLINK    =
-*     IT_ALV_GRAPHICS =
-*     IT_EXCEPT_QINFO =
-*     IR_SALV_ADAPTER =
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
-      IT_OUTTAB       = GT_ADATA
-      IT_FIELDCATALOG = GT_FCAT
-      IT_SORT         = GT_SORT
-*     IT_FILTER       =
+      IT_OUTTAB            = GT_ADATA
+      IT_FIELDCATALOG      = GT_FCAT
+      IT_SORT              = GT_SORT
+*     IT_FILTER            =
 *  EXCEPTIONS
 *     INVALID_PARAMETER_COMBINATION = 1
-*     PROGRAM_ERROR   = 2
-*     TOO_MANY_LINES  = 3
-*     OTHERS          = 4
+*     PROGRAM_ERROR        = 2
+*     TOO_MANY_LINES       = 3
+*     OTHERS               = 4
     .
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
@@ -1983,11 +1970,15 @@ FORM DISPLAY_TREE .
     GV_FLAG6 = 'X'.
   ENDIF.
 * Expand Level
-*  CALL METHOD go_tree->expand_root_nodes
+*  CALL METHOD GO_TREE->EXPAND_NODE
 *    EXPORTING
-*      level_count    = 1
-*      expand_subtree = ''.
+*      NODE_KEY       = GS_TREE-NODE_KEY
+*      EXPAND_SUBTREE = 'X'.
 
+  CALL METHOD GO_TREE->EXPAND_ROOT_NODES
+    EXPORTING
+      LEVEL_COUNT    = 1
+      EXPAND_SUBTREE = ''.
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Form  GET_TREE_DATA
@@ -2005,65 +1996,165 @@ FORM GET_TREE_DATA .
 
 * Tree Node
   CLEAR GS_TREE.
-  "1lv Root
   GS_TREE-NODE_KEY = '1000'.
   GS_TREE-ISFOLDER = 'X'. " Folder Image
   GS_TREE-EXPANDER = ''. " Open
   GS_TREE-TEXT = '전표유형'.
   APPEND GS_TREE TO GT_TREE.
 
+*
   CLEAR GS_TREE.
   GS_TREE-NODE_KEY = 'WE'.
   GS_TREE-RELATKEY = '1000'. "Parent
-  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-ISFOLDER = 'X'. " Folder Image
   GS_TREE-EXPANDER = ''. " Close
   GS_TREE-TEXT = '입고'.
   APPEND GS_TREE TO GT_TREE.
 
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'WE25'.
+  GS_TREE-RELATKEY = 'WE'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2025'.
+  APPEND GS_TREE TO GT_TREE.
 
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'WE24'.
+  GS_TREE-RELATKEY = 'WE'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2024'.
+  APPEND GS_TREE TO GT_TREE.
+
+*
   CLEAR GS_TREE.
   GS_TREE-NODE_KEY = 'KR'.
   GS_TREE-RELATKEY = '1000'. "Parent
-  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-ISFOLDER = 'X'. " Folder Image
   GS_TREE-EXPANDER = ''. " Close
   GS_TREE-TEXT = '송장검증'.
   APPEND GS_TREE TO GT_TREE.
+
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'KR25'.
+  GS_TREE-RELATKEY = 'KR'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2025'.
+
+  APPEND GS_TREE TO GT_TREE.
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'KR24'.
+  GS_TREE-RELATKEY = 'KR'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2024'.
+  APPEND GS_TREE TO GT_TREE.
+
+
 *
   CLEAR GS_TREE.
   GS_TREE-NODE_KEY = 'KZ'.
   GS_TREE-RELATKEY = '1000'. "Parent
-  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-ISFOLDER = 'X'. " Folder Image
   GS_TREE-EXPANDER = ''. " Close
   GS_TREE-TEXT = '지급'.
   APPEND GS_TREE TO GT_TREE.
 
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'KZ25'.
+  GS_TREE-RELATKEY = 'KZ'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2025'.
+  APPEND GS_TREE TO GT_TREE.
 
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'KZ24'.
+  GS_TREE-RELATKEY = 'KZ'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2024'.
+  APPEND GS_TREE TO GT_TREE.
+
+
+  "
   CLEAR GS_TREE.
   GS_TREE-NODE_KEY = 'WA'.
   GS_TREE-RELATKEY = '1000'. "Parent
-  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-ISFOLDER = 'X'. " Folder Image
   GS_TREE-EXPANDER = ''. " Close
 *  GS_TREE-N_IMAGE = ICON_SPACE." ICON_DISPLAY. " Icon Name ( Table ICONS ), Type Group icon
   GS_TREE-TEXT = '출고'.
   APPEND GS_TREE TO GT_TREE.
 
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'WA25'.
+  GS_TREE-RELATKEY = 'WA'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2025'.
+  APPEND GS_TREE TO GT_TREE.
 
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'WA24'.
+  GS_TREE-RELATKEY = 'WA'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2024'.
+  APPEND GS_TREE TO GT_TREE.
+
+
+  " 청구
   CLEAR GS_TREE.
   GS_TREE-NODE_KEY = 'DR'.
   GS_TREE-RELATKEY = '1000'. "Parent
-  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-ISFOLDER = 'X'. " Folder Image
   GS_TREE-EXPANDER = ''. " Close
   GS_TREE-TEXT = '청구'.
   APPEND GS_TREE TO GT_TREE.
 
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'DR25'.
+  GS_TREE-RELATKEY = 'DR'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2025'.
+  APPEND GS_TREE TO GT_TREE.
 
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'DR24'.
+  GS_TREE-RELATKEY = 'DR'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2024'.
+  APPEND GS_TREE TO GT_TREE.
+
+  " 수금
   CLEAR GS_TREE.
   GS_TREE-NODE_KEY = 'DZ'.
   GS_TREE-RELATKEY = '1000'. "Parent
-  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-ISFOLDER = 'X'. " Folder Image
   GS_TREE-EXPANDER = ''. " Close
 *  GS_TREE-N_IMAGE = ICON_SPACE." ICON_DISPLAY. " Icon Name ( Table ICONS ), Type Group icon
   GS_TREE-TEXT = '수금'.
+  APPEND GS_TREE TO GT_TREE.
+
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'DZ25'.
+  GS_TREE-RELATKEY = 'DZ'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2025'.
+  APPEND GS_TREE TO GT_TREE.
+
+  CLEAR GS_TREE.
+  GS_TREE-NODE_KEY = 'DZ24'.
+  GS_TREE-RELATKEY = 'DZ'. "Parent
+  GS_TREE-ISFOLDER = ''. " Folder Image
+  GS_TREE-EXPANDER = ''. " Close
+  GS_TREE-TEXT = '2024'.
   APPEND GS_TREE TO GT_TREE.
 
 ENDFORM.
@@ -2077,22 +2168,53 @@ ENDFORM.
 *----------------------------------------------------------------------*
 FORM GET_NODE_DATA USING VALUE(PA_KEY).
 
+  READ TABLE GT_TREE INTO GS_TREE WITH KEY NODE_KEY = PA_KEY.
+  IF SY-SUBRC NE 0.
+    RETURN.
+  ENDIF.
 
+* GS_TREE-TEXT가 '2024' 이면 GV_Y2024 'X' 세팅
+  IF GS_TREE-TEXT = '2024'.
+    GV_Y2024 = 'X'.
+    CLEAR: GT_RRGDAT, GS_RRGDAT.
+
+    GS_RRGDAT-SIGN   = 'I'.
+    GS_RRGDAT-OPTION = 'BT'.
+    GS_RRGDAT-LOW    = '20240101'.
+    GS_RRGDAT-HIGH   = '20241231'.
+    APPEND GS_RRGDAT TO GT_RRGDAT.
+
+
+* '2025' 이면 GV_Y2025 'X' 세팅
+  ELSEIF GS_TREE-TEXT = '2025'.
+    GV_Y2025 = 'X'.
+    CLEAR: GT_RRGDAT, GS_RRGDAT.
+
+    GS_RRGDAT-SIGN   = 'I'.
+    GS_RRGDAT-OPTION = 'BT'.
+    GS_RRGDAT-LOW    = '20250101'.
+    GS_RRGDAT-HIGH   = '20251231'.
+    APPEND GS_RRGDAT TO GT_RRGDAT.
+
+
+  ENDIF.
+
+
+
+  CL_GUI_CFW=>SET_NEW_OK_CODE( 'ENTER2' ).
+
+
+  " 기존 SELECT 문 유지
   SELECT JENUM FYEAR JTYPE STEXT CURKY RGDAT
              RGTOR REV RRSON RJNUM
          FROM ZTSSJEH
          INTO CORRESPONDING FIELDS OF TABLE GT_HDATA
          WHERE JENUM IN GT_RJENUM
-          AND FYEAR IN GT_RFYEAR
+*          AND FYEAR IN GT_RFYEAR
           AND RGDAT IN GT_RRGDAT
-          AND JTYPE = PA_KEY
+          AND JTYPE = GS_TREE-RELATKEY
           AND RGTOR IN GT_RRGTOR.
 
-
-
-
-*
-*  PERFORM GET_JEH_DATA.     " 전표 헤더 정보 취득
 
   PERFORM GET_TOPRC_INFO.   " 전표 아이템 금액 가져오기
 
@@ -2100,7 +2222,9 @@ FORM GET_NODE_DATA USING VALUE(PA_KEY).
 
   LOOP AT GT_HDATA INTO GS_HDATA.
     CASE GS_HDATA-JTYPE.
+
       WHEN 'WE'. " 입고
+
         READ TABLE GT_ZTSSGRH INTO GS_ZTSSGRH WITH KEY JENUM = GS_HDATA-JENUM.
 
         IF SY-SUBRC = 0.
@@ -2109,6 +2233,7 @@ FORM GET_NODE_DATA USING VALUE(PA_KEY).
           " 해당 값이 없으면 빈값 유지
           GS_HDATA-REFDOC = ''.
         ENDIF.
+
 
       WHEN 'KR'. " 송장검증
         READ TABLE GT_ZTSSMIVH INTO GS_ZTSSMIVH WITH KEY JENUM = GS_HDATA-JENUM.
@@ -2119,7 +2244,6 @@ FORM GET_NODE_DATA USING VALUE(PA_KEY).
           " 해당 값이 없으면 빈값 유지
           GS_HDATA-REFDOC = ''.
         ENDIF.
-
 
       WHEN 'KZ'. " 지급
         READ TABLE GT_ZTSSMIVH INTO GS_ZTSSMIVH WITH KEY APNUM = GS_HDATA-JENUM.
@@ -2163,6 +2287,7 @@ FORM GET_NODE_DATA USING VALUE(PA_KEY).
 
     ENDCASE.
 
+
     " 차변이 없을 경우 대변 정보 취득
     READ TABLE GT_TOPRC INTO GS_TOPRC WITH KEY JENUM = GS_HDATA-JENUM.
 
@@ -2179,6 +2304,19 @@ FORM GET_NODE_DATA USING VALUE(PA_KEY).
   ENDLOOP.
 
   PERFORM DISPLAY_ALV_0100.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DELETE_TOOLBAR
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DELETE_TOOLBAR .
+
+  APPEND CL_GUI_ALV_GRID=>MC_FC_EXCL_ALL TO GT_TOOLBAR.
 
 ENDFORM.
 

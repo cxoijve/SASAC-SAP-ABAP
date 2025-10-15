@@ -20,8 +20,8 @@ MODULE STATUS_0200 OUTPUT.
   SET TITLEBAR 'T200'.
 
   " 아이콘 세팅
-  MOVE '@5C@' TO GV_ICON_R.
   MOVE ICON_LED_GREEN TO GV_ICON_G.
+  MOVE '@5C@' TO GV_ICON_R.
 
 ENDMODULE.
 *&---------------------------------------------------------------------*
@@ -41,6 +41,8 @@ MODULE SET_ALV_0200 OUTPUT.
 
   PERFORM EVENT_OPTION_0200.
 
+  PERFORM DELETE_TOOLBAR.
+
   PERFORM DISPLAY_ALV_0200.
 
 ENDMODULE.
@@ -54,8 +56,8 @@ MODULE STATUS_0300 OUTPUT.
   SET TITLEBAR 'T300'.
 
   " 아이콘 세팅
-  MOVE '@5C@' TO GV_ICON_R.
   MOVE ICON_LED_GREEN TO GV_ICON_G.
+  MOVE '@5C@' TO GV_ICON_R.
 
 ENDMODULE.
 *&---------------------------------------------------------------------*
@@ -73,9 +75,9 @@ MODULE SET_ALV_0300 OUTPUT.
 
   PERFORM SET_FCAT_0300.
 
-*  PERFORM SET_EVENT.
-
   PERFORM EVENT_OPTION_0300.
+
+  PERFORM DELETE_TOOLBAR.
 
   PERFORM DISPLAY_ALV_0300.
 

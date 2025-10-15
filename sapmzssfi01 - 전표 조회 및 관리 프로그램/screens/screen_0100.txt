@@ -8,27 +8,25 @@ SAPMZSSFI01
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI01                             0100 0100     34100192 37  0  0 37158  0G E                              20251014223149																																
+SAPMZSSFI01                             0100 0100     31128192 37  0  0 37160  0G E                              20251015105317																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
-B_COND		CHAR	100	00	00	00	30	00	  1	  2		  0	  0	  0		  9	R				  0	  0	101							전표 조회 조건		
-CON_TREE			 20	00	30	00	30	00	  2	 81		  0	  0	  0		  7	U				  5	 16	102									
-ZSSSFI0101-FYEAR	0	CHAR	 10	30	00	04	30	00	  3	  7		  0	  0	  0		  0					  0	  0								회계연도	                                                                                                                                                                                                                                                        X	
-ZSSSFI0101-FYEAR	N	NUMC	  4	A0	00	8C	00	08	  3	 21		  0	  0	  0		  0					  8	  0								____	X                                      00	
-ZSSSFI0101-RGDATB	0	CHAR	  6	30	00	00	30	00	  3	 41		  0	  0	  0		  0					  0	  0								전기일	                                                                                                                                                                                                                                                        X	
-ZSSSFI0101-RGDATB	D	DATE	 10	A0	00	80	00	08	  3	 55		  0	  0	  0		  0					 16	  0								__________	X                                      00	
-ZSSSFI0101-RGDATE	0	CHAR	  1	30	00	00	30	00	  3	 66		  0	  0	  0		  0					  0	  0								~	                                                                                                                                                                                                                                                        X	
-ZSSSFI0101-RGDATE	D	DATE	 10	A0	00	80	00	08	  3	 68		  0	  0	  0		  0					 16	  0								__________	X                                      00	
-ZSSSFI0101-JENUM	0	CHAR	 13	30	00	00	30	00	  5	  7		  0	  0	  0		  0					  0	  0								회계전표 번호	                                                                                                                                                                                                                                                        X	
-ZSSSFI0101-JENUM	C	CHAR	 11	A0	00	8C	00	08	  5	 21		  0	  0	  0		  0					 22	  0								___________	X                                      00	
-ZSSSFI0101-RGTOR	0	CHAR	  9	30	00	04	30	00	  7	  7		  0	  0	  0		  0					  0	  0								등록자	                                                                                                                                                                                                                                                        X	
-ZSSSFI0101-RGTOR	C	CHAR	  8	A0	00	8C	00	08	  7	 21		  0	  0	  0		  0					 16	  0								________	X                                      00	
-ZSSSFI0101-RGTOR_T	C	CHAR	 10	B0	02	80	31	00	  7	 30		  0	  0	  0		  0					 80	  0								__________	                                       00	
-B_INFO		CHAR	100	00	00	00	30	00	 10	  2		  0	  0	  0		 25	R				  0	  0	103							전표 조회 결과		
-B_BUTTON		CHAR	  9	00	00	00	30	00	 11	  3		  0	  0	  0		  0	P				  0	  0	104							전표 변경	                                                                                                                                                                        HINFO	
-B_BUTTON2		CHAR	  9	00	00	00	30	00	 11	 14		  0	  0	  0		  0	P				  0	  0	105			GR1				변경 완료	                                                                                                                                                                        UPDATE	
-CON			 97	00	00	00	30	00	 12	  3		  0	  0	  0		 22	U				  1	  1	106									
+B_COND		CHAR	106	00	00	00	30	00	  1	 24		  0	  0	  0		  6	R				  0	  0	101							전표 조회 조건		
+CON_TREE			 20	00	30	00	30	00	  2	  2		  0	  0	  0		 29	U				  5	 16	102									
+ZSSSFI0101-RGDATB	0	CHAR	  6	30	00	00	30	00	  3	 29		  0	  0	  0		  0					  0	  0								전기일	                                                                                                                                                                                                                                                        X	
+ZSSSFI0101-RGDATB	D	DATE	 10	A0	00	80	00	08	  3	 43		  0	  0	  0		  0					 16	  0								__________	X                                      00	
+ZSSSFI0101-RGDATE	0	CHAR	  1	30	00	00	30	00	  3	 54		  0	  0	  0		  0					  0	  0								~	                                                                                                                                                                                                                                                        X	
+ZSSSFI0101-RGDATE	D	DATE	 10	A0	00	80	00	08	  3	 56		  0	  0	  0		  0					 16	  0								__________	X                                      00	
+ZSSSFI0101-RGTOR	0	CHAR	  9	30	00	04	30	00	  3	 87		  0	  0	  0		  0					  0	  0								등록자	                                                                                                                                                                                                                                                        X	
+ZSSSFI0101-RGTOR	C	CHAR	  8	A0	00	8C	00	08	  3	101		  0	  0	  0		  0					 16	  0								________	X                                      00	
+ZSSSFI0101-RGTOR_T	C	CHAR	 10	B0	02	80	31	00	  3	110		  0	  0	  0		  0					 80	  0								__________	                                       00	
+ZSSSFI0101-JENUM	0	CHAR	 13	30	00	00	30	00	  5	 29		  0	  0	  0		  0					  0	  0								회계전표 번호	                                                                                                                                                                                                                                                        X	
+ZSSSFI0101-JENUM	C	CHAR	 14	B0	00	8C	00	08	  5	 43		  0	  0	  0		  0					 22	  0								______________	X                                      00	
+B_INFO		CHAR	106	00	00	00	30	00	  7	 24		  0	  0	  0		 25	R				  0	  0	103							전표 조회 결과		
+B_BUTTON		CHAR	  9	00	00	00	30	00	  8	 25		  0	  0	  0		  0	P				  0	  0	104							전표 변경	                                                                                                                                                                        HINFO	
+B_BUTTON2		CHAR	  9	00	00	00	30	00	  8	 36		  0	  0	  0		  0	P				  0	  0	105			GR1				변경 완료	                                                                                                                                                                        UPDATE	
+CON			103	00	00	00	30	00	  9	 25		  0	  0	  0		 22	U				  1	  1	106									
 OK_CODE		CHAR	 20	80	10	00	00	00	255	  1	O	  0	  0	  0		  0					  0	  0								____________________		
 %_FLOWLOGIC																																
 PROCESS BEFORE OUTPUT.																																

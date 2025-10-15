@@ -9,6 +9,22 @@
 MODULE STATUS_0100 OUTPUT.
   SET PF-STATUS 'S100'.
   SET TITLEBAR 'T100'.
+
+
+***  IF GV_Y2024  = 'X'.
+***
+***    ZSSSFI0101-RGDATB = '2024.01.01'.
+***    ZSSSFI0101-RGDATE = '2024.12.31'.
+***
+***  ELSEIF GV_Y2025 = 'X'.
+***
+***    ZSSSFI0101-RGDATB = '2025.01.01'.
+***    ZSSSFI0101-RGDATE = '2025.12.31'.
+***
+***  ELSE.
+***
+***  ENDIF.
+
 ENDMODULE.
 *&---------------------------------------------------------------------*
 *&      Module  SET_ALV_0100  OUTPUT
@@ -29,6 +45,8 @@ MODULE SET_ALV_0100 OUTPUT.
 
   PERFORM EVENT_OPTION.
 
+  PERFORM DELETE_TOOLBAR.
+
   PERFORM DISPLAY_ALV_0100.
 
 ENDMODULE.
@@ -44,11 +62,12 @@ FORM DISPLAY_ALV_0100 .
 
   CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT       = GS_LAYO
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
-      IT_OUTTAB       = GT_HDATA
-      IT_FIELDCATALOG = GT_FCAT
-      IT_SORT         = GT_SORT2.
+      IT_OUTTAB            = GT_HDATA
+      IT_FIELDCATALOG      = GT_FCAT
+      IT_SORT              = GT_SORT2.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
@@ -83,6 +102,8 @@ MODULE SET_ALV_0200 OUTPUT.
   PERFORM SET_EVENT_0200.
 
   PERFORM EVENT_OPTION_0200.
+
+  PERFORM DELETE_TOOLBAR.
 
   PERFORM DISPLAY_ALV_0200.
 ENDMODULE.
@@ -123,6 +144,7 @@ MODULE SET_ALV_0300 OUTPUT.
   PERFORM SET_LAYO.
   PERFORM SET_SORT.
   PERFORM SET_FCAT_0300.
+  PERFORM DELETE_TOOLBAR.
   PERFORM DISPLAY_ALV_0300.
 ENDMODULE.
 *&---------------------------------------------------------------------*

@@ -101,6 +101,10 @@ FORM SET_INIT .
 
   PERFORM GET_JEI_DATA.
 
+  PERFORM GET_MIVH_DATA.
+
+  PERFORM GET_SIVH_DATA.
+
 ENDFORM.
 *&---------------------------------------------------------------------*
 *&      Module  F4_FYEAR  INPUT
@@ -606,11 +610,13 @@ FORM INSERT_DATA_0110 .
   MOVE-CORRESPONDING GS_HDATA TO GS_ZTSSJEH.
 
   GS_ZTSSJEH-JENUM = LV_NUM2.
-  GS_ZTSSJEH-RGDAT = LV_NEXT01.
+  GS_ZTSSJEH-RGDAT = ZSSSFI0301-RGDAT.
   GS_ZTSSJEH-RGTOR = 'E0000001'.
   GS_ZTSSJEH-REV   = ''.
   GS_ZTSSJEH-RRSON = ''.
   GS_ZTSSJEH-RJNUM = ''.
+  GS_ZTSSJEH-STEXT = |{ GS_HDATA-JENUM } 수정에 따른 역분개 전표|.
+
 *  APPEND GS_ZTSSJEH TO GT_HDATA.
 
 
@@ -675,6 +681,86 @@ FORM INSERT_DATA_0110 .
     MESSAGE S999(ZMCSS) WITH '역분개 전표번호: ' GS_ZTSSJEH-JENUM.
 
   ENDIF.
+
+  " 지급, 수금 역분개 후 역분개된 전표번호로 IV UPDATE
+
+  READ TABLE GT_MHDATA WITH  KEY APNUM = GS_HDATA-JENUM
+                                 APFYR = GS_HDATA-FYEAR
+        INTO GS_MHDATA.
+
+  IF SY-SUBRC EQ 0.
+
+    UPDATE ZTSSMIVH
+      SET APNUM = @GS_ZTSSJEH-JENUM,
+          FYEAR = @GS_ZTSSJEH-FYEAR
+      WHERE JENUM = @GS_MHDATA-JENUM
+        AND FYEAR = @GS_MHDATA-FYEAR.
+
+    IF SY-SUBRC <> 0.
+
+      MESSAGE S999(ZMCSS) WITH 'AP 전표번호 업데이트 오류' DISPLAY LIKE 'E'.
+
+    ELSE.
+
+      COMMIT WORK.
+
+    ENDIF.
+  ENDIF.
+
+
+
+  READ TABLE GT_SHDATA WITH  KEY ARNUM = GS_HDATA-JENUM
+                                 ARFYR = GS_HDATA-FYEAR
+        INTO GS_SHDATA.
+
+  IF SY-SUBRC EQ 0.
+
+    UPDATE ZTSSSIVH
+      SET ARNUM = @GS_ZTSSJEH-JENUM,
+          FYEAR = @GS_ZTSSJEH-FYEAR
+      WHERE JENUM = @GS_SHDATA-JENUM
+        AND FYEAR = @GS_SHDATA-FYEAR.
+
+    IF SY-SUBRC <> 0.
+
+      MESSAGE S999(ZMCSS) WITH 'AR 전표번호 업데이트 오류' DISPLAY LIKE 'E'.
+
+    ELSE.
+
+      COMMIT WORK.
+
+    ENDIF.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_MIVH_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_MIVH_DATA .
+
+  SELECT *
+    FROM ZTSSMIVH
+    INTO CORRESPONDING FIELDS OF TABLE GT_MHDATA.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_SIVH_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_SIVH_DATA .
+
+  SELECT *
+      FROM ZTSSSIVH
+      INTO CORRESPONDING FIELDS OF TABLE GT_SHDATA.
 
 ENDFORM.
 

@@ -8,7 +8,7 @@ SAPMZSSFI03
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI03                             0400 0400      9 85192 37  0  0 34146  0G E                              20251008183922																																
+SAPMZSSFI03                             0400 0400      0  0192 37  0  0 34146  0G E                              20251015210013																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																

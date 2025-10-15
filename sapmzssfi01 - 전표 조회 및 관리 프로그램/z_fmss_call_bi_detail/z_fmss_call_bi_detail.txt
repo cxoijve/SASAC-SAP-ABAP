@@ -1,0 +1,20 @@
+FUNCTION Z_FMSS_CALL_BI_DETAIL.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(IV_BINUM) TYPE  ZESSBINUM
+*"----------------------------------------------------------------------
+
+  SET PARAMETER ID 'ZSSBI' FIELD iv_binum.
+
+  IF iv_binum IS INITIAL.
+    MESSAGE i999(zmcss) WITH '청구문서 번호가 지정되지 않았습니다.' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
+
+  CALL TRANSACTION 'ZSSSD03'.
+
+ENDFUNCTION.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

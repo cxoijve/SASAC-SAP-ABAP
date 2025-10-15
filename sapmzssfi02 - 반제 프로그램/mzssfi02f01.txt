@@ -319,12 +319,12 @@ FORM DISPLAY_ALV_0400 .
 
   CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT       = GS_LAYO
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
-      IT_OUTTAB       = GT_MHDATA
-      IT_FIELDCATALOG = GT_FCAT
-      IT_SORT         = GT_SORT
-    .
+      IT_OUTTAB            = GT_MHDATA
+      IT_FIELDCATALOG      = GT_FCAT
+      IT_SORT              = GT_SORT.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
@@ -439,11 +439,12 @@ FORM DISPLAY_ALV_0500 .
 
   CALL METHOD GO_ALV2->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT       = GS_LAYO2
+      IS_LAYOUT            = GS_LAYO2
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
-      IT_OUTTAB       = GT_SHDATA
-      IT_FIELDCATALOG = GT_FCAT2
-      IT_SORT         = GT_SORT.
+      IT_OUTTAB            = GT_SHDATA
+      IT_FIELDCATALOG      = GT_FCAT2
+      IT_SORT              = GT_SORT.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
@@ -704,11 +705,12 @@ FORM DISPLAY_ALV_0300 .
 
   CALL METHOD GO_ALV3->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT       = GS_LAYO
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
-      IT_OUTTAB       = GT_ADATA
-      IT_FIELDCATALOG = GT_FCAT
-      IT_SORT         = GT_SORT.
+      IT_OUTTAB            = GT_ADATA
+      IT_FIELDCATALOG      = GT_FCAT
+      IT_SORT              = GT_SORT.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
@@ -717,11 +719,12 @@ FORM DISPLAY_ALV_0300 .
 
   CALL METHOD GO_ALV4->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT       = GS_LAYO
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
-      IT_OUTTAB       = GT_CIDATA
-      IT_FIELDCATALOG = GT_FCAT2
-      IT_SORT         = GT_SORT.
+      IT_OUTTAB            = GT_CIDATA
+      IT_FIELDCATALOG      = GT_FCAT2
+      IT_SORT              = GT_SORT.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
@@ -1255,11 +1258,12 @@ FORM DISPLAY_ALV_0600 .
 
   CALL METHOD GO_ALV5->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT       = GS_LAYO
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
-      IT_OUTTAB       = GT_ADATA
-      IT_FIELDCATALOG = GT_FCAT
-      IT_SORT         = GT_SORT.
+      IT_OUTTAB            = GT_ADATA
+      IT_FIELDCATALOG      = GT_FCAT
+      IT_SORT              = GT_SORT.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
@@ -1268,11 +1272,12 @@ FORM DISPLAY_ALV_0600 .
 
   CALL METHOD GO_ALV6->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT       = GS_LAYO
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
-      IT_OUTTAB       = GT_CIDATA
-      IT_FIELDCATALOG = GT_FCAT2
-      IT_SORT         = GT_SORT.
+      IT_OUTTAB            = GT_CIDATA
+      IT_FIELDCATALOG      = GT_FCAT2
+      IT_SORT              = GT_SORT.
   IF SY-SUBRC <> 0.
 * Implement suitable error handling here
   ENDIF.
@@ -1562,6 +1567,19 @@ FORM SET_EVENT2 .
 
   SET HANDLER:
   GO_EVENT->HANDLE_HOTSPOT_CLICK FOR GO_ALV2.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DELETE_TOOLBAR
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DELETE_TOOLBAR .
+
+  APPEND CL_GUI_ALV_GRID=>MC_FC_EXCL_ALL TO GT_TOOLBAR.
 
 ENDFORM.
 

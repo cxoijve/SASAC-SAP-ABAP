@@ -1,0 +1,6 @@
+FUNCTION-POOL ZFGSS27.                      "MESSAGE-ID ..
+
+* INCLUDE LZFGSS27D...                       " Local class definition
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750
