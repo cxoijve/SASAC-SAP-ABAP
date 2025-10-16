@@ -12,208 +12,249 @@
 
 INCLUDE ZRBSSFI03TOP                            .    " global Data
 
-* INCLUDE ZRBSSFI03O01                            .  " PBO-Modules
-* INCLUDE ZRBSSFI03I01                            .  " PAI-Modules
-* INCLUDE ZRBSSFI03F01                            .  " FORM-Routines
+INCLUDE ZRBSSFI03O01                            .  " PBO-Modules
+INCLUDE ZRBSSFI03I01                            .  " PAI-Modules
+INCLUDE ZRBSSFI03F01                            .  " FORM-Routines
 
 
-* 파라미터 정의: 회계연도
-PARAMETERS: P_FYEAR TYPE ZTSSJEH-FYEAR OBLIGATORY.
 
-* 타입 선언 (합계 출력용)
-TYPES: BEGIN OF TY_SUM,
-         GLACC   TYPE ZTSSJEI-GLACC,
-         ACTNM   TYPE ZTSSACNT-ACTNM,
-         ACTTY   TYPE ZTSSACNT-ACTTY,
-         SUM_DEB TYPE P DECIMALS 2,
-         SUM_CRD TYPE P DECIMALS 2,
-         ZBAL    TYPE P DECIMALS 2,
-       END OF TY_SUM.
 
-* 내부 테이블 선언
-DATA: GT_SUM TYPE STANDARD TABLE OF TY_SUM WITH DEFAULT KEY,
-      GS_SUM TYPE TY_SUM.
+START-OF-SELECTION.
 
-DATA: IT_HEAD TYPE STANDARD TABLE OF ZTSSJEH WITH DEFAULT KEY,
-      WA_HEAD TYPE ZTSSJEH.
+  GV_FYEAR = P_FYEAR.
 
-DATA: IT_ITEMS TYPE STANDARD TABLE OF ZTSSJEI WITH DEFAULT KEY,
-      WA_ITEM  TYPE ZTSSJEI.
-
-* 1. 헤더에서 해당 회계연도의 전표번호 추출
-SELECT * FROM ZTSSJEH
-  INTO TABLE IT_HEAD
-  WHERE FYEAR = P_FYEAR.
-
-* 2. 아이템에서 해당 전표번호만 추출
-IF IT_HEAD[] IS INITIAL.
-  WRITE: / '해당 회계연도 전표가 없습니다.'.
-  EXIT.
-ENDIF.
-
-SELECT * FROM ZTSSJEI
-  INTO TABLE IT_ITEMS
-  FOR ALL ENTRIES IN IT_HEAD
-  WHERE JENUM = IT_HEAD-JENUM.
-
-* 3. 계정별 차변/대변 집계
-CLEAR GT_SUM.
-LOOP AT IT_ITEMS INTO WA_ITEM.
-  READ TABLE GT_SUM INTO GS_SUM WITH KEY GLACC = WA_ITEM-GLACC.
-  IF SY-SUBRC <> 0.
-    CLEAR GS_SUM.
-    GS_SUM-GLACC   = WA_ITEM-GLACC.
-    GS_SUM-SUM_DEB = WA_ITEM-DEBIT.
-    GS_SUM-SUM_CRD = WA_ITEM-CREDIT.
-    APPEND GS_SUM TO GT_SUM.
-  ELSE.
-    GS_SUM-SUM_DEB = GS_SUM-SUM_DEB + WA_ITEM-DEBIT.
-    GS_SUM-SUM_CRD = GS_SUM-SUM_CRD + WA_ITEM-CREDIT.
-    MODIFY GT_SUM FROM GS_SUM INDEX SY-TABIX.
-  ENDIF.
-ENDLOOP.
-
-* 4. 계정명/분류 및 잔액 처리
-LOOP AT GT_SUM INTO GS_SUM.
-  SELECT SINGLE ACTNM ACTTY
-    INTO (GS_SUM-ACTNM, GS_SUM-ACTTY)
-    FROM ZTSSACNT
-   WHERE GLACC = GS_SUM-GLACC.
-
-* 자산/비용(차변-대변), 부채/수익/조정(대변-차변)
-  CASE GS_SUM-ACTTY.
-    WHEN 'A' OR 'E' OR 'D'.
-      GS_SUM-ZBAL = GS_SUM-SUM_DEB - GS_SUM-SUM_CRD.
-    WHEN 'B' OR 'C'.
-      GS_SUM-ZBAL = GS_SUM-SUM_CRD - GS_SUM-SUM_DEB.
-  ENDCASE.
-
-  MODIFY GT_SUM FROM GS_SUM INDEX SY-TABIX.
-ENDLOOP.
-
-* 5. 분류별 테이블 분리 (자산/부채/수익/비용)
-DATA: BEGIN OF GT_ASSET OCCURS 0,
-        GLACC TYPE ZTSSJEI-GLACC,
-        ACTNM TYPE ZTSSACNT-ACTNM,
-        ZBAL  TYPE P DECIMALS 2,
-      END OF GT_ASSET,
-      BEGIN OF GT_LIAB OCCURS 0,
-        GLACC TYPE ZTSSJEI-GLACC,
-        ACTNM TYPE ZTSSACNT-ACTNM,
-        ZBAL  TYPE P DECIMALS 2,
-      END OF GT_LIAB,
-      BEGIN OF GT_INCM OCCURS 0,
-        GLACC TYPE ZTSSJEI-GLACC,
-        ACTNM TYPE ZTSSACNT-ACTNM,
-        ZBAL  TYPE P DECIMALS 2,
-      END OF GT_INCM,
-      BEGIN OF GT_EXPN OCCURS 0,
-        GLACC TYPE ZTSSJEI-GLACC,
-        ACTNM TYPE ZTSSACNT-ACTNM,
-        ZBAL  TYPE P DECIMALS 2,
-      END OF GT_EXPN.
-
-DATA: LV_ASSET TYPE P DECIMALS 2 VALUE 0,
-      LV_LIAB  TYPE P DECIMALS 2 VALUE 0,
-      LV_INCM  TYPE P DECIMALS 2 VALUE 0,
-      LV_EXPN  TYPE P DECIMALS 2 VALUE 0.
-
-LOOP AT GT_SUM INTO GS_SUM.
-  CASE GS_SUM-ACTTY.
-    WHEN 'A'.
-      GT_ASSET-GLACC = GS_SUM-GLACC.
-      GT_ASSET-ACTNM = GS_SUM-ACTNM.
-      GT_ASSET-ZBAL  = GS_SUM-ZBAL.
-      APPEND GT_ASSET.
-      LV_ASSET = LV_ASSET + GS_SUM-ZBAL.
-    WHEN 'B'.
-      GT_LIAB-GLACC = GS_SUM-GLACC.
-      GT_LIAB-ACTNM = GS_SUM-ACTNM.
-      GT_LIAB-ZBAL  = GS_SUM-ZBAL.
-      APPEND GT_LIAB.
-      LV_LIAB = LV_LIAB + GS_SUM-ZBAL.
-    WHEN 'C'.
-      GT_INCM-GLACC = GS_SUM-GLACC.
-      GT_INCM-ACTNM = GS_SUM-ACTNM.
-      GT_INCM-ZBAL  = GS_SUM-ZBAL.
-      APPEND GT_INCM.
-      LV_INCM = LV_INCM + GS_SUM-ZBAL.
-    WHEN 'D' OR 'E'.
-      GT_EXPN-GLACC = GS_SUM-GLACC.
-      GT_EXPN-ACTNM = GS_SUM-ACTNM.
-      GT_EXPN-ZBAL  = GS_SUM-ZBAL.
-      APPEND GT_EXPN.
-      LV_EXPN = LV_EXPN + GS_SUM-ZBAL.
-  ENDCASE.
-ENDLOOP.
-
-DATA: LV_EQUITY TYPE P DECIMALS 2.
-LV_EQUITY = LV_ASSET - LV_LIAB.
-
-DATA: LV_NETINC TYPE P DECIMALS 2.
-LV_NETINC = LV_INCM - LV_EXPN.
-
-* 6. 병렬 출력 (자산/부채, 수익/비용)
-" 재무상태표
-DATA: LV_CNT TYPE I,
-      LV_MAX TYPE I.
-
-LV_CNT = LINES( GT_ASSET ).
-LV_MAX = LV_CNT.
-IF LINES( GT_LIAB ) > LV_MAX.
-  LV_MAX = LINES( GT_LIAB ).
-ENDIF.
-
-WRITE: / '자산', 30 '금액', 60 '|', 65 '부채', 95 '금액'.
-DO LV_MAX TIMES.
-  IF SY-INDEX <= LINES( GT_ASSET ).
-    READ TABLE GT_ASSET INDEX SY-INDEX.
-    WRITE: / GT_ASSET-ACTNM, GT_ASSET-ZBAL.
-  ELSE.
-    WRITE: / ''.
+  IF P_FYEAR NE '2024' AND P_FYEAR NE '2025'.
+    MESSAGE '해당 회계연도의 화면이 존재하지 않습니다.' TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
   ENDIF.
 
-  WRITE AT 60 '|'.
+  PERFORM GET_DATA.
 
-  IF SY-INDEX <= LINES( GT_LIAB ).
-    READ TABLE GT_LIAB INDEX SY-INDEX.
-    WRITE: GT_LIAB-ACTNM, GT_LIAB-ZBAL.
-  ENDIF.
-ENDDO.
 
-WRITE: / '----------------------------------------------'.
-WRITE: / '자산 합계 :', LV_ASSET, AT 60 '|', '부채 합계 :', LV_LIAB.
-WRITE: / '순자산(자본)=자산-부채 :', LV_EQUITY.
+  CALL SCREEN 0100.
 
-" 손익계산서
-WRITE: / .
-WRITE: / '수익', 30 '금액', 60 '|', 65 '비용', 95 '금액'.
 
-LV_CNT = LINES( GT_INCM ).
-LV_MAX = LV_CNT.
-IF LINES( GT_EXPN ) > LV_MAX.
-  LV_MAX = LINES( GT_EXPN ).
-ENDIF.
+**** 파라미터 정의: 회계연도
+***PARAMETERS: P_FYEAR TYPE ZTSSJEH-FYEAR OBLIGATORY.
+***
+**** 타입 선언 (합계 출력용)
+***TYPES: BEGIN OF TY_SUM,
+***         GLACC   TYPE ZTSSJEI-GLACC,
+***         ACTNM   TYPE ZTSSACNT-ACTNM,
+***         ACTTY   TYPE ZTSSACNT-ACTTY,
+***         SUM_DEB TYPE P DECIMALS 2,
+***         SUM_CRD TYPE P DECIMALS 2,
+***         ZBAL    TYPE P DECIMALS 2,
+***       END OF TY_SUM.
+***
+**** 내부 테이블 선언
+***DATA: GT_SUM TYPE STANDARD TABLE OF TY_SUM WITH DEFAULT KEY,
+***      GS_SUM TYPE TY_SUM.
+***
+***DATA: IT_HEAD TYPE STANDARD TABLE OF ZTSSJEH WITH DEFAULT KEY,
+***      WA_HEAD TYPE ZTSSJEH.
+***
+***DATA: IT_ITEMS TYPE STANDARD TABLE OF ZTSSJEI WITH DEFAULT KEY,
+***      WA_ITEM  TYPE ZTSSJEI.
+***
+**** 1. 헤더에서 해당 회계연도의 전표번호 추출
+***SELECT *
+***  FROM ZTSSJEH
+***  INTO TABLE IT_HEAD
+***  WHERE FYEAR = P_FYEAR.
+***
+**** 2. 아이템에서 해당 전표번호만 추출
+***IF IT_HEAD[] IS INITIAL.
+***  WRITE: / '해당 회계연도 전표가 없습니다.'.
+***  EXIT.
+***ENDIF.
+***
+***SELECT * FROM ZTSSJEI
+***  INTO TABLE IT_ITEMS
+***  FOR ALL ENTRIES IN IT_HEAD
+***  WHERE JENUM = IT_HEAD-JENUM.
+***
+**** 3. 계정별 차변/대변 집계
+***CLEAR GT_SUM.
+***LOOP AT IT_ITEMS INTO WA_ITEM.
+***  READ TABLE GT_SUM INTO GS_SUM WITH KEY GLACC = WA_ITEM-GLACC.
+***  IF SY-SUBRC <> 0.
+***    CLEAR GS_SUM.
+***    GS_SUM-GLACC   = WA_ITEM-GLACC.
+***    GS_SUM-SUM_DEB = WA_ITEM-DEBIT.
+***    GS_SUM-SUM_CRD = WA_ITEM-CREDIT.
+***    APPEND GS_SUM TO GT_SUM.
+***  ELSE.
+***    GS_SUM-SUM_DEB = GS_SUM-SUM_DEB + WA_ITEM-DEBIT.
+***    GS_SUM-SUM_CRD = GS_SUM-SUM_CRD + WA_ITEM-CREDIT.
+***    MODIFY GT_SUM FROM GS_SUM INDEX SY-TABIX.
+***  ENDIF.
+***ENDLOOP.
+***
+**** 4. 계정명/분류 및 잔액 처리
+***LOOP AT GT_SUM INTO GS_SUM.
+***  SELECT SINGLE ACTNM ACTTY
+***    INTO (GS_SUM-ACTNM, GS_SUM-ACTTY)
+***    FROM ZTSSACNT
+***   WHERE GLACC = GS_SUM-GLACC.
+***
+**** 자산/비용(차변-대변), 부채/수익/조정(대변-차변)
+***  CASE GS_SUM-ACTTY.
+***    WHEN 'A' OR 'E' OR 'D'.
+***      GS_SUM-ZBAL = GS_SUM-SUM_DEB - GS_SUM-SUM_CRD.
+***    WHEN 'B' OR 'C'.
+***      GS_SUM-ZBAL = GS_SUM-SUM_CRD - GS_SUM-SUM_DEB.
+***  ENDCASE.
+***
+***  MODIFY GT_SUM FROM GS_SUM INDEX SY-TABIX.
+***ENDLOOP.
+***
+**** 5. 분류별 테이블 분리 (자산/부채/수익/비용)
+***DATA: BEGIN OF GT_ASSET OCCURS 0,
+***        GLACC TYPE ZTSSJEI-GLACC,
+***        ACTNM TYPE ZTSSACNT-ACTNM,
+***        ZBAL  TYPE P DECIMALS 2,
+***      END OF GT_ASSET,
+***      BEGIN OF GT_LIAB OCCURS 0,
+***        GLACC TYPE ZTSSJEI-GLACC,
+***        ACTNM TYPE ZTSSACNT-ACTNM,
+***        ZBAL  TYPE P DECIMALS 2,
+***      END OF GT_LIAB,
+***      BEGIN OF GT_INCM OCCURS 0,
+***        GLACC TYPE ZTSSJEI-GLACC,
+***        ACTNM TYPE ZTSSACNT-ACTNM,
+***        ZBAL  TYPE P DECIMALS 2,
+***      END OF GT_INCM,
+***      BEGIN OF GT_EXPN OCCURS 0,
+***        GLACC TYPE ZTSSJEI-GLACC,
+***        ACTNM TYPE ZTSSACNT-ACTNM,
+***        ZBAL  TYPE P DECIMALS 2,
+***      END OF GT_EXPN.
+***
+***DATA: LV_ASSET TYPE P DECIMALS 2 VALUE 0,
+***      LV_LIAB  TYPE P DECIMALS 2 VALUE 0,
+***      LV_INCM  TYPE P DECIMALS 2 VALUE 0,
+***      LV_EXPN  TYPE P DECIMALS 2 VALUE 0.
+***
+***LOOP AT GT_SUM INTO GS_SUM.
+***  CASE GS_SUM-ACTTY.
+***    WHEN 'A'.
+***      GT_ASSET-GLACC = GS_SUM-GLACC.
+***      GT_ASSET-ACTNM = GS_SUM-ACTNM.
+***      GT_ASSET-ZBAL  = GS_SUM-ZBAL.
+***      APPEND GT_ASSET.
+***      LV_ASSET = LV_ASSET + GS_SUM-ZBAL.
+***    WHEN 'B'.
+***      GT_LIAB-GLACC = GS_SUM-GLACC.
+***      GT_LIAB-ACTNM = GS_SUM-ACTNM.
+***      GT_LIAB-ZBAL  = GS_SUM-ZBAL.
+***      APPEND GT_LIAB.
+***      LV_LIAB = LV_LIAB + GS_SUM-ZBAL.
+***    WHEN 'C'.
+***      GT_INCM-GLACC = GS_SUM-GLACC.
+***      GT_INCM-ACTNM = GS_SUM-ACTNM.
+***      GT_INCM-ZBAL  = GS_SUM-ZBAL.
+***      APPEND GT_INCM.
+***      LV_INCM = LV_INCM + GS_SUM-ZBAL.
+***    WHEN 'D' OR 'E'.
+***      GT_EXPN-GLACC = GS_SUM-GLACC.
+***      GT_EXPN-ACTNM = GS_SUM-ACTNM.
+***      GT_EXPN-ZBAL  = GS_SUM-ZBAL.
+***      APPEND GT_EXPN.
+***      LV_EXPN = LV_EXPN + GS_SUM-ZBAL.
+***  ENDCASE.
+***ENDLOOP.
+***
+***DATA: LV_EQUITY TYPE P DECIMALS 2.
+***LV_EQUITY = LV_ASSET - LV_LIAB.
+***
+***DATA: LV_NETINC TYPE P DECIMALS 2.
+***LV_NETINC = LV_INCM - LV_EXPN.
+***
+**** 6. 병렬 출력 (자산/부채, 수익/비용)
+***" 재무상태표
+***DATA: LV_CNT TYPE I,
+***      LV_MAX TYPE I.
+***
+***LV_CNT = LINES( GT_ASSET ).
+***LV_MAX = LV_CNT.
+***IF LINES( GT_LIAB ) > LV_MAX.
+***  LV_MAX = LINES( GT_LIAB ).
+***ENDIF.
+***
+***WRITE: / '========================================================================================================'.
+***WRITE: / '                                                재무상태표                                                 '.
+***WRITE: / '--------------------------------------------------------------------------------------------------------'.
+***WRITE: / '자산', 30 '금액', 60 '|', 65 '부채', 95 '금액'.
+***DO LV_MAX TIMES.
+***  IF SY-INDEX <= LINES( GT_ASSET ).
+***    READ TABLE GT_ASSET INDEX SY-INDEX.
+***    WRITE: / GT_ASSET-ACTNM, GT_ASSET-ZBAL.
+***  ELSE.
+***    WRITE: / ''.
+***  ENDIF.
+***
+***  WRITE AT 60 '|'.
+***
+***  IF SY-INDEX <= LINES( GT_LIAB ).
+***    READ TABLE GT_LIAB INDEX SY-INDEX.
+***    WRITE: GT_LIAB-ACTNM, GT_LIAB-ZBAL.
+***  ENDIF.
+***ENDDO.
+***
+***WRITE: / '--------------------------------------------------------------------------------------------------------'.WRITE: / '수익', 30 '금액', 60 '|', 65 '비용', 95 '금액'.
+***WRITE: / '자산 합계 :', LV_ASSET, AT 60 '|', '부채 합계 :', LV_LIAB.
+***WRITE: /.
+***WRITE: / '순자산(자본)=자산-부채 :', LV_EQUITY.
+***
+***" 손익계산서
+***
+***WRITE: / '========================================================================================================'.
+***WRITE: / '                                                손익계산서                                                 '.
+***WRITE: / '--------------------------------------------------------------------------------------------------------'.WRITE: / '수익', 30 '금액', 60 '|', 65 '비용', 95 '금액'.
+***
+***LV_CNT = LINES( GT_INCM ).
+***LV_MAX = LV_CNT.
+***IF LINES( GT_EXPN ) > LV_MAX.
+***  LV_MAX = LINES( GT_EXPN ).
+***ENDIF.
+***
+***DO LV_MAX TIMES.
+***  IF SY-INDEX <= LINES( GT_INCM ).
+***    READ TABLE GT_INCM INDEX SY-INDEX.
+***    WRITE: / GT_INCM-ACTNM, GT_INCM-ZBAL.
+***  ELSE.
+***    WRITE: / ''.
+***  ENDIF.
+***
+***  WRITE AT 60 '|'.
+***
+***  IF SY-INDEX <= LINES( GT_EXPN ).
+***    READ TABLE GT_EXPN INDEX SY-INDEX.
+***    WRITE: GT_EXPN-ACTNM, GT_EXPN-ZBAL.
+***  ENDIF.
+***ENDDO.
+***
+***
+***
+***WRITE: / '--------------------------------------------------------------------------------------------------------'.WRITE: / '수익', 30 '금액', 60 '|', 65 '비용', 95 '금액'.
+***WRITE: / '수익 합계 :', LV_INCM, AT 60 '|', '비용 합계 :', LV_EXPN.
+***WRITE: /.
+***WRITE: / '당기순이익(수익-비용) :', LV_NETINC.
 
-DO LV_MAX TIMES.
-  IF SY-INDEX <= LINES( GT_INCM ).
-    READ TABLE GT_INCM INDEX SY-INDEX.
-    WRITE: / GT_INCM-ACTNM, GT_INCM-ZBAL.
-  ELSE.
-    WRITE: / ''.
-  ENDIF.
+*GUI Texts
+*----------------------------------------------------------
+* T100 --> 2024년 재무제표
+* T200 --> 2025년 재무제표
+* T100 --> 2024년 재무제표
+* T200 --> 2025년 재무제표
 
-  WRITE AT 60 '|'.
 
-  IF SY-INDEX <= LINES( GT_EXPN ).
-    READ TABLE GT_EXPN INDEX SY-INDEX.
-    WRITE: GT_EXPN-ACTNM, GT_EXPN-ZBAL.
-  ENDIF.
-ENDDO.
-
-WRITE: / '----------------------------------------------'.
-WRITE: / '수익 합계 :', LV_INCM, AT 60 '|', '비용 합계 :', LV_EXPN.
-WRITE: / '당기순이익(수익-비용) :', LV_NETINC.
+*Messages
+*----------------------------------------------------------
+*
+* Message class: Hard coded
+*   해당 회계연도의 화면이 존재하지 않습니다.
 
 ----------------------------------------------------------------------------------
 Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

@@ -8,11 +8,15 @@ SAPMZSSFI02
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI02                             0200 0200      0  0192 37  0  0 27120  0G E                              20250925151231																																
+SAPMZSSFI02                             0200 0200      1116192 37  0  0 27121  0G E                              20251016110610																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
-OK_CODE		CHAR	 20	80	10	00	00	00	255	  1	O	  0	  0	  0		  0					  0	  0								____________________	                                       00	
+GV_ICON_G	C	CHAR	  8	80	00	80	33	00	  1	 92		  0	  0	  0		  3					  0	  0								@00@____		
+GV_TEXT_G	0	CHAR	  6	00	00	00	30	00	  1	 96		  0	  0	  0		  0					  0	  0								: 기결		
+GV_ICON_R	C	CHAR	  6	80	00	80	33	00	  1	108		  0	  0	  0		  3					  0	  0								@00@__		
+GV_TEXT_R	0	CHAR	  6	00	00	00	30	00	  1	112		  0	  0	  0		  0					  0	  0								: 미결		
+OK_CODE		CHAR	 20	80	10	00	00	00	255	  1	O	  0	  0	  0		  0					  0	  0								____________________		
 %_FLOWLOGIC																																
 PROCESS BEFORE OUTPUT.																																
   MODULE STATUS_0200.																																

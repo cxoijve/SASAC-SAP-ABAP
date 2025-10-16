@@ -13,11 +13,24 @@ FORM SET_LAYO .
   GS_LAYO-ZEBRA = 'X'.
   GS_LAYO-SEL_MODE = 'A'.
 
+  GS_LAYO-EXCP_FNAME = 'LIGHT'.
+  GS_LAYO-EXCP_LED = 'X'.
+
+
   CLEAR GS_LAYO2.
 
   GS_LAYO2-CWIDTH_OPT = 'X'.
   GS_LAYO2-ZEBRA = 'X'.
   GS_LAYO2-SEL_MODE = 'A'.
+
+  GS_LAYO2-EXCP_FNAME = 'LIGHT'.
+  GS_LAYO2-EXCP_LED = 'X'.
+
+  CLEAR GS_LAYO3.
+
+  GS_LAYO3-CWIDTH_OPT = 'X'.
+  GS_LAYO3-ZEBRA = 'X'.
+  GS_LAYO3-SEL_MODE = 'A'.
 
 
 ENDFORM.
@@ -271,17 +284,18 @@ FORM SET_FCAT_0400 .
   CLEAR: GT_FCAT.
 
   PERFORM FCAT USING:
-        'APNUM' '1' '지급 전표번호',
-        'APFYR' '2' '지급 회계연도',
-        'JENUM' '3' '전표번호',
-        'FYEAR' '4' '회계연도',
-        'TOPRC' '5' '총 금액',
-        'CURKY' '6' '통화 키',
-        'IVNUM' '7' '송장 문서번호',
-        'RGDAT' '8' '등록일',
-        'IVDAT' '9' '송장 검증일',
-        'STEXT' '10' '비고',
-        'RGTOR' '11' '등록자'.
+        'LIGHT' '1' '반제 여부',
+        'APNUM' '2' '지급 전표번호',
+        'APFYR' '3' '지급 회계연도',
+        'JENUM' '4' '전표번호',
+        'FYEAR' '5' '회계연도',
+        'TOPRC' '6' '총 금액',
+        'CURKY' '7' '통화 키',
+        'IVNUM' '8' '송장 문서번호',
+        'RGDAT' '9' '등록일',
+        'IVDAT' '10' '송장 검증일',
+        'STEXT' '11' '비고',
+        'RGTOR' '12' '등록자'.
 
   CLEAR GS_FCAT.
 
@@ -388,17 +402,18 @@ FORM SET_FCAT_0500 .
   CLEAR: GT_FCAT2.
 
   PERFORM FCAT2 USING:
-        'ARNUM' '1' '수금 전표번호',
-        'ARFYR' '2' '수금 회계연도',
-        'JENUM' '3' '전표번호',
-        'FYEAR' '4' '회계연도',
-        'TOPRC' '5' '총 금액',
-        'CURKY' '6' '통화 키',
-        'BINUM' '7' '청구 문서번호',
-        'RGDAT' '8' '등록일',
-        'BIDAT' '9' '청구일',
-        'STEXT' '10' '비고',
-        'RGTOR' '11' '등록자'.
+        'LIGHT' '1' '반제 여부',
+        'ARNUM' '2' '수금 전표번호',
+        'ARFYR' '3' '수금 회계연도',
+        'JENUM' '4' '전표번호',
+        'FYEAR' '5' '회계연도',
+        'TOPRC' '6' '총 금액',
+        'CURKY' '7' '통화 키',
+        'BINUM' '8' '청구 문서번호',
+        'RGDAT' '9' '등록일',
+        'BIDAT' '10' '청구일',
+        'STEXT' '11' '비고',
+        'RGTOR' '12' '등록자'.
 
   CLEAR GS_FCAT2.
 
@@ -469,6 +484,9 @@ FORM SET_DATA_0400 .
   MOVE-CORRESPONDING GS_HDATA TO ZSSSFI0203.
 
 
+  PERFORM MODIFY_DATA.      " 추가 정보 취득
+
+
   PERFORM GET_RGTOR_NAME USING ZSSSFI0203-RGTOR
                          CHANGING ZSSSFI0203-RGTOR_T.
 
@@ -477,14 +495,14 @@ FORM SET_DATA_0400 .
     ZSSSFI0203-RGTOR_T = 'AutoFIBot'.
   ENDIF.
 
+
   " 송장검증 IV의 라인아이템 정보 취득
   PERFORM GET_MJEI_DATA.
 
 
   " 송장검증 IV 전표 차/대 분개 표시
   PERFORM CAL_SUM_DC CHANGING ZSSSFI0204-DEBIT
-                                                        ZSSSFI0204-CREDIT.
-
+                              ZSSSFI0204-CREDIT.
   ZSSSFI0204-CURKY = ZSSSFI0203-CURKY.
 
 
@@ -492,7 +510,7 @@ FORM SET_DATA_0400 .
   PERFORM SET_AP_INIT.
 
   PERFORM CAL_SUM_DC CHANGING ZSSSFI0206-DEBIT
-                                                        ZSSSFI0206-CREDIT.
+                              ZSSSFI0206-CREDIT.
 
   ZSSSFI0206-CURKY = ZSSSFI0205-CURKY.
 
@@ -705,7 +723,7 @@ FORM DISPLAY_ALV_0300 .
 
   CALL METHOD GO_ALV3->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT            = GS_LAYO
+      IS_LAYOUT            = GS_LAYO3
       IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
       IT_OUTTAB            = GT_ADATA
@@ -719,7 +737,7 @@ FORM DISPLAY_ALV_0300 .
 
   CALL METHOD GO_ALV4->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT            = GS_LAYO
+      IS_LAYOUT            = GS_LAYO3
       IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
       IT_OUTTAB            = GT_CIDATA
@@ -961,18 +979,32 @@ FORM SET_AP_INIT .
   IF ZSSSFI0203-STEXT IS NOT INITIAL.
     ZSSSFI0205-STEXT = ZSSSFI0203-STEXT.
 
-    IF  ZSSSFI0205-STEXT CP '*IV'  OR ZSSSFI0205-STEXT CP 'IV*' .
-      " 끝에 'IV'가 있으면 'AP'로 변경
-      REPLACE ALL OCCURRENCES OF REGEX '\M*IV\M*' IN ZSSSFI0205-STEXT WITH 'AP'.
+    " GT_CHDATA, GS_CHDATA
+    PERFORM GET_DOMAIN_VALUE USING 'ZDSSJTYPE' CHANGING GT_DOMAIN2.
 
-**      REPLACE REGEX 'IV' IN ZSSSFI0205-STEXT WITH 'AR'.
-    ELSE.
-      CONCATENATE 'AP' ZSSSFI0205-STEXT INTO ZSSSFI0205-STEXT SEPARATED BY ''..
-*    ZSSSFI0205-STEXT = ZSSSFI0203-STEXT.
+    CLEAR GS_DOMAIN2.
+    READ TABLE GT_DOMAIN2 INTO GS_DOMAIN2 WITH KEY DOMVALUE_L = ZSSSFI0205-JTYPE.
+
+    IF SY-SUBRC = 0.
+      ZSSSFI0205-JTYPE_T = GS_DOMAIN2-DDTEXT.
     ENDIF.
 
-  ENDIF.
+**    IF  ZSSSFI0205-STEXT CP '*IV'  OR ZSSSFI0205-STEXT CP 'IV*' .
+**      " 끝에 'IV'가 있으면 'AP'로 변경
+**      REPLACE ALL OCCURRENCES OF REGEX '\M*IV\M*' IN ZSSSFI0205-STEXT WITH 'AP'.
+**
+**    ELSE.
 
+**      CONCATENATE 'AP' ZSSSFI0205-STEXT INTO ZSSSFI0205-STEXT SEPARATED BY ''.
+    CONCATENATE '송장검증' ZSSSFI0203-JENUM '의 지급 전표' INTO ZSSSFI0205-STEXT SEPARATED BY ''.
+
+*    ENDIF.
+
+  ELSE.
+
+    CONCATENATE '송장검증' ZSSSFI0203-JENUM '의 지급 전표' INTO ZSSSFI0205-STEXT SEPARATED BY ''.
+
+  ENDIF.
 
 
 
@@ -1070,6 +1102,16 @@ FORM SET_DATA_0500 .
 
   READ TABLE GT_HDATA INTO GS_HDATA WITH KEY JENUM = GS_SHDATA-JENUM.
   MOVE-CORRESPONDING GS_HDATA TO ZSSSFI0203.
+
+  " DOMAIN
+  PERFORM GET_DOMAIN_VALUE USING 'ZDSSJTYPE' CHANGING GT_DOMAIN.
+
+  CLEAR GS_DOMAIN.
+  READ TABLE GT_DOMAIN INTO GS_DOMAIN WITH KEY DOMVALUE_L = GS_HDATA-JTYPE.
+
+  IF SY-SUBRC = 0.
+    ZSSSFI0203-JTYPE_T = GS_DOMAIN-DDTEXT.
+  ENDIF.
 
 
   PERFORM GET_RGTOR_NAME USING ZSSSFI0203-RGTOR
@@ -1258,7 +1300,7 @@ FORM DISPLAY_ALV_0600 .
 
   CALL METHOD GO_ALV5->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT            = GS_LAYO
+      IS_LAYOUT            = GS_LAYO3
       IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
       IT_OUTTAB            = GT_ADATA
@@ -1272,7 +1314,7 @@ FORM DISPLAY_ALV_0600 .
 
   CALL METHOD GO_ALV6->SET_TABLE_FOR_FIRST_DISPLAY
     EXPORTING
-      IS_LAYOUT            = GS_LAYO
+      IS_LAYOUT            = GS_LAYO3
       IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
     CHANGING
       IT_OUTTAB            = GT_CIDATA
@@ -1396,19 +1438,34 @@ FORM SET_AR_INIT .
     ZSSSFI0205-RGTOR_T = '최지예'.
   ENDIF.
 
+  " GT_CHDATA, GS_CHDATA
+  PERFORM GET_DOMAIN_VALUE USING 'ZDSSJTYPE' CHANGING GT_DOMAIN2.
+
+  CLEAR GS_DOMAIN2.
+  READ TABLE GT_DOMAIN2 INTO GS_DOMAIN2 WITH KEY DOMVALUE_L = ZSSSFI0205-JTYPE.
+
+  IF SY-SUBRC = 0.
+    ZSSSFI0205-JTYPE_T = GS_DOMAIN2-DDTEXT.
+  ENDIF.
 
   IF ZSSSFI0203-STEXT IS NOT INITIAL.
     ZSSSFI0205-STEXT = ZSSSFI0203-STEXT.
 
-    IF  ZSSSFI0205-STEXT CP '*IV'  OR ZSSSFI0205-STEXT CP 'IV*' .
-      " 끝에 'IV'가 있으면 'AR'로 변경
-      REPLACE ALL OCCURRENCES OF REGEX '\S*IV\S*' IN ZSSSFI0205-STEXT WITH 'AR'.
+*    IF  ZSSSFI0205-STEXT CP '*IV'  OR ZSSSFI0205-STEXT CP 'IV*' .
+*      " 끝에 'IV'가 있으면 'AR'로 변경
+*      REPLACE ALL OCCURRENCES OF REGEX '\S*IV\S*' IN ZSSSFI0205-STEXT WITH 'AR'.
+*
+***      REPLACE REGEX 'IV' IN ZSSSFI0205-STEXT WITH 'AR'.
+*    ELSE.
 
-**      REPLACE REGEX 'IV' IN ZSSSFI0205-STEXT WITH 'AR'.
-    ELSE.
-      CONCATENATE 'AR' ZSSSFI0205-STEXT INTO ZSSSFI0205-STEXT SEPARATED BY ''..
-*    ZSSSFI0205-STEXT = ZSSSFI0203-STEXT.
-    ENDIF.
+*      CONCATENATE 'AR' ZSSSFI0205-STEXT INTO ZSSSFI0205-STEXT SEPARATED BY ''..
+    CONCATENATE '청구' ZSSSFI0203-JENUM '의 수금 전표' INTO ZSSSFI0205-STEXT SEPARATED BY ''.
+
+*    ENDIF.
+
+  ELSE.
+
+    CONCATENATE '청구' ZSSSFI0203-JENUM '의 수금 전표' INTO ZSSSFI0205-STEXT SEPARATED BY ''.
 
   ENDIF.
 
@@ -1581,6 +1638,42 @@ FORM DELETE_TOOLBAR .
 
   APPEND CL_GUI_ALV_GRID=>MC_FC_EXCL_ALL TO GT_TOOLBAR.
 
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  MODIFY_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM MODIFY_DATA .
+  " DOMAIN
+  PERFORM GET_DOMAIN_VALUE USING 'ZDSSJTYPE' CHANGING GT_DOMAIN.
+
+  CLEAR GS_DOMAIN.
+  READ TABLE GT_DOMAIN INTO GS_DOMAIN WITH KEY DOMVALUE_L = GS_HDATA-JTYPE.
+
+  IF SY-SUBRC = 0.
+    ZSSSFI0203-JTYPE_T = GS_DOMAIN-DDTEXT.
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_DOMAIN_VALUE
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_2771   text
+*      <--P_GT_DOMAIN  text
+*----------------------------------------------------------------------*
+FORM GET_DOMAIN_VALUE  USING    VALUE(PV_DOMNAME)
+                       CHANGING PT_DOMAIN TYPE DD07V_T.
+  CALL FUNCTION 'GET_DOMAIN_VALUES'
+    EXPORTING
+      DOMNAME    = PV_DOMNAME
+    TABLES
+      VALUES_TAB = PT_DOMAIN.
 ENDFORM.
 
 ----------------------------------------------------------------------------------

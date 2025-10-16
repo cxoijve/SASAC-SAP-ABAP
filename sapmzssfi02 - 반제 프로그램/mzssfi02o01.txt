@@ -120,6 +120,11 @@ ENDMODULE.
 MODULE STATUS_0400 OUTPUT.
   SET PF-STATUS 'S400'.
   SET TITLEBAR 'T400'.
+
+  " 아이콘 세팅
+  MOVE ICON_LED_GREEN TO GV_ICON_G.
+  MOVE '@5C@' TO GV_ICON_R.
+
 ENDMODULE.
 *&---------------------------------------------------------------------*
 *&      Module  SET_ALV_0400  OUTPUT
@@ -172,6 +177,11 @@ ENDMODULE.
 MODULE STATUS_0500 OUTPUT.
   SET PF-STATUS 'S500'.
   SET TITLEBAR 'T500'.
+
+  " 아이콘 세팅
+  MOVE ICON_LED_GREEN TO GV_ICON_G.
+  MOVE '@5C@' TO GV_ICON_R.
+
 ENDMODULE.
 *&---------------------------------------------------------------------*
 *&      Module  SET_ALV_0300  OUTPUT

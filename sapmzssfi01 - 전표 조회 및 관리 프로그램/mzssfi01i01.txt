@@ -291,12 +291,24 @@ MODULE USER_COMMAND_0300 INPUT.
       ELSE.
         LEAVE TO SCREEN 0.
       ENDIF.
+
     WHEN 'ENTER'.
 
       " 등록자명 취득
       PERFORM GET_RGTOR_NAME USING ZSSSFI0102-RGTOR
                              CHANGING ZSSSFI0102-RGTOR_T.
 
+    WHEN 'B_RGTOR'.
+      IF ZSSSFI0102-RGTOR IS NOT INITIAL.
+        CALL FUNCTION 'Z_FMSS_CALL_EMP_DETAIL'
+          EXPORTING
+            IV_PERNR   = ZSSSFI0102-RGTOR
+            IV_ISMODAL = 'X'    " 모달 형태
+            IV_DTLLV   = 'A'.   " 축약 정보
+      ELSE.
+
+        MESSAGE I999(ZMCSS) WITH '자동 전표입니다. (담당자: AutoFIBot)' DISPLAY LIKE 'E'.
+      ENDIF.
   ENDCASE.
 
 ENDMODULE.

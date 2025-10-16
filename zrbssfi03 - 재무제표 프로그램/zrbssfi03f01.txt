@@ -1,0 +1,459 @@
+*&---------------------------------------------------------------------*
+*&  Include           ZRBSSFI03F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_ALV_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CREATE_ALV_0100 .
+
+
+  " 객체가 있을 시 미생성
+  IF GO_CON IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON
+    EXPORTING
+      CONTAINER_NAME              = 'CON'
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV
+    EXPORTING
+      I_PARENT          = GO_CON
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+
+
+
+  " 객체가 있을 시 미생성
+  IF GO_CON2 IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON2
+    EXPORTING
+      CONTAINER_NAME              = 'CON2'
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV2
+    EXPORTING
+      I_PARENT          = GO_CON2
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_LAYO
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_LAYO .
+
+  CLEAR GS_LAYO.
+
+  GS_LAYO-CWIDTH_OPT = 'X'.
+  GS_LAYO-ZEBRA = 'X'.
+  GS_LAYO-SEL_MODE = 'A'.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_SORT_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_SORT .
+
+*  CLEAR GT_SORT.
+*  GS_SORT-SPOS = '1'.
+*  GS_SORT-FIELDNAME = 'JENUM'.
+*  GS_SORT-DOWN = 'X'.
+*  APPEND GS_SORT TO GT_SORT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  SET_FCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM SET_FCAT .
+
+  CLEAR: GT_FCAT.
+
+  PERFORM FCAT USING:
+        'JENUM' '1' '전표번호',
+        'FYEAR' '2' '회계연도',
+        'JESEQ' '3' '전표 아이템 번호',
+        'DEBIT' '4' '차변',
+        'CREDIT' '5' '대변',
+        'CURKY' '6' '통화 키',
+        'GLACC' '7' 'G/L 계정',
+        'ACTNM' '8' 'G/L 계정명'.
+
+  CLEAR GS_FCAT.
+
+  LOOP AT GT_FCAT INTO GS_FCAT.
+    IF GS_FCAT-FIELDNAME = 'JESEQ'.
+      GS_FCAT-LZERO = 'X'.
+    ELSEIF GS_FCAT-FIELDNAME = 'JENUM' OR GS_FCAT-FIELDNAME = 'FYEAR' .
+      GS_FCAT-NO_OUT = 'X'.
+    ELSEIF GS_FCAT-FIELDNAME = 'DEBIT' OR GS_FCAT-FIELDNAME = 'CREDIT'.
+      GS_FCAT-CFIELDNAME = 'CURKY'.
+    ENDIF.
+
+    MODIFY GT_FCAT FROM GS_FCAT.
+  ENDLOOP.
+
+
+  CLEAR: GT_FCAT2.
+
+  PERFORM FCAT2 USING:
+        'JENUM' '1' '전표번호',
+        'FYEAR' '2' '회계연도',
+        'JESEQ' '3' '전표 아이템 번호',
+        'DEBIT' '4' '차변',
+        'CREDIT' '5' '대변',
+        'CURKY' '6' '통화 키',
+        'GLACC' '7' 'G/L 계정',
+        'ACTNM' '8' 'G/L 계정명'.
+
+  CLEAR GS_FCAT2.
+
+  LOOP AT GT_FCAT2 INTO GS_FCAT2.
+    IF GS_FCAT2-FIELDNAME = 'JESEQ'.
+      GS_FCAT2-LZERO = 'X'.
+    ELSEIF GS_FCAT2-FIELDNAME = 'JENUM' OR GS_FCAT2-FIELDNAME = 'FYEAR' .
+      GS_FCAT2-NO_OUT = 'X'.
+    ELSEIF GS_FCAT2-FIELDNAME = 'DEBIT' OR GS_FCAT2-FIELDNAME = 'CREDIT'.
+      GS_FCAT2-CFIELDNAME = 'CURKY'.
+    ENDIF.
+
+    MODIFY GT_FCAT2 FROM GS_FCAT2.
+  ENDLOOP.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV_0100
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_ALV_0100 .
+
+  CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
+    CHANGING
+      IT_OUTTAB            = GT_ADATA
+      IT_FIELDCATALOG      = GT_FCAT
+      IT_SORT              = GT_SORT.
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+
+
+  CALL METHOD GO_ALV2->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+      IS_LAYOUT            = GS_LAYO2
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
+    CHANGING
+      IT_OUTTAB            = GT_ADATA
+      IT_FIELDCATALOG      = GT_FCAT2
+      IT_SORT              = GT_SORT.
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  FCAT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0096   text
+*      -->P_0097   text
+*      -->P_0098   text
+*----------------------------------------------------------------------*
+FORM FCAT  USING    VALUE(P_FIELDNAME)
+                    VALUE(P_COLPOS)
+                    VALUE(P_COLTEXT).
+
+  DATA LS_FCAT LIKE LINE OF GT_FCAT.
+
+  LS_FCAT-FIELDNAME = P_FIELDNAME.
+  LS_FCAT-COL_POS = P_COLPOS.
+  LS_FCAT-COLTEXT = P_COLTEXT.
+  APPEND LS_FCAT TO GT_FCAT.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  FCAT2
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*      -->P_0188   text
+*      -->P_0189   text
+*      -->P_0190   text
+*----------------------------------------------------------------------*
+FORM FCAT2  USING    VALUE(P_FIELDNAME)
+                    VALUE(P_COLPOS)
+                    VALUE(P_COLTEXT).
+
+  DATA LS_FCAT2 LIKE LINE OF GT_FCAT2.
+
+  LS_FCAT2-FIELDNAME = P_FIELDNAME.
+  LS_FCAT2-COL_POS = P_COLPOS.
+  LS_FCAT2-COLTEXT = P_COLTEXT.
+  APPEND LS_FCAT2 TO GT_FCAT2.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DELETE_TOOLBAR
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DELETE_TOOLBAR .
+
+  APPEND CL_GUI_ALV_GRID=>MC_FC_EXCL_ALL TO GT_TOOLBAR.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  GET_DATA
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM GET_DATA .
+  DATA: LT_TAB   TYPE TABLE OF ZTSSJEI WITH HEADER LINE,
+        LV_FIELD TYPE I.
+
+  SELECT *
+     FROM ZTSSJEI
+       INTO CORRESPONDING FIELDS OF TABLE LT_TAB
+   WHERE FYEAR EQ P_FYEAR.
+
+
+  CLEAR: GV_FIELD1, GV_FIELD2, GV_FIELD3, GV_FIELD4,
+              GV_FIELD5, GV_FIELD6, GV_FIELD7, GV_FIELD8.
+
+  LOOP AT LT_TAB.
+    CASE LT_TAB-GLACC.
+      WHEN '100000'.   "GV_FIELD1
+        LV_FIELD = LT_TAB-DEBIT * 100.
+        GV_FIELD1 = GV_FIELD1 + LV_FIELD.
+      WHEN '110000'.   "GV_FIELD2
+        LV_FIELD = LT_TAB-DEBIT * 100.
+        GV_FIELD2 = GV_FIELD2 + LV_FIELD.
+      WHEN '140000'.   "GV_FIELD3
+        LV_FIELD = LT_TAB-DEBIT * 100.
+        GV_FIELD3 = GV_FIELD3 + LV_FIELD.
+      WHEN '240000'.  "GV_FIELD4
+        LV_FIELD = LT_TAB-CREDIT * 100.
+        GV_FIELD4 = GV_FIELD4 + LV_FIELD.
+      WHEN '310000'.  "GV_FIELD8
+        LV_FIELD = LT_TAB-DEBIT * 100.
+        GV_FIELD8 = GV_FIELD8 + LV_FIELD.
+      WHEN '410000'.   "GV_FIELD7
+        LV_FIELD = LT_TAB-CREDIT * 100.
+        GV_FIELD7 = GV_FIELD7 + LV_FIELD.
+      WHEN '510000'.   "GV_FIELD6
+        LV_FIELD = LT_TAB-DEBIT * 100.
+        GV_FIELD6 = GV_FIELD6 + LV_FIELD.
+    ENDCASE.
+  ENDLOOP.
+
+
+  GV_SUM1 = GV_FIELD1 + GV_FIELD2 + GV_FIELD3 + GV_FIELD8.
+
+  GV_SUM2 = GV_FIELD4.
+
+  GV_FIELD5 = GV_SUM1 - GV_FIELD4.
+
+  GV_SUM3 = GV_FIELD5.
+
+  GV_SUM4 = GV_FIELD7 - GV_FIELD6.
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  CREATE_ALV_0200
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM CREATE_ALV_0200 .
+
+  " 객체가 있을 시 미생성
+  IF GO_CON IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON
+    EXPORTING
+      CONTAINER_NAME              = 'CON'
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV
+    EXPORTING
+      I_PARENT          = GO_CON
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+
+
+
+  " 객체가 있을 시 미생성
+  IF GO_CON2 IS NOT INITIAL.
+    RETURN.
+  ENDIF.
+
+  CREATE OBJECT GO_CON2
+    EXPORTING
+      CONTAINER_NAME              = 'CON2'
+    EXCEPTIONS
+      CNTL_ERROR                  = 1
+      CNTL_SYSTEM_ERROR           = 2
+      CREATE_ERROR                = 3
+      LIFETIME_ERROR              = 4
+      LIFETIME_DYNPRO_DYNPRO_LINK = 5
+      OTHERS                      = 6.
+  IF SY-SUBRC <> 0.
+*   MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*              WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+  CREATE OBJECT GO_ALV2
+    EXPORTING
+      I_PARENT          = GO_CON2
+    EXCEPTIONS
+      ERROR_CNTL_CREATE = 1
+      ERROR_CNTL_INIT   = 2
+      ERROR_CNTL_LINK   = 3
+      ERROR_DP_CREATE   = 4
+      OTHERS            = 5.
+  IF SY-SUBRC <> 0.
+* MESSAGE ID SY-MSGID TYPE SY-MSGTY NUMBER SY-MSGNO
+*            WITH SY-MSGV1 SY-MSGV2 SY-MSGV3 SY-MSGV4.
+  ENDIF.
+
+
+ENDFORM.
+*&---------------------------------------------------------------------*
+*&      Form  DISPLAY_ALV_0200
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*  -->  p1        text
+*  <--  p2        text
+*----------------------------------------------------------------------*
+FORM DISPLAY_ALV_0200 .
+
+  CALL METHOD GO_ALV->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+      IS_LAYOUT            = GS_LAYO
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
+    CHANGING
+      IT_OUTTAB            = GT_ADATA
+      IT_FIELDCATALOG      = GT_FCAT
+      IT_SORT              = GT_SORT.
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+
+
+  CALL METHOD GO_ALV2->SET_TABLE_FOR_FIRST_DISPLAY
+    EXPORTING
+      IS_LAYOUT            = GS_LAYO2
+      IT_TOOLBAR_EXCLUDING = GT_TOOLBAR
+    CHANGING
+      IT_OUTTAB            = GT_ADATA
+      IT_FIELDCATALOG      = GT_FCAT2
+      IT_SORT              = GT_SORT.
+  IF SY-SUBRC <> 0.
+* Implement suitable error handling here
+  ENDIF.
+
+ENDFORM.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

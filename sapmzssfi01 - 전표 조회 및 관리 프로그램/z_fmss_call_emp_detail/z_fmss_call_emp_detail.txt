@@ -1,0 +1,37 @@
+FUNCTION z_fmss_call_emp_detail.
+*"----------------------------------------------------------------------
+*"*"Local Interface:
+*"  IMPORTING
+*"     REFERENCE(IV_PERNR) TYPE  ZESSPERNR
+*"     REFERENCE(IV_ISMODAL) TYPE  CHAR1
+*"     REFERENCE(IV_DTLLV) TYPE  CHAR1
+*"  EXCEPTIONS
+*"      QUERY_FAILED
+*"      UNKNOWN_FLAG
+*"----------------------------------------------------------------------
+
+  PERFORM get_info_0400 USING iv_pernr
+                        CHANGING gv_subrc.
+
+  IF gv_subrc <> 0. RETURN. ENDIF.
+
+  CASE iv_dtllv.
+    WHEN 'A' OR 'X'.
+      gv_dtlinfo = iv_dtllv.
+    WHEN OTHERS.
+      RAISE unknown_flag.
+  ENDCASE.
+
+  CASE iv_ismodal.
+    WHEN 'X'.
+      CALL SCREEN 410 STARTING AT 10 10.
+    WHEN ''.
+      CALL SCREEN 400.
+  ENDCASE.
+
+
+
+ENDFUNCTION.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

@@ -8,11 +8,15 @@ SAPMZSSFI02
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI02                             0400 0400     21116192 37  0  0 27121  0G E                              20250926101846																																
+SAPMZSSFI02                             0400 0400     27124192 37  0  0 27125  0G E                              20251016110550																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
-CON			115	00	00	00	30	00	  2	  3		  0	  0	  0		 20	U				  1	  1	101									
+GV_ICON_G	C	CHAR	  8	80	00	80	33	00	  1	100		  0	  0	  0		  3					  0	  0								@00@____		
+GV_TEXT_G	0	CHAR	  6	00	00	00	30	00	  1	104		  0	  0	  0		  0					  0	  0								: 기결		
+GV_ICON_R	C	CHAR	  6	80	00	80	33	00	  1	116		  0	  0	  0		  3					  0	  0								@00@__		
+GV_TEXT_R	0	CHAR	  6	00	00	00	30	00	  1	120		  0	  0	  0		  0					  0	  0								: 미결		
+CON			123	00	30	00	30	00	  2	  3		  0	  0	  0		 26	U				 13	 61	101									
 OK_CODE		CHAR	 20	80	10	00	00	00	255	  1	O	  0	  0	  0		  0					  0	  0								____________________		
 %_FLOWLOGIC																																
 PROCESS BEFORE OUTPUT.																																

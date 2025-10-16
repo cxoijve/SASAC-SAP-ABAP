@@ -1,0 +1,184 @@
+FUNCTION-POOL zfgss28.                      "MESSAGE-ID ..
+
+* INCLUDE LZFGSS28D...                       " Local class definition
+
+" Common Variables
+DATA : gv_subrc LIKE sy-subrc,
+       ok_code  LIKE sy-ucomm.
+
+" ALV Objects 공통
+DATA : gt_exclude TYPE ui_functions.
+
+" ALV Handler
+CLASS lcl_handler DEFINITION.
+  PUBLIC SECTION.
+    DATA : hname TYPE c LENGTH 4.
+    METHODS on_hotspot_click FOR EVENT hotspot_click OF cl_gui_alv_grid
+      IMPORTING es_row_no e_column_id.
+
+ENDCLASS.
+
+" Itab 0100
+DATA gt_dd07v_d TYPE TABLE OF dd07v WITH HEADER LINE.
+
+" 100 : 자재 상세정보 =========================
+TYPES : BEGIN OF ts_mat.
+TYPES : matnr   TYPE zessmatnr,
+        mtype   TYPE zessmtype,
+        mtype_t TYPE ddtext,
+        expda   TYPE zessexpda,
+        meins   TYPE zessmeins,
+        matnm   TYPE zessmatnm.
+TYPES : END OF ts_mat.
+DATA : gs_infod_0100 TYPE ts_mat.
+
+" 200 ; SO =================================
+" SO HEADER
+TABLES zssssd0103.
+
+" Screen 200 INFO
+DATA: BEGIN OF gs_infod_0200.
+    INCLUDE STRUCTURE zssssd0104.
+DATA: END OF gs_infod_0200,
+gt_infod_0200 LIKE TABLE OF gs_infod_0200.
+
+" ALV Objects 0200
+DATA   go_cond_0200 TYPE REF TO cl_gui_custom_container.
+DATA   go_alvd_0200 TYPE REF TO cl_gui_alv_grid.
+DATA : gs_layod_0200 TYPE lvc_s_layo.
+DATA : gt_fcatd_0200 TYPE lvc_t_fcat,
+       gs_fcatd_0200 TYPE lvc_s_fcat.
+DATA : gt_sortd_0200 TYPE lvc_t_sort,
+       gs_sortd_0200 TYPE lvc_s_sort.
+
+" Handler 0200
+DATA : go_handlerd_0200 TYPE REF TO lcl_handler.
+
+" ALV Objects 0210
+DATA   go_cond_0210 TYPE REF TO cl_gui_custom_container.
+DATA   go_alvd_0210 TYPE REF TO cl_gui_alv_grid.
+DATA : gs_layod_0210 TYPE lvc_s_layo.
+DATA : gt_fcatd_0210 TYPE lvc_t_fcat,
+       gs_fcatd_0210 TYPE lvc_s_fcat.
+DATA : gt_sortd_0210 TYPE lvc_t_sort,
+       gs_sortd_0210 TYPE lvc_s_sort.
+
+" Handler 0210
+DATA : go_handlerd_0210 TYPE REF TO lcl_handler.
+
+
+" 300 ; IV =================================
+" ALV Objects 0300
+DATA   go_cond_0300 TYPE REF TO cl_gui_custom_container.
+DATA   go_alvd_0300 TYPE REF TO cl_gui_alv_grid.
+DATA : gs_layod_0300 TYPE lvc_s_layo.
+DATA : gt_fcatd_0300 TYPE lvc_t_fcat,
+       gs_fcatd_0300 TYPE lvc_s_fcat.
+DATA : gt_sortd_0300 TYPE lvc_t_sort,
+       gs_sortd_0300 TYPE lvc_s_sort.
+
+" Handler 0300
+DATA : go_handlerd_0300 TYPE REF TO lcl_handler.
+
+" ALV Objects 0310
+DATA   go_cond_0310 TYPE REF TO cl_gui_custom_container.
+DATA   go_alvd_0310 TYPE REF TO cl_gui_alv_grid.
+DATA : gs_layod_0310 TYPE lvc_s_layo.
+DATA : gt_fcatd_0310 TYPE lvc_t_fcat,
+       gs_fcatd_0310 TYPE lvc_s_fcat.
+DATA : gt_sortd_0310 TYPE lvc_t_sort,
+       gs_sortd_0310 TYPE lvc_s_sort.
+
+" Handler 0300
+DATA : go_handlerd_0310 TYPE REF TO lcl_handler.
+
+
+" Header 0300
+DATA : BEGIN OF gs_infod_0300h.
+    INCLUDE TYPE ztssmivh.
+DATA ename TYPE zessename.
+DATA : END OF gs_infod_0300h.
+
+DATA : BEGIN OF gs_infod_0300.
+    INCLUDE TYPE ztssmivi.
+DATA : END OF gs_infod_0300.
+DATA : gt_infod_0300 LIKE TABLE OF gs_infod_0300.
+
+" Info 400
+DATA : BEGIN OF gs_infod_0400h.
+    INCLUDE TYPE ztssemp.
+DATA : persg_t TYPE ddtext,
+       dname   TYPE zessdname,
+       gesch_t TYPE ddtext,
+       ednme   TYPE zessednme,
+       estat_t TYPE ddtext,
+       email   TYPE ddtext,
+       ename   TYPE ddtext,
+       dptel   TYPE zessdptel.
+DATA : END OF gs_infod_0400h.
+
+DATA : gv_dtlinfo.
+
+" 500 =====================================================
+" ALV Objects 0500
+DATA   go_cond_0500 TYPE REF TO cl_gui_custom_container.
+DATA   go_alvd_0500 TYPE REF TO cl_gui_alv_grid.
+DATA : gs_layod_0500 TYPE lvc_s_layo.
+DATA : gt_fcatd_0500 TYPE lvc_t_fcat,
+       gs_fcatd_0500 TYPE lvc_s_fcat.
+DATA : gt_sortd_0500 TYPE lvc_t_sort,
+       gs_sortd_0500 TYPE lvc_s_sort.
+
+" Handler 0500
+DATA : go_handlerd_0500 TYPE REF TO lcl_handler.
+
+"   - ALV INFO 0500
+DATA : BEGIN OF gs_infod_0500.
+DATA : cellscol TYPE lvc_t_scol.
+    INCLUDE TYPE zsssmd0803.
+DATA : END OF gs_infod_0500.
+DATA : gt_infod_0500 LIKE TABLE OF gs_infod_0500.
+
+
+" ============================================================
+
+LOAD-OF-PROGRAM.
+  " Domain Fixed Value 가져오기
+  PERFORM get_domain_fixed_values TABLES  gt_dd07v_d
+                                  USING  'ZDSSMTYPE'.
+  PERFORM get_domain_fixed_values TABLES  gt_dd07v_d
+                                  USING  'ZDSSPERSG'.
+  PERFORM get_domain_fixed_values TABLES  gt_dd07v_d
+                                  USING  'ZDSSGESCH'.
+  PERFORM get_domain_fixed_values TABLES  gt_dd07v_d
+                                  USING  'ZDSSESTAT'.
+  " 공통 세팅 : exclude (ALV위에 툴바)
+  PERFORM set_alv_exclude CHANGING gt_exclude.
+  " alv의 기본 세팅
+  PERFORM set_default_alv : TABLES    gt_fcatd_0200
+                                      gt_sortd_0200
+                            USING     '0200'
+                            CHANGING  gs_layod_0200,
+
+                            TABLES    gt_fcatd_0210
+                                      gt_sortd_0210
+                            USING     '0210'
+                            CHANGING  gs_layod_0210,
+
+                            TABLES    gt_fcatd_0300
+                                      gt_sortd_0300
+                            USING     '0300'
+                            CHANGING  gs_layod_0300,
+
+                            TABLES    gt_fcatd_0310
+                                      gt_sortd_0310
+                            USING     '0310'
+                            CHANGING  gs_layod_0310,
+
+                            TABLES    gt_fcatd_0500
+                                      gt_sortd_0500
+                            USING     '0500'
+                            CHANGING  gs_layod_0500.
+
+----------------------------------------------------------------------------------
+Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2025. Sap Release 750

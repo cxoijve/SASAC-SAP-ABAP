@@ -29,8 +29,14 @@ DATA : gt_fcat_0100f TYPE lvc_t_fcat,
        gt_fcat_0200f TYPE lvc_t_fcat,
        gs_fcat_0200f LIKE LINE OF gt_fcat_0200f.
 
+DATA : gt_fvalf TYPE TABLE OF dd07v,
+       gs_fvalf LIKE LINE OF gt_fvalf.
+
+DATA gv_post TYPE c LENGTH 5.
+
 TABLES : zsssmm03014,
-         zsssmd06001.
+         zsssmd06001,
+         zsssmd06008.
 
 
 
@@ -49,8 +55,9 @@ CLASS lcl_handler IMPLEMENTATION.
   METHOD on_hotspot_click.
 
 
-    DATA :row_id  TYPE i,
-          gs_list LIKE LINE OF gt_mivif.
+    DATA :row_id   TYPE i,
+          gs_list  LIKE LINE OF gt_mivif,
+          gs_list2 LIKE LINE OF gt_cstidf.
 
     row_id = es_row_no-row_id.
 
@@ -63,10 +70,26 @@ CLASS lcl_handler IMPLEMENTATION.
           CALL FUNCTION 'Z_FMSS_CALL_GR_DETAIL'
             EXPORTING
               iv_grnum = gs_list-grnum.
+
       ENDCASE.
 
     ELSEIF sy-dynnr = '0200'.
+      CASE e_column_id.
+        WHEN 'PRDNR'.
+          READ TABLE gt_cstidf INTO gs_list2 INDEX row_id.
+          CALL FUNCTION 'Z_FMSS_CALL_MATERIAL_DETAIL'
+            EXPORTING
+              iv_matnr     = gs_list2-prdnr
+*             IV_ISMODAL   = 'X'
+            EXCEPTIONS
+              query_failed = 1
+              unknown_flag = 2
+              OTHERS       = 3.
+          IF sy-subrc <> 0.
+* Implement suitable error handling here
+          ENDIF.
 
+      ENDCASE.
 
     ENDIF.
 
