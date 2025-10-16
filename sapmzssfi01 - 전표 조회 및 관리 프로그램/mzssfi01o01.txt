@@ -10,21 +10,6 @@ MODULE STATUS_0100 OUTPUT.
   SET PF-STATUS 'S100'.
   SET TITLEBAR 'T100'.
 
-
-***  IF GV_Y2024  = 'X'.
-***
-***    ZSSSFI0101-RGDATB = '2024.01.01'.
-***    ZSSSFI0101-RGDATE = '2024.12.31'.
-***
-***  ELSEIF GV_Y2025 = 'X'.
-***
-***    ZSSSFI0101-RGDATB = '2025.01.01'.
-***    ZSSSFI0101-RGDATE = '2025.12.31'.
-***
-***  ELSE.
-***
-***  ENDIF.
-
 ENDMODULE.
 *&---------------------------------------------------------------------*
 *&      Module  SET_ALV_0100  OUTPUT

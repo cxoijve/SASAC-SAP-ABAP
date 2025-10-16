@@ -8,7 +8,7 @@ SAPMZSSFI01
 750																																
                 40																																
 %_HEADER																																
-SAPMZSSFI01                             0100 0100     31128192 37  0  0 37160  0G E                              20251015105317																																
+SAPMZSSFI01                             0100 0100     31128192 37  0  0 37160  0G E                              20251017033703																																
 %_DESCRIPTION																																
                 40																																
 %_FIELDS																																
